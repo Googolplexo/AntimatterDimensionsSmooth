@@ -643,7 +643,7 @@ export const normalAchievements = [
     id: 94,
     name: "4.3333 minutes of Infinity",
     get description() { return `Get your multiplier from Infinity Power above ${format(DC.E260)}.`; },
-    checkRequirement: () => InfinityDimension(1).isUnlocked && Currency.infinityPower.log10() * 7 >= 260,
+    checkRequirement: () => InfinityDimension(1).isUnlocked && player.infinityPower.log10() * 7 >= 260,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Double Infinity Power gain.",
     effect: 2
