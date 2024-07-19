@@ -528,3 +528,7 @@ dev.forceCloudSave = async function() {
 dev.unlockAllCosmeticSets = function() {
   player.reality.glyphs.cosmetics.unlockedFromNG = Object.keys(GameDatabase.reality.glyphCosmeticSets);
 };
+
+dev.skipToNextRG = function() {
+  simulateTime(Replicanti.galaxies.currentCost.minus(Replicanti.amount).clampMin(0).div(getReplicantiInterval(ReplicantiUpgrade.interval.value)).toNumber());
+};

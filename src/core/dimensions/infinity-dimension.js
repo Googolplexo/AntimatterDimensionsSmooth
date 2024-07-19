@@ -21,7 +21,7 @@ export function infinityDimensionCommonMultiplier() {
       PelleRifts.recursion.milestones[1]
     );
 
-  if (Replicanti.areUnlocked && Replicanti.amount.gt(1)) {
+  if (Replicanti.areUnlocked) {
     mult = mult.times(replicantiMult());
   }
 
@@ -40,21 +40,21 @@ class InfinityDimensionState extends DimensionState {
     super(() => player.dimensions.infinity, tier);
     const UNLOCK_REQUIREMENTS = [
       undefined,
-      DC.E1100,
-      DC.E1900,
-      DC.E2400,
-      DC.E10500,
-      DC.E30000,
-      DC.E45000,
-      DC.E54000,
-      DC.E60000,
+      DC.E3250,
+      DC.E9400,
+      DC.E13500,
+      DC.E18000,
+      DC.E44000,
+      DC.E125000,
+      DC.E200000,
+      DC.E250000,
     ];
     this._unlockRequirement = UNLOCK_REQUIREMENTS[tier];
-    const COST_MULTS = [null, 1e3, 1e6, 1e8, 1e10, 1e15, 1e20, 1e25, 1e30];
+    const COST_MULTS = [null, 1e6, 1e12, 1e18, 1e24, 1e30, 1e36, 1e42, 1e48];
     this._costMultiplier = COST_MULTS[tier];
-    const POWER_MULTS = [null, 50, 30, 10, 5, 5, 5, 5, 5];
+    const POWER_MULTS = [null, 2, 2, 2, 2, 2, 2, 2, 2];
     this._powerMultiplier = POWER_MULTS[tier];
-    const BASE_COSTS = [null, 1e8, 1e9, 1e10, 1e20, 1e140, 1e200, 1e250, 1e280];
+    const BASE_COSTS = [null, 1e16, 1e40, 1e60, 1e80, 1e210, DC.E580, DC.E900, DC.E1100];
     this._baseCost = new Decimal(BASE_COSTS[tier]);
     this.ipRequirement = BASE_COSTS[1];
   }
@@ -215,9 +215,7 @@ class InfinityDimensionState extends DimensionState {
     if (Enslaved.isRunning) {
       return 1;
     }
-    return InfinityDimensions.capIncrease + (this.tier === 8
-      ? Number.MAX_VALUE
-      : InfinityDimensions.HARDCAP_PURCHASES);
+    return 9999999999999999999999999999999999999999999999999999999999;
   }
 
   get isCapped() {
@@ -273,6 +271,8 @@ class InfinityDimensionState extends DimensionState {
       player.eterc8ids -= 1;
     }
 
+    SpeedrunMilestones(7).tryComplete();
+
     return true;
   }
 
@@ -309,6 +309,9 @@ class InfinityDimensionState extends DimensionState {
     if (EternityChallenge(8).isRunning) {
       player.eterc8ids -= costScaling.purchases;
     }
+
+    SpeedrunMilestones(7).tryComplete();
+
     return true;
   }
 }
@@ -325,7 +328,7 @@ export const InfinityDimensions = {
    * @type {InfinityDimensionState[]}
    */
   all: InfinityDimension.index.compact(),
-  HARDCAP_PURCHASES: 2000000,
+  HARDCAP_PURCHASES: 999999999999999999999999999999999999999999999999,
 
   unlockNext() {
     if (InfinityDimension(8).isUnlocked) return;

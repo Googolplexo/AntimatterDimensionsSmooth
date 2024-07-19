@@ -42,13 +42,14 @@ export default {
       if (!Achievement(111).isUnlocked) reset.push("Dimensions");
       if (!Achievement(143).isUnlocked) reset.push("Dimension Boosts");
       return reset.length === 0
-        ? `Increase the power of Tickspeed upgrades`
-        : `Reset your ${makeEnumeration(reset)} to increase the power of Tickspeed upgrades`;
+        ? `Multiply the power of Tickspeed upgrades by 1.25`
+        : `Reset your ${makeEnumeration(reset)} to multiply the power of Tickspeed upgrades by 1.25`;
     },
     sumText() {
       const parts = [Math.max(this.galaxies.normal, 0)];
       if (this.galaxies.replicanti > 0) parts.push(this.galaxies.replicanti);
       if (this.galaxies.dilation > 0) parts.push(this.galaxies.dilation);
+      if (InfinityUpgarde.galaxyBoost.isBought) parts.push(1);
       const sum = parts.map(this.formatGalaxies).join(" + ");
       if (parts.length >= 2) {
         return `${sum} = ${this.formatGalaxies(parts.sum())}`;
@@ -58,7 +59,7 @@ export default {
     typeName() {
       switch (this.type) {
         case GALAXY_TYPE.NORMAL: return "Antimatter Galaxies";
-        case GALAXY_TYPE.DISTANT: return "Distant Antimatter Galaxies";
+        case GALAXY_TYPE.DISTANT: return "Antimatter Galaxies";
         case GALAXY_TYPE.REMOTE: return "Remote Antimatter Galaxies";
       }
       return undefined;

@@ -211,15 +211,6 @@ export const shortcuts = [
     },
     visible: true
   }, {
-    name: "Open How To Play Modal",
-    keys: ["h"],
-    type: "bind",
-    function: () => {
-      keyboardH2PToggle();
-      return false;
-    },
-    visible: true
-  }, {
     name: "Modify visible tabs",
     keys: ["tab"],
     type: "bind",
@@ -489,6 +480,7 @@ function keyboardPressQuestionMark() {
 }
 
 function keyboardH2PToggle() {
+  GameKeyboard.stopSpins();
   if (Modal.h2p.isOpen) {
     EventHub.dispatch(GAME_EVENT.CLOSE_MODAL);
     return;

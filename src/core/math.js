@@ -72,28 +72,22 @@ window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alrea
       cantBuy = middle;
     }
   }
-  const baseCost = costFunction(alreadyBought + canBuy - 1);
+  let totalCost = costFunction(alreadyBought + canBuy - 1);
   if (!isCumulative) {
-    return { quantity: canBuy, purchasePrice: baseCost };
+    return { quantity: canBuy, purchasePrice: totalCost };
   }
-  let otherCost = DC.D0;
   // Account for costs leading up to that purchase; we are basically adding things
   // up until they are insignificant
   let count = 0;
   for (let i = canBuy - 1; i > 0; --i) {
-    const newCost = otherCost.plus(costFunction(alreadyBought + i - 1));
-    if (newCost.eq(otherCost)) break;
-    otherCost = newCost;
+    const newCost = totalCost.plus(costFunction(alreadyBought + i - 1));
+    if (newCost.eq(totalCost)) break;
+    totalCost = newCost;
+    if (money.lt(totalCost)) {
+      --canBuy;
+      totalCost = totalCost.minus(costFunction(alreadyBought + canBuy));
+    }
     if (++count > 1000) throw new Error("unexpected long loop (buggy cost function?)");
-  }
-  let totalCost = baseCost.plus(otherCost);
-  // Check the purchase price again
-  if (money.lt(totalCost)) {
-    --canBuy;
-    // Since prices grow rather steeply, we can safely assume that we can, indeed, buy
-    // one less (e.g. if prices were A, B, C, D, we could afford D, but not A+B+C+D; we
-    // assume we can afford A+B+C because A+B+C < D)
-    totalCost = otherCost;
   }
   return { quantity: canBuy, purchasePrice: totalCost };
 };

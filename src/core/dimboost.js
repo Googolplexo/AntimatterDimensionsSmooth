@@ -14,27 +14,9 @@ class DimBoostRequirement {
 
 export class DimBoost {
   static get power() {
-    if (NormalChallenge(8).isRunning) {
-      return DC.D1;
-    }
-
-    let boost = Effects.max(
-      2,
-      InfinityUpgrade.dimboostMult,
-      InfinityChallenge(7).reward,
-      InfinityChallenge(7),
-      TimeStudy(81)
-    )
-      .toDecimal()
-      .timesEffectsOf(
-        TimeStudy(83),
-        TimeStudy(231),
-        Achievement(117),
-        Achievement(142),
-        GlyphEffect.dimBoostPower,
-        PelleRifts.recursion.milestones[0]
-      ).powEffectsOf(InfinityUpgrade.dimboostMult.chargedEffect);
-    if (GlyphAlteration.isAdded("effarig")) boost = boost.pow(getSecondaryGlyphEffect("effarigforgotten"));
+    let boost = DC.D2;
+    if (InfinityUpgrade.dimboostMult.isBought && Player.isInAntimatterChallenge) boost = DC.D2_5;
+    if (InfinityChallenge(7).isRunning) boost = DC.E1
     return boost;
   }
 
@@ -68,11 +50,6 @@ export class DimBoost {
       // more boosts than this; it's just that boosts beyond this are pointless.
       return 2;
     }
-    if (NormalChallenge(8).isRunning) {
-      // See above. It's important we check for this after checking for IC1 since otherwise
-      // this case would trigger when we're in IC1.
-      return 5;
-    }
     return Infinity;
   }
 
@@ -86,8 +63,6 @@ export class DimBoost {
   static get lockText() {
     if (DimBoost.purchasedBoosts >= this.maxBoosts) {
       if (Ra.isRunning) return "Locked (Ra's Reality)";
-      if (InfinityChallenge(1).isRunning) return "Locked (Infinity Challenge 1)";
-      if (NormalChallenge(8).isRunning) return "Locked (8th Antimatter Dimension Autobuyer Challenge)";
     }
     return null;
   }
@@ -141,8 +116,7 @@ export class DimBoost {
     if (boosts >= DimBoost.maxDimensionsUnlockable - 1) dimensionRange = `to all Dimensions`;
 
     let boostEffects;
-    if (NormalChallenge(8).isRunning) boostEffects = newUnlock;
-    else if (newUnlock === "") boostEffects = `${formattedMultText} ${dimensionRange}`;
+    if (newUnlock === "") boostEffects = `${formattedMultText} ${dimensionRange}`;
     else boostEffects = `${newUnlock} and ${formattedMultText} ${dimensionRange}`;
 
     if (boostEffects === "") return "Dimension Boosts are currently useless";
@@ -182,7 +156,7 @@ export function softReset(tempBulk, forcedADReset = false, forcedAMReset = false
   resetChallengeStuff();
   const canKeepDimensions = Pelle.isDoomed
     ? PelleUpgrade.dimBoostResetsNothing.canBeApplied
-    : Perk.antimatterNoReset.canBeApplied;
+    : Perk.antimatterNoReset.canBeApplied || (InfinityChallenge(4).isCompleted && bulk > 0);
   if (forcedADReset || !canKeepDimensions) {
     AntimatterDimensions.reset();
     player.sacrificed = DC.D0;
@@ -202,12 +176,16 @@ export function softReset(tempBulk, forcedADReset = false, forcedAMReset = false
 
 export function skipResetsIfPossible(enteringAntimatterChallenge) {
   if (enteringAntimatterChallenge || Player.isInAntimatterChallenge) return;
-  if (InfinityUpgrade.skipResetGalaxy.isBought && player.dimensionBoosts < 4) {
-    player.dimensionBoosts = 4;
+  if (InfinityUpgrade.skipResetGalaxy.isBought) {
+    if (player.dimensionBoosts <= 3) player.dimensionBoosts = 4;
+    if (player.galaxies <= 2) player.galaxies = 3;
+  } else if (InfinityUpgrade.skipReset3.isBought) {
+    if (player.dimensionBoosts <= 2) player.dimensionBoosts = 3;
+    if (player.galaxies <= 1) player.galaxies = 2;
+  } else if (InfinityUpgrade.skipReset2.isBought) {
+    if (player.dimensionBoosts <= 1) player.dimensionBoosts = 2;
     if (player.galaxies === 0) player.galaxies = 1;
-  } else if (InfinityUpgrade.skipReset3.isBought && player.dimensionBoosts < 3) player.dimensionBoosts = 3;
-  else if (InfinityUpgrade.skipReset2.isBought && player.dimensionBoosts < 2) player.dimensionBoosts = 2;
-  else if (InfinityUpgrade.skipReset1.isBought && player.dimensionBoosts < 1) player.dimensionBoosts = 1;
+  } else if (InfinityUpgrade.skipReset1.isBought && player.dimensionBoosts < 1) player.dimensionBoosts = 1;
 }
 
 export function manualRequestDimensionBoost(bulk) {

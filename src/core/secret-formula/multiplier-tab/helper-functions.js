@@ -21,14 +21,9 @@ export const MultiplierTabHelper = {
   // Helper method for galaxy strength multipliers affecting all galaxy types (this is used a large number of times)
   globalGalaxyMult() {
     return Effects.product(
-      InfinityUpgrade.galaxyBoost,
-      InfinityUpgrade.galaxyBoost.chargedEffect,
-      BreakInfinityUpgrade.galaxyBoost,
       TimeStudy(212),
       TimeStudy(232),
-      Achievement(86),
       Achievement(178),
-      InfinityChallenge(5).reward,
       PelleUpgrade.galaxyPower,
       PelleRifts.decay.milestones[1]
     ) * Pelle.specialGlyphEffect.power;

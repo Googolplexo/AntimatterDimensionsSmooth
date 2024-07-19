@@ -32,6 +32,12 @@ export default {
     };
   },
   computed: {
+    sacrificeBoostDisplay() {
+      return formatX(this.sacrificeBoost, 2, 2);
+    },
+    sacrificeTooltip() {
+      return `Boosts 8th Antimatter Dimension by ${this.sacrificeBoostDisplay}`;
+    },
     tesseractCountString() {
       const extra = this.extraTesseracts > 0 ? ` + ${format(this.extraTesseracts, 2, 2)}` : "";
       return `${formatInt(this.boughtTesseracts)}${extra}`;
@@ -139,8 +145,6 @@ export default {
       All Infinity Dimensions are limited to a single purchase.
     </div>
     <div v-else>
-      All Infinity Dimensions except for the 8th are limited to a maximum of {{ format(totalDimCap, 2) }}
-      purchases each.
     </div>
     <div>You are getting {{ format(powerPerSecond, 2, 0) }} {{ incomeType }} per second.</div>
     <b

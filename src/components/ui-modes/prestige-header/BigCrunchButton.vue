@@ -27,7 +27,7 @@ export default {
       };
     },
     // Show IP/min below this threshold, color the IP number above it
-    rateThreshold: () => 5e11,
+    rateThreshold: () => 1e16,
     amountStyle() {
       if (!this.headerTextColored || this.currentIP.lt(this.rateThreshold)) return {
         "transition-duration": "0s"

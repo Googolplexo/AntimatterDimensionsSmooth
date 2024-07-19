@@ -64,7 +64,7 @@ export const tabNotifications = {
       }
     ],
     condition: () => !PlayerProgress.realityUnlocked() &&
-      !PlayerProgress.eternityUnlocked() && Currency.infinityPoints.gte(DC.E140),
+      !PlayerProgress.eternityUnlocked() && Currency.infinityPoints.gte(DC.E210),
     events: [GAME_EVENT.BIG_CRUNCH_AFTER]
   },
   firstEternity: {

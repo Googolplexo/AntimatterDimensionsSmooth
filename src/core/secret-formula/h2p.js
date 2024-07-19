@@ -325,8 +325,12 @@ boosting production as if part of a game tick has passed. Note that the actual t
 game always runs calculations at the update rate you've chosen in the Options tab.
 <br>
 <br>
+The first Tickspeed Upgrade costs ${format(1000, 2, 2)} antimatter. After that, the cost multiplies by ${formatInt(10)},
+then by ${formatInt(100)}, by ${format(1000, 2, 2)}, ${format(10000, 2, 2)} and so on forever.
+<br>
+<br>
 <b>Cost:</b> The cost of antimatter for multiplying ticks/sec by the displayed multiplier.
-(without any Galaxies, this is ${formatX(1.1245, 0, 3)} per purchase)
+(without any Galaxies, this is ${formatX(2, 0, 3)} per purchase)
 <br>
 <br>
 <b>Buy Max:</b> This will buy the maximum amount of Tickspeed Upgrades available
@@ -365,23 +369,16 @@ the 3rd Dimension ${formatX(2)}, and all other Dimensions are unaffected.
       name: "Antimatter Galaxies",
       info: () => `
 Purchasing an Antimatter Galaxy will reset your game back to the point where only ${formatInt(4)} Dimensions are
-available, but will increase the effect of your Tickspeed Upgrades by +${format(0.02, 0, 2)} for your first two
-Galaxies. As you get more Galaxies, the multiplier will continue becoming stronger and stronger.
+available, but will multiply the effect of your Tickspeed Upgrades by ${format(1.25, 0, 2)}.
 <br>
 <br>
-Though it will have very little impact for the first few Tickspeed purchases,
+Though it will have little impact for the first few Tickspeed purchases,
 the increase is multiplicative and will not take long to be visible.
 <br>
 <br>
-Your first Antimatter Galaxy requires ${formatInt(80)} Eighth Dimensions, and each additional Galaxy will cost
-another ${formatInt(60)} more.
-<br>
-<b>Distant Galaxy scaling:</b> Above ${formatInt(100)} Antimatter Galaxies the cost increase between Galaxies will
-increase by ${formatInt(2)} per Galaxy, making the next Galaxy cost ${formatInt(62)} more, then ${formatInt(64)} more,
-etc.
-<br>
-<b>Remote Galaxy scaling:</b> Above ${formatInt(Galaxy.remoteStart)} Antimatter Galaxies, the <i>total</i> cost
-increases by another ${formatPercents(0.002, 1)} per Galaxy, on top of Distant scaling.
+Your first Antimatter Galaxy requires ${formatInt(80)} Eighth Dimensions. This scales in a fashion similar to
+Tickspeed Upgrades: the second Galaxy will cost ${formatInt(45)} more than the first, the third ${formatInt(55)}
+more than the second, and so on, increasing the primary cost scaling by ${formatInt(10)} for every Galaxy.
 <br>
 <br>
 <b>Hotkey: G</b> will try to purchase an Antimatter Galaxy.
@@ -575,8 +572,7 @@ Tickspeed Upgrade costs as well.
 <br>
 <br>
 <b>Infinity Dimension Purchasing:</b> Infinity Dimensions are only purchasable in sets of ${formatInt(10)}, and cost
-Infinity Points. They give a permanent multiplier per purchase, similar to the other dimensions. The actual multiplier
-applied depends on which Infinity Dimension you purchase. <!-- Sorry Garnet :/ -->
+Infinity Points. They give a permanent ${formatX(2)} multiplier per purchase, similar to the other dimensions.
 <br>
 <br>
 <b>Infinity Dimension Production:</b> Just like Antimatter Dimensions, each Infinity Dimension produces the
@@ -589,10 +585,6 @@ of Infinity Dimensions does not carry between crunches, all the multipliers you 
 <br>
 <b>Infinity Dimension unlock thresholds (antimatter):</b> ${Array.range(1, 8)
     .map(tier => formatPostBreak(InfinityDimension(tier)._unlockRequirement))
-    .join(", ")}
-<br>
-<b>Infinity Dimension purchase multipliers:</b> ${Array.range(1, 8)
-    .map(tier => format(InfinityDimension(tier)._powerMultiplier))
     .join(", ")}
 <br>
 <b>Infinity Dimension base prices (IP):</b> ${Array.range(1, 8)
@@ -633,33 +625,38 @@ amount of antimatter before you can attempt them.
     }, {
       name: "Replicanti",
       info: () => `
-Replicanti are another resource you unlock at ${format(DC.E140)} IP. Rather
-than producing something else, Replicanti actually produces <i>itself</i> up to a maximum of
-${formatPostBreak(Number.MAX_VALUE, 2)}. Replicanti are produced at their own pace, unaffected by Tickspeed Upgrades.
-Each individual Replicanti has a certain chance (initially ${formatPercents(0.01)}) of producing another Replicanti
-every Replicanti tick (initially every second), and both of these can be upgraded by spending IP.
+Replicanti are another resource you unlock at ${format(DC.E210)} IP. Initially, you will gain 1 Replicanti per second,
+which can be improved by spending IP.
 <br>
 <br>
-If you have purchased a Replicanti Galaxy upgrade, then you can get a "free" Replicanti Galaxy in exchange for
-resetting your Replicanti count back to ${formatInt(1)}. This Galaxy is free in that it will act as if it was an
+Replicanti give a multiplier to all Infinity Dimensions, which is proportional to the Replicanti amount raised to a power of
+${formatInt(2)}. That power also can be increased by spending IP.
+<br>
+<br>
+When you reach ${format(DC.E5)} Replicanti, you will be able to purchase a Replicanti Galaxy, which will
+reset your Replicanti count back to ${formatInt(0)}. This Galaxy is free in that it will act as if it was an
 Antimatter Galaxy, but it will not make your next Antimatter Galaxy more expensive. However, it will still reset the
-same things as an Antimatter Galaxy does.
+same things as an Antimatter Galaxy does. The secondary cost scaling of Replicanti Galaxies can be reduced by spending IP.
+<br>
+<br>
+All Replicanti upgrades and Replicanti galaxies have their cost scaled similarly to Tickspeed Upgrades and Antimatter
+Galaxies, with primary and secondary cost scalings.
 <br>
 <br>
 <b>Hotkey: R</b> will try to purchase a Replicanti Galaxy.
 <br>
-Replicanti give a multiplier to all Infinity Dimensions, which will reach a maximum of
-${formatX(Math.pow(2, 20), 2, 2)} at ${formatPostBreak(Number.MAX_VALUE, 2)} Replicanti.
+<b>Replicanti multiplier power increase cost:</b> Base ${format(DC.E230)} IP, primary cost scaling ${formatX(DC.E15)} IP,
+secondary cost scaling ${formatX(DC.E5)} IP
 <br>
+<b>Replicanti gain improvement cost:</b> Base ${format(DC.E270)} IP, primary cost scaling ${formatX(DC.E10)} IP,
+secondary cost scaling ${formatX(DC.E5)} IP
 <br>
-<b>Chance upgrade cost:</b> Base ${format(DC.E150)} IP, cost increment ${formatX(DC.E15)} IP
+<b>Replicanti Galaxy cost scaling reduction cost:</b> Base ${format(DC.E570)} IP, primary cost scaling ${formatX(DC.E75)} IP,
+secondary cost scaling ${formatX(DC.E55)} IP
 <br>
-<b>Interval upgrade cost:</b> Base ${format(DC.E140)} IP, cost increment ${formatX(DC.E10)} IP
-<br>
-<b>Galaxy upgrade cost:</b> Base ${format(DC.E170)} IP, cost increment ${formatX(DC.E25)} IP and an additional
-${formatX(1e5)} IP per upgrade, scaling similarly to distant Antimatter Galaxies. Above ${formatInt(100)} Replicanti
-Galaxies, this ${formatX(1e5)} per upgrade changes to ${formatX(DC.E55)}. Above ${formatInt(1000)}, the scaling switches
-from quadratic to cubic, with the ${formatX(DC.E55)} multiplier itself increasing by ${formatX(DC.E5)} per upgrade.
+<b>Replicanti Galaxy cost:</b> Base ${format(DC.E5)} Replicanti, primary cost scaling ${formatX(1)} Replicanti,
+secondary cost scaling ${formatX(2)} Replicanti
+
 `,
       isUnlocked: () => Replicanti.areUnlocked || PlayerProgress.eternityUnlocked(),
       tags: ["interval", "chance", "infinity", "galaxy", "galaxies", "midgame"],

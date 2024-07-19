@@ -10,7 +10,7 @@ export const eternityMilestones = {
   },
   autobuyerReplicantiGalaxy: {
     eternities: 3,
-    reward: "Unlock the Replicanti Galaxy Autobuyer"
+    reward: "Replicanti Galaxies are bought in bulk, and unlock an autobuyer for them"
   },
   keepInfinityUpgrades: {
     eternities: 4,
@@ -43,8 +43,7 @@ export const eternityMilestones = {
   },
   autoIC: {
     eternities: 7,
-    reward: `You complete Infinity Challenges as soon as you unlock them,
-      and keep the Dimensional Sacrifice Autobuyer`,
+    reward: `You complete Infinity Challenges as soon as you unlock them`,
     pelleUseless: true
   },
   keepBreakUpgrades: {

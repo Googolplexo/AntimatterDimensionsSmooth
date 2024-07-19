@@ -12,7 +12,7 @@ const propList = {
     "eternityChallenge", "glyph", "alchemy", "imaginaryUpgrade", "pelle", "iap", "nerfV", "nerfCursed", "nerfPelle"],
   TD: ["purchase", "achievementMult", "achievement", "timeStudy", "eternityUpgrade", "eternityChallenge",
     "dilationUpgrade", "realityUpgrade", "glyph", "alchemy", "imaginaryUpgrade", "pelle", "iap", "nerfV", "nerfCursed"],
-  IP: ["base", "infinityUpgrade", "achievement", "timeStudy", "dilationUpgrade", "glyph", "alchemy", "pelle", "iap",
+  IP: ["base", "infinityUpgrade", "infinityChallenge", "achievement", "timeStudy", "dilationUpgrade", "glyph", "alchemy", "pelle", "iap",
     "nerfTeresa", "nerfV"],
   EP: ["base", "eternityUpgrade", "timeStudy", "glyph", "realityUpgrade", "pelle", "iap", "nerfTeresa", "nerfV"],
 };
@@ -66,13 +66,13 @@ export const multiplierTabTree = {
     getProps("IP")
   ],
   IP_base: [
-    ["IP_antimatter", "IP_divisor"]
+    ["IP_antimatter"]
   ],
   EP_total: [
     getProps("EP")
   ],
   EP_base: [
-    ["EP_IP", "EP_divisor"]
+    ["EP_IP"]
   ],
   TP_total: [
     getProps("TP")
@@ -118,8 +118,8 @@ const singleRes = ["IP", "EP", "DT", "infinities", "replicanti"];
 const targetedEffects = {
   achievement: {
     checkFn: MultiplierTabHelper.achievementDimCheck,
-    AD: [23, 28, 31, 34, 43, 48, 56, 64, 65, 68, 71, 72, 73, 74, 76, 84, 91, 92, 183],
-    TD: [105, 128],
+    AD: [23, 24, 28, 31, 34, 43, 47, 48, 56, 64, 65, 68, 71, 72, 74, 76, 91, 92, 183],
+    TD: [128],
     IP: [85, 93, 116, 125, 141],
     DT: [132, 137],
     infinities: [87, 131, 164],

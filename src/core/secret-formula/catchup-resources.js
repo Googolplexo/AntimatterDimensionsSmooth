@@ -86,8 +86,8 @@ export const catchupResources = [
     name: "Replicanti",
     id: 11,
     requiredStage: PROGRESS_STAGE.REPLICANTI,
-    description: () => `Replicanti is a resource which produces itself over time, giving a multiplier to all
-      Infinity Dimensions. At ${format(Number.MAX_VALUE, 2)} Replicanti, they can be reset to ${formatInt(1)} for an
+    description: () => `Replicanti is a resource which is constantly produced over time, giving a multiplier to all
+      Infinity Dimensions. At ${format(DC.E5, 2)} Replicanti, they can be reset to ${formatInt(0)} for an
       additional Galaxy which does not increase the cost of Antimatter Galaxies. They also reset after every Infinity.`
   },
   {

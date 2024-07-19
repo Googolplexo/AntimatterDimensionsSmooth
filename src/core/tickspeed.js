@@ -16,54 +16,23 @@ export function effectiveBaseGalaxies() {
   replicantiGalaxies += nonActivePathReplicantiGalaxies * Effects.sum(EternityChallenge(8).reward);
   let freeGalaxies = player.dilation.totalTachyonGalaxies;
   freeGalaxies *= 1 + Math.max(0, Replicanti.amount.log10() / 1e6) * AlchemyResource.alternation.effectValue;
-  return Math.max(player.galaxies + GalaxyGenerator.galaxies + replicantiGalaxies + freeGalaxies, 0);
+  let extraGalaxies = Effects.sum(InfinityUpgrade.galaxyBoost)
+  return Math.max(player.galaxies + GalaxyGenerator.galaxies + replicantiGalaxies + freeGalaxies + extraGalaxies, 0);
 }
 
 export function getTickSpeedMultiplier() {
   if (InfinityChallenge(3).isRunning) return DC.D1;
   if (Ra.isRunning) return DC.C1D1_1245;
   let galaxies = effectiveBaseGalaxies();
-  const effects = Effects.product(
-    InfinityUpgrade.galaxyBoost,
-    InfinityUpgrade.galaxyBoost.chargedEffect,
-    BreakInfinityUpgrade.galaxyBoost,
-    TimeStudy(212),
-    TimeStudy(232),
-    Achievement(86),
-    Achievement(178),
-    InfinityChallenge(5).reward,
-    PelleUpgrade.galaxyPower,
-    PelleRifts.decay.milestones[1]
-  );
-  if (galaxies < 3) {
-    // Magic numbers are to retain balancing from before while displaying
-    // them now as positive multipliers rather than negative percentages
-    let baseMultiplier = 1 / 1.1245;
-    if (player.galaxies === 1) baseMultiplier = 1 / 1.11888888;
-    if (player.galaxies === 2) baseMultiplier = 1 / 1.11267177;
-    if (NormalChallenge(5).isRunning) {
-      baseMultiplier = 1 / 1.08;
-      if (player.galaxies === 1) baseMultiplier = 1 / 1.07632;
-      if (player.galaxies === 2) baseMultiplier = 1 / 1.072;
-    }
-    const perGalaxy = 0.02 * effects;
-    if (Pelle.isDoomed) galaxies *= 0.5;
+  
+  let baseMultiplier = DC.D0_5;
+  if (NormalChallenge(5).isRunning) baseMultiplier = DC.D2.div(3);
 
-    galaxies *= Pelle.specialGlyphEffect.power;
-    return DC.D0_01.clampMin(baseMultiplier - (galaxies * perGalaxy));
-  }
-  let baseMultiplier = 0.8;
-  if (NormalChallenge(5).isRunning) baseMultiplier = 0.83;
-  galaxies -= 2;
-  galaxies *= effects;
-  galaxies *= getAdjustedGlyphEffect("cursedgalaxies");
-  galaxies *= getAdjustedGlyphEffect("realitygalaxies");
-  galaxies *= 1 + ImaginaryUpgrade(9).effectOrDefault(0);
   if (Pelle.isDoomed) galaxies *= 0.5;
 
   galaxies *= Pelle.specialGlyphEffect.power;
-  const perGalaxy = DC.D0_965;
-  return perGalaxy.pow(galaxies - 2).times(baseMultiplier);
+  const perGalaxy = DC.D0_8;
+  return perGalaxy.pow(galaxies).times(baseMultiplier);
 }
 
 export function buyTickSpeed() {
@@ -155,8 +124,8 @@ export const Tickspeed = {
     return new ExponentialCostScaling({
       baseCost: 1000,
       baseIncrease: 10,
-      costScale: Player.tickSpeedMultDecrease,
-      scalingCostThreshold: Number.MAX_VALUE
+      costScale: 10,
+      scalingCostThreshold: 10000
     });
   },
 

@@ -87,11 +87,7 @@ export function breakInfinity() {
 }
 
 export function gainedInfinityPoints() {
-  const div = Effects.min(
-    308,
-    Achievement(103),
-    TimeStudy(111)
-  );
+  const div = 308
   if (Pelle.isDisabled("IPMults")) {
     return Decimal.pow10(player.records.thisInfinity.maxAM.log10() / div - 0.75)
       .timesEffectsOf(PelleRifts.vacuum)
@@ -137,7 +133,7 @@ function totalEPMult() {
 
 export function gainedEternityPoints() {
   let ep = DC.D5.pow(player.records.thisEternity.maxIP.plus(
-    gainedInfinityPoints()).log10() / (308 - PelleRifts.recursion.effectValue.toNumber()) - 0.7).times(totalEPMult());
+    gainedInfinityPoints()).log10() / (308 - PelleRifts.recursion.effectValue.toNumber()) - 1.5).times(totalEPMult());
 
   if (Teresa.isRunning) {
     ep = ep.pow(0.55);
@@ -154,8 +150,8 @@ export function gainedEternityPoints() {
 }
 
 export function requiredIPForEP(epAmount) {
-  return Decimal.pow10(308 * (Decimal.log(Decimal.divide(epAmount, totalEPMult()), 5) + 0.7))
-    .clampMin(Number.MAX_VALUE);
+  return Decimal.pow10(308 * (Decimal.log(Decimal.divide(epAmount, totalEPMult()), 5) + 1.5))
+    .clampMin(DC.E200000);
 }
 
 export function gainedGlyphLevel() {
@@ -467,7 +463,7 @@ export function gameLoop(passDiff, options = {}) {
   } else if (!Enslaved.isReleaseTick) {
     Enslaved.nextTickDiff = realDiff;
   }
-  if (Enslaved.isReleaseTick || diff === undefined) {
+  if (diff === undefined) {
     diff = Enslaved.nextTickDiff;
   }
 

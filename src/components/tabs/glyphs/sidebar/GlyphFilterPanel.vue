@@ -412,7 +412,6 @@ export default {
 .l-top-left-btn {
   cursor: pointer;
   border: var(--var-border-width, 0.2rem) solid;
-  border-radius: var(--var-border-radius, 0.2rem);
   width: 2.5rem;
   margin: 0.5rem 0 0 0.5rem;
   padding: 0.5rem;
@@ -424,7 +423,6 @@ export default {
   align-items: center;
   cursor: pointer;
   border: var(--var-border-width, 0.2rem) solid;
-  border-radius: var(--var-border-radius, 0.2rem);
   width: 2rem;
   height: 2rem;
   margin: 0.5rem 0.5rem 0 0;

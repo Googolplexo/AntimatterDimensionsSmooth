@@ -46,53 +46,40 @@ export default {
   computed: {
     isDoomed: () => Pelle.isDoomed,
     replicantiChanceSetup() {
+      const upgrade = ReplicantiUpgrade.chance;
+      function formatChance(chance) {
+        return `${formatPow(chance / 10 + 2, 2, 2)}`;
+      }
       return new ReplicantiUpgradeButtonSetup(
-        ReplicantiUpgrade.chance,
-        value => `Replicate chance: ${formatPercents(value)}`,
-        cost => `+${formatPercents(0.01)} Costs: ${format(cost)} IP`
+        upgrade,
+        value => `Replicanti multiplier: ${formatChance(value)}`,
+        cost =>
+          `➜ ${formatChance(upgrade.nextValue)} Costs: ${format(cost)} IP`
       );
     },
     replicantiIntervalSetup() {
       const upgrade = ReplicantiUpgrade.interval;
       function formatInterval(interval) {
-        const actualInterval = upgrade.applyModifiers(interval);
-        const intervalNum = actualInterval.toNumber();
-        if (
-          Number.isFinite(intervalNum) &&
-          intervalNum > 1 &&
-          upgrade.isCapped
-        ) {
-          // Checking isCapped() prevents text overflow when formatted as "__ ➜ __"
-          return TimeSpan.fromMilliseconds(intervalNum).toStringShort(false);
-        }
-        if (actualInterval.lt(0.01)) return `< ${format(0.01, 2, 2)}ms`;
-        if (actualInterval.gt(1000))
-          return `${format(actualInterval.div(1000), 2, 2)}s`;
-        return `${format(actualInterval, 2, 2)}ms`;
+        return `${format(getReplicantiInterval(interval), 2, 2)}/s`;
       }
       return new ReplicantiUpgradeButtonSetup(
         upgrade,
-        value => `Interval: ${formatInterval(value)}`,
+        value => `Gaining: ${formatInterval(value)}`,
         cost =>
           `➜ ${formatInterval(upgrade.nextValue)} Costs: ${format(cost)} IP`
       );
     },
     maxGalaxySetup() {
       const upgrade = ReplicantiUpgrade.galaxies;
+      function formatGalaxies(galaxies) {
+        if (galaxies < 34) return `${formatX(1 + 1 / (galaxies + 1), 0, 3)}`;
+        return `×(1+1/${format(galaxies)})`;
+      }
       return new ReplicantiUpgradeButtonSetup(
         upgrade,
-        value => {
-          let description = `Max Replicanti Galaxies: `;
-          const extra = upgrade.extra;
-          if (extra > 0) {
-            const total = value + extra;
-            description += `<br>${formatInt(value)} + ${formatInt(extra)} = ${formatInt(total)}`;
-          } else {
-            description += formatInt(value);
-          }
-          return description;
-        },
-        cost => `+${formatInt(1)} Costs: ${format(cost)} IP`
+        value => `RG cost scaling: ${formatGalaxies(value)}`,
+        cost =>
+          `➜ ${formatGalaxies(upgrade.nextValue)} Costs: ${format(cost)} IP`
       );
     },
     boostText() {
@@ -127,7 +114,7 @@ export default {
   methods: {
     update() {
       this.isUnlocked = Replicanti.areUnlocked;
-      this.unlockCost = new Decimal(1e140).dividedByEffectOf(PelleRifts.vacuum.milestones[1]);
+      this.unlockCost = new Decimal("1e210").dividedByEffectOf(PelleRifts.vacuum.milestones[1]);
       if (this.isDoomed) this.scrambledText = this.vacuumText();
       if (!this.isUnlocked) {
         this.isUnlockAffordable = Currency.infinityPoints.gte(this.unlockCost);
@@ -164,8 +151,8 @@ export default {
       this.nextEffarigRGThreshold = Decimal.NUMBER_MAX_VALUE.pow(
         Effarig.bonusRG + 2
       );
-      this.canSeeGalaxyButton =
-        Replicanti.galaxies.max >= 1 || PlayerProgress.eternityUnlocked();
+      this.canSeeGalaxyButton = true;
+      //  Replicanti.galaxies.max >= 1 || PlayerProgress.eternityUnlocked();
       this.maxReplicanti.copyFrom(player.records.thisReality.maxReplicanti);
       this.estimateToMax = this.calculateEstimate();
     },
@@ -174,13 +161,7 @@ export default {
     },
     // This is copied out of a short segment of ReplicantiGainText with comments and unneeded variables stripped
     calculateEstimate() {
-      const updateRateMs = player.options.updateRate;
-      const logGainFactorPerTick = Decimal.divide(getGameSpeedupForDisplay() * updateRateMs *
-        (Math.log(player.replicanti.chance + 1)), getReplicantiInterval());
-      const postScale = Math.log10(ReplicantiGrowth.scaleFactor) / ReplicantiGrowth.scaleLog10;
-      const nextMilestone = this.maxReplicanti;
-      const coeff = Decimal.divide(updateRateMs / 1000, logGainFactorPerTick.times(postScale));
-      return coeff.times(nextMilestone.divide(this.amount).pow(postScale).minus(1));
+      return this.maxReplicanti.minus(this.amount).div(getReplicantiInterval())
     }
   },
 };
@@ -243,12 +224,6 @@ export default {
         <ReplicantiUpgradeButton :setup="replicantiChanceSetup" />
         <ReplicantiUpgradeButton :setup="replicantiIntervalSetup" />
         <ReplicantiUpgradeButton :setup="maxGalaxySetup" />
-      </div>
-      <div>
-        The Max Replicanti Galaxy upgrade can be purchased endlessly, but costs increase
-        <br>
-        more rapidly above {{ formatInt(distantRG) }} Replicanti Galaxies
-        and even more so above {{ formatInt(remoteRG) }} Replicanti Galaxies.
       </div>
       <br><br>
       <ReplicantiGainText />

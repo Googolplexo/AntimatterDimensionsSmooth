@@ -10,7 +10,7 @@ export class SacrificeAutobuyerState extends AutobuyerState {
   }
 
   get isUnlocked() {
-    return EternityMilestone.autoIC.isReached || InfinityChallenge(2).isCompleted;
+    return Achievement(62).isUnlocked;
   }
 
   get multiplier() {

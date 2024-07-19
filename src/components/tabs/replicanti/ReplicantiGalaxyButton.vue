@@ -16,20 +16,24 @@ export default {
       isAutoEnabled: false,
       isDivideUnlocked: false,
       boughtGalaxies: 0,
-      extraGalaxies: 0
+      extraGalaxies: 0,
+      cost: new Decimal(0)
     };
   },
   computed: {
     resetActionDisplay() {
       return this.isDivideUnlocked && !Pelle.isDoomed
-        ? `Divide Replicanti by ${format(Number.MAX_VALUE, 1, 1)}`
-        : "Reset Replicanti amount";
+        ? "Get"
+        : "Reset the Replicanti amount for";
     },
     galaxyCountDisplay() {
       const bought = this.boughtGalaxies;
       const extra = this.extraGalaxies;
       const galaxyCount = extra > 0 ? `${formatInt(bought)}+${formatInt(extra)}` : formatInt(bought);
       return `Currently: ${galaxyCount}`;
+    },
+    galaxyCostDisplay() {
+      return `Cost: ${format(this.cost, 2, 2)} Replicanti`;
     },
     autobuyer() {
       return Autobuyer.replicantiGalaxy;
@@ -44,6 +48,7 @@ export default {
     update() {
       const rg = Replicanti.galaxies;
       this.isAvailable = rg.canBuyMore;
+      this.cost = rg.currentCost;
       this.boughtGalaxies = rg.bought;
       this.extraGalaxies = rg.extra;
       this.isDivideUnlocked = Achievement(126).isUnlocked;
@@ -70,9 +75,11 @@ export default {
       class="o-primary-btn--replicanti-galaxy"
       @click="handleClick"
     >
-      {{ resetActionDisplay }} for a Replicanti Galaxy
+      {{ resetActionDisplay }} a Replicanti Galaxy
       <br>
       {{ galaxyCountDisplay }}
+      <br>
+      {{ galaxyCostDisplay }}
     </PrimaryButton>
     <PrimaryToggleButton
       v-if="isAutoUnlocked"

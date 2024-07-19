@@ -103,7 +103,7 @@ export const normalTimeStudies = [
     requirement: [31],
     reqType: TS_REQUIREMENT_TYPE.AT_LEAST_ONE,
     description: () => `All Galaxies give a ${formatX(DC.D1_2, 1, 1)} multiplier to Infinity Points gained`,
-    effect: () => DC.D1_2.pow(Replicanti.galaxies.total + player.galaxies + player.dilation.totalTachyonGalaxies),
+    effect: () => DC.D1_2.pow(Replicanti.galaxies.total + player.galaxies + player.dilation.totalTachyonGalaxies + Effects.sum(InfinityUpgrade.galaxyBoost)),
     formatEffect: value => formatX(value, 2, 1)
   },
   {
@@ -595,10 +595,8 @@ export const normalTimeStudies = [
     requirement: [214],
     reqType: TS_REQUIREMENT_TYPE.AT_LEAST_ONE,
     requiresST: [227],
-    description: () => `Dimensional Sacrifice formula scales better
-      ${Sacrifice.getSacrificeDescription({ "TimeStudy228": false })} ➜
-      ${Sacrifice.getSacrificeDescription({ "TimeStudy228": true })}`,
-    effect: 0.2
+    description: () => `Dimensional Sacrifice bonus is raised to a power of 13/11.`,
+    effect: 13 / 11
   },
   {
     id: 231,
@@ -686,7 +684,7 @@ export const normalTimeStudies = [
     requirement: [() => Ra.unlocks.unlockHardV.effectOrDefault(0) >= 4, 227, 228, 234],
     reqType: TS_REQUIREMENT_TYPE.ALL,
     requiresST: [227, 228, 234],
-    description: "Dimensional Sacrifice multiplier is squared",
+    description: "Dimensional Sacrifice bonus is squared",
     effect: 2,
     unlocked: () => Ra.unlocks.unlockHardV.effectOrDefault(0) >= 4
   }

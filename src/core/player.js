@@ -359,7 +359,7 @@ window.player = {
     previousRuns: {}
   },
   IPMultPurchases: 0,
-  version: 25,
+  version: 100,
   infinityPower: DC.D1,
   postC4Tier: 0,
   eternityPoints: DC.D0,
@@ -372,13 +372,14 @@ window.player = {
   replicanti: {
     unl: false,
     amount: DC.D0,
-    chance: 0.01,
-    chanceCost: DC.E150,
-    interval: 1000,
-    intervalCost: DC.E140,
+    chance: 0,
+    chanceCost: DC.E230,
+    interval: 0,
+    intervalCost: DC.E270,
     boughtGalaxyCap: 0,
     galaxies: 0,
-    galCost: DC.E170,
+    galCost: DC.E570,
+    galaxyCost: DC.E5
   },
   timestudy: {
     theorem: DC.D0,
@@ -840,8 +841,7 @@ window.player = {
       tachyonParticles: true,
       reality: true,
       background: true,
-      blobSnowflakes: 16,
-      blobHole: false
+      blobSnowflakes: 16
     },
     confirmations: {
       armageddon: true,

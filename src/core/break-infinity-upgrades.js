@@ -9,13 +9,6 @@ export class BreakInfinityUpgradeState extends SetPurchasableMechanicState {
   get set() {
     return player.infinityUpgrades;
   }
-
-  onPurchased() {
-    if (this.id === "postGalaxy") {
-      SpeedrunMilestones(7).tryComplete();
-      PelleStrikes.powerGalaxies.trigger();
-    }
-  }
 }
 
 class RebuyableBreakInfinityUpgradeState extends RebuyableMechanicState {

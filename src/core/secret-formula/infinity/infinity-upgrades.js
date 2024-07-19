@@ -6,6 +6,13 @@ function dimInfinityMult() {
 function chargedDimInfinityMult() {
   return 1 + Math.log10(Math.max(1, Currency.infinitiesTotal.value.pLog10())) * Math.sqrt(Ra.pets.teresa.level) / 150;
 }
+function dimBoughtMult() {
+  let mult = 1
+  for (let tier = 1; tier < 9; tier++) {
+    mult *= (AntimatterDimension(tier).bought + 1);
+  }
+  return Math.pow(mult, 0.07) / 10 + 1
+}
 
 export const infinityUpgrades = {
   totalTimeMult: {
@@ -50,7 +57,7 @@ export const infinityUpgrades = {
   },
   dim36mult: {
     id: "36Mult",
-    cost: 1,
+    cost: 2,
     checkRequirement: () => InfinityUpgrade.dim18mult.isBought,
     description: "3rd and 6th Antimatter Dimensions gain a multiplier based on Infinities",
     effect: () => dimInfinityMult(),
@@ -63,7 +70,7 @@ export const infinityUpgrades = {
   },
   dim45mult: {
     id: "45Mult",
-    cost: 1,
+    cost: 2,
     checkRequirement: () => InfinityUpgrade.dim27mult.isBought,
     description: "4th and 5th Antimatter Dimensions gain a multiplier based on Infinities",
     effect: () => dimInfinityMult(),
@@ -90,9 +97,9 @@ export const infinityUpgrades = {
   buy10Mult: {
     id: "dimMult",
     cost: 1,
-    description: () => `Increase the multiplier for buying ${formatInt(10)} Antimatter Dimensions`,
-    effect: () => 1.1,
-    formatEffect: () => `${formatX(2, 0, 1)} ➜ ${formatX(2.2, 0, 1)}`,
+    description: () => `Antimatter Dimensions gain a multiplier based on the product of purchased Dimension amounts`,
+    effect: () => dimBoughtMult().toDecimal(),
+    formatEffect: value => formatX(value, 2, 2),
     charged: {
       description: () => `The multiplier for buying ${formatInt(10)} Antimatter Dimensions gains ` +
         "a power effect based on Teresa level",
@@ -102,10 +109,10 @@ export const infinityUpgrades = {
   },
   galaxyBoost: {
     id: "galaxyBoost",
-    cost: 2,
+    cost: 30,
     checkRequirement: () => InfinityUpgrade.dim45mult.isBought,
-    description: "All Galaxies are twice as strong",
-    effect: 2,
+    description: `Get a free Galaxy that doesn't reset on Big Crunch`,
+    effect: 1,
     charged: {
       description: "All Galaxies are stronger based on Teresa level",
       effect: () => 2 + Math.sqrt(Ra.pets.teresa.level) / 100,
@@ -116,7 +123,7 @@ export const infinityUpgrades = {
     id: "timeMult2",
     cost: 3,
     description: "Antimatter Dimensions gain a multiplier based on time spent in current Infinity",
-    effect: () => Decimal.max(Math.pow(Time.thisInfinity.totalMinutes / 4, 0.25), 1),
+    effect: () => Math.pow((Time.thisInfinity.totalMinutes + 4) / 4, 0.25).toDecimal(),
     formatEffect: value => formatX(value, 2, 2),
     charged: {
       description:
@@ -132,7 +139,7 @@ export const infinityUpgrades = {
     cost: 5,
     checkRequirement: () => InfinityUpgrade.thisInfinityTimeMult.isBought,
     description: "Multiplier to 1st Antimatter Dimension based on unspent Infinity Points",
-    effect: () => Currency.infinityPoints.value.dividedBy(2).pow(1.5).plus(1),
+    effect: () => Math.pow(Currency.infinityPoints.value.plus(10).log10(), 8) * 1.3 - 0.3,
     formatEffect: value => formatX(value, 2, 2),
     charged: {
       description: "Multiplier to 1st Antimatter Dimension based on unspent Infinity Points, powered by Teresa level",
@@ -144,7 +151,7 @@ export const infinityUpgrades = {
     id: "resetMult",
     cost: 7,
     checkRequirement: () => InfinityUpgrade.unspentIPMult.isBought,
-    description: "Increase Dimension Boost multiplier",
+    description: "Dimension Boost multiplier is stronger, but only in challenges",
     effect: () => 2.5,
     formatEffect: () => `${formatX(2, 0, 1)} ➜ ${formatX(2.5, 0, 1)}`,
     charged: {
@@ -155,7 +162,7 @@ export const infinityUpgrades = {
   },
   ipGen: {
     id: "passiveGen",
-    cost: 10,
+    cost: 1,
     checkRequirement: () => InfinityUpgrade.dimboostMult.isBought,
     description: () => `Passively generate Infinity Points ${formatInt(10)} times slower than your fastest Infinity`,
     // Cutting corners: this is not actual effect, but it is totalIPMult that is displyed on upgrade
@@ -186,14 +193,16 @@ export const infinityUpgrades = {
     cost: 40,
     checkRequirement: () => InfinityUpgrade.skipReset1.isBought,
     description: () =>
-      `Start every reset with ${formatInt(2)} Dimension Boosts, automatically unlocking the 6th Antimatter Dimension`,
+      `Start every reset with ${formatInt(2)} Dimension Boosts, automatically unlocking the 6th Antimatter Dimension;
+      and an Antimatter Galaxy`,
   },
   skipReset3: {
     id: "skipReset3",
-    cost: 80,
+    cost: 120,
     checkRequirement: () => InfinityUpgrade.skipReset2.isBought,
     description: () =>
-      `Start every reset with ${formatInt(3)} Dimension Boosts, automatically unlocking the 7th Antimatter Dimension`,
+      `Start every reset with ${formatInt(3)} Dimension Boosts, automatically unlocking the 7th Antimatter Dimension;
+      and ${formatInt(2)} Antimatter Galaxies`,
   },
   skipResetGalaxy: {
     id: "skipResetGalaxy",
@@ -201,17 +210,17 @@ export const infinityUpgrades = {
     checkRequirement: () => InfinityUpgrade.skipReset3.isBought,
     description: () =>
       `Start every reset with ${formatInt(4)} Dimension Boosts, automatically unlocking the 8th Antimatter Dimension;
-      and an Antimatter Galaxy`,
+      and ${formatInt(3)} Antimatter Galaxies`,
   },
   ipOffline: {
     id: "ipOffline",
     cost: 1000,
     checkRequirement: () => Achievement(41).isUnlocked,
     description: () => (player.options.offlineProgress
-      ? `Only while offline, gain ${formatPercents(0.5)} of your best IP/min without using Max All`
+      ? `Only while offline, gain ${formatPercents(1)} of your best IP/min without using Max All`
       : "This upgrade would give offline Infinity Point generation, but offline progress is currently disabled"),
     effect: () => (player.options.offlineProgress
-      ? player.records.thisEternity.bestIPMsWithoutMaxAll.times(TimeSpan.fromMinutes(1).totalMilliseconds / 2)
+      ? player.records.thisEternity.bestIPMsWithoutMaxAll.times(TimeSpan.fromMinutes(1).totalMilliseconds)
       : DC.D0),
     isDisabled: () => !player.options.offlineProgress,
     formatEffect: value => `${format(value, 2, 2)} IP/min`,
@@ -220,13 +229,13 @@ export const infinityUpgrades = {
     id: "ipMult",
     cost: () => InfinityUpgrade.ipMult.cost,
     checkRequirement: () => Achievement(41).isUnlocked,
-    costCap: DC.E6E6,
-    costIncreaseThreshold: DC.E3E6,
+    costCap: DC.E1E20,
+    costIncreaseThreshold: DC.E1E20,
     description: () => `Multiply Infinity Points from all sources by ${formatX(2)}`,
     // Normally the multiplier caps at e993k or so with 3300000 purchases, but if the cost is capped then we just give
     // an extra e7k to make the multiplier look nice
-    effect: () => (player.IPMultPurchases >= 3300000 ? DC.E1E6 : DC.D2.pow(player.IPMultPurchases)),
-    cap: () => Effarig.eternityCap ?? DC.E1E6,
+    effect: () => (DC.D2.pow(player.IPMultPurchases)),
+    cap: () => Effarig.eternityCap ?? DC.E1E20,
     formatEffect: value => formatX(value, 2, 2),
   }
 };

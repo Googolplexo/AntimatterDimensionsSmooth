@@ -87,6 +87,7 @@ export function totalIPMult() {
   let ipMult = DC.D1
     .times(ShopPurchase.IPPurchases.currentMult)
     .timesEffectsOf(
+      InfinityChallenge(7).reward,
       TimeStudy(41),
       TimeStudy(51),
       TimeStudy(141),

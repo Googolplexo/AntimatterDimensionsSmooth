@@ -17,8 +17,8 @@ function rebuyable(config) {
       (value => {
         const afterECText = config.afterEC ? config.afterEC() : "";
         return value === config.maxUpgrades
-          ? `Currently: ${formatX(10 - value)} ${afterECText}`
-          : `Currently: ${formatX(10 - value)} | Next: ${formatX(10 - value - 1)}`;
+          ? `Currently: ^${formatInt(1 + value)} ${afterECText}`
+          : `Currently: ^${formatInt(1 + value)} | Next: ^${formatInt(2 + value)}`;
       }),
     formatCost: value => format(value, 2, 0),
     noLabel,
@@ -29,50 +29,53 @@ function rebuyable(config) {
 export const breakInfinityUpgrades = {
   totalAMMult: {
     id: "totalMult",
-    cost: 1e4,
+    cost: 5e6,
     description: "Antimatter Dimensions gain a multiplier based on total antimatter produced",
     effect: () => Math.pow(player.records.totalAntimatter.exponent + 1, 0.5),
     formatEffect: value => formatX(value, 2, 2)
   },
   currentAMMult: {
     id: "currentMult",
-    cost: 5e4,
+    cost: 2e7,
     description: "Antimatter Dimensions gain a multiplier based on current antimatter",
     effect: () => Math.pow(Currency.antimatter.exponent + 1, 0.5),
     formatEffect: value => formatX(value, 2, 2)
   },
   galaxyBoost: {
     id: "postGalaxy",
-    cost: 5e11,
-    description: () => `All Galaxies are ${formatPercents(0.5)} stronger`,
-    effect: 1.5
+    cost: 2e31,
+    description: () => `The primary Antimatter Galaxy cost scaling is reduced to ${formatInt(30)}`,
+    effect: 30
   },
   infinitiedMult: {
     id: "infinitiedMult",
-    cost: 1e5,
+    cost: 5e8,
     description: "Antimatter Dimensions gain a multiplier based on Infinities",
     effect: () => 1 + Currency.infinitiesTotal.value.pLog10() * 10,
     formatEffect: value => formatX(value, 2, 2)
   },
   achievementMult: {
     id: "achievementMult",
-    cost: 1e6,
-    description: "Antimatter Dimensions gain a multiplier based on Achievements completed",
-    effect: () => Math.max(Math.pow((Achievements.effectiveCount - 30), 3) / 40, 1),
+    cost: 2e10,
+    description: "Additional multiplier to Antimatter Dimensions based on Achievements completed",
+    effect: () => {
+      const x = Achievements.effectiveCount - 30;
+      return Math.pow((x + Math.sqrt(x * x + 1)) / 2, 3) / 40 + 1;
+    },
     formatEffect: value => formatX(value, 2, 2)
   },
   slowestChallengeMult: {
     id: "challengeMult",
-    cost: 1e7,
-    description: "Antimatter Dimensions gain a multiplier based on how fast your slowest challenge run is",
-    effect: () => Decimal.clampMin(50 / Time.worstChallenge.totalMinutes, 1),
+    cost: 1e12,
+    description: "Antimatter Dimensions gain a multiplier based on slowest challenge run",
+    effect: () => (50 / Time.worstChallenge.totalMinutes + 1).toDecimal(),
     formatEffect: value => formatX(value, 2, 2),
     hasCap: true,
     cap: DC.D3E4
   },
   infinitiedGen: {
     id: "infinitiedGeneration",
-    cost: 2e7,
+    cost: 5e12,
     description: "Passively generate Infinities based on your fastest Infinity",
     effect: () => player.records.bestInfinity.time,
     formatEffect: value => {
@@ -92,33 +95,40 @@ export const breakInfinityUpgrades = {
   },
   autobuyMaxDimboosts: {
     id: "autobuyMaxDimboosts",
-    cost: 5e9,
+    cost: 2e15,
     description: "Unlock the buy max Dimension Boost Autobuyer mode"
   },
   autobuyerSpeed: {
     id: "autoBuyerUpgrade",
-    cost: 1e15,
+    cost: 1e12,
     description: "Autobuyers unlocked or improved by Normal Challenges work twice as fast"
   },
   tickspeedCostMult: rebuyable({
     id: 0,
-    initialCost: 1e6,
+    initialCost: 2e10,
     costIncrease: 5,
-    maxUpgrades: 8,
-    description: "Reduce post-infinity Tickspeed Upgrade cost multiplier scaling",
+    maxUpgrades: 5,
+    description: () => {
+      let effect = `Keep up to ${formatInt(20 * player.infinityRebuyables[0])}`;
+      if (!BreakInfinityUpgrade.tickspeedCostMult.isCapped) {
+        effect += ` ➜ ${formatInt(20 * (1 + player.infinityRebuyables[0]))}`;
+      }
+      return `${effect} Dimension Boosts on Galaxy resets`;
+    },
     afterEC: () => (EternityChallenge(11).completions > 0
       ? `After EC11: ${formatX(Player.tickSpeedMultDecrease, 2, 2)}`
       : ""
     ),
+    formatEffect: value => "",
     noLabel: true,
     onPurchased: () => GameCache.tickSpeedMultDecrease.invalidate()
   }),
   dimCostMult: rebuyable({
     id: 1,
-    initialCost: 1e7,
-    costIncrease: 5e3,
-    maxUpgrades: 7,
-    description: "Reduce post-infinity Antimatter Dimension cost multiplier scaling",
+    initialCost: 2e12,
+    costIncrease: 50,
+    maxUpgrades: 9,
+    description: "Dimensional Sacrifice is stronger",
     afterEC: () => (EternityChallenge(6).completions > 0
       ? `After EC6: ${formatX(Player.dimensionMultDecrease, 2, 2)}`
       : ""
@@ -128,7 +138,7 @@ export const breakInfinityUpgrades = {
   }),
   ipGen: rebuyable({
     id: 2,
-    initialCost: 1e7,
+    initialCost: 1e8,
     costIncrease: 10,
     maxUpgrades: 10,
     effect: value => Player.bestRunIPPM.times(value / 20),

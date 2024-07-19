@@ -26,6 +26,7 @@ export default {
     },
     showH2P() {
       Modal.h2p.show();
+      GameKeyboard.stopSpins();
     },
     showInfo() {
       Modal.information.show();

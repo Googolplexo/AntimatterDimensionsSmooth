@@ -6,10 +6,16 @@ import { MultiplierTabIcons } from "./icons";
 export const replicanti = {
   total: {
     name: "Replicanti Speed",
-    multValue: () => totalReplicantiSpeedMult(Replicanti.amount.gt(replicantiCap())),
-    isActive: () => PlayerProgress.eternityUnlocked(),
+    multValue: () => getReplicantiInterval(player.replicanti.interval),
+    isActive: () => PlayerProgress.replicantiUnlocked(),
     overlay: ["Ξ"],
   },
+  upgrade: {
+    name: "Replicanti Upgrades",
+    multValue: () => getIntervalBoost(player.replicanti.interval),
+    isActive: () => PlayerProgress.replicantiUnlocked(),
+    icon: MultiplierTabIcons.SPECIFIC_GLYPH("replication"),
+  },  
   achievement: {
     name: "Achievement 134",
     // This is explicitly 2 in the replicanti code as well, inside of a replicanti amount check

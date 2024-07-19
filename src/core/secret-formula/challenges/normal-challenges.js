@@ -56,7 +56,7 @@ export const normalChallenges = [
     legacyId: 6,
     isQuickResettable: false,
     description:
-      () => `the Tickspeed purchase multiplier starts at ${formatX(1.080, 0, 3)} instead of ${formatX(1.1245, 0, 3)}.`,
+      () => `the Tickspeed purchase multiplier starts at ${formatX(1.5, 0, 3)} instead of ${formatX(2, 0, 3)}.`,
     name: "5th Antimatter Dimension Autobuyer",
     reward: "Upgradeable 5th Antimatter Dimension Autobuyer",
     lockedAt: DC.D0,
@@ -85,9 +85,8 @@ export const normalChallenges = [
   {
     id: 8,
     legacyId: 11,
-    isQuickResettable: false,
-    description: `Dimension Boosts provide no multiplier and Antimatter Galaxies cannot be bought. Dimensional
-      Sacrifice resets antimatter and all Antimatter Dimensions, but also gives a significantly stronger multiplier.`,
+    isQuickResettable: true,
+    description: `all Antimatter Dimensions decay exponentially, at the rate of 1% per second.`,
     name: "8th Antimatter Dimension Autobuyer",
     reward: "Upgradeable 8th Antimatter Dimension Autobuyer",
     lockedAt: DC.D0,

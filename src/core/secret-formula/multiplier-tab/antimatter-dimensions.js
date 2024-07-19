@@ -116,16 +116,16 @@ export const AD = {
     name: "Achievement Rewards",
     multValue: dim => {
       const allMult = DC.D1.timesEffectsOf(
+        Achievement(24),
+        Achievement(47),
         Achievement(48),
         Achievement(56),
         Achievement(65),
         Achievement(72),
-        Achievement(73),
         Achievement(74),
         Achievement(76),
-        Achievement(84),
         Achievement(91),
-        Achievement(92)
+        Achievement(92),
       );
 
       const dimMults = Array.repeat(DC.D1, 9);
@@ -165,6 +165,7 @@ export const AD = {
       const allMult = DC.D1.timesEffectsOf(
         InfinityUpgrade.totalTimeMult,
         InfinityUpgrade.thisInfinityTimeMult,
+        InfinityUpgrade.buy10Mult,
       );
 
       const dimMults = Array.repeat(DC.D1, 9);
@@ -237,6 +238,7 @@ export const AD = {
       const allMult = DC.D1.timesEffectsOf(
         InfinityChallenge(3),
         InfinityChallenge(3).reward,
+        InfinityChallenge(4).reward,
       );
 
       const dimMults = Array.repeat(DC.D1, 9);
@@ -253,7 +255,6 @@ export const AD = {
       }
       return totalMult;
     },
-    powValue: () => InfinityChallenge(4).reward.effectOrDefault(1),
     isActive: () => player.break && !EternityChallenge(11).isRunning,
     icon: MultiplierTabIcons.CHALLENGE("infinity"),
   },

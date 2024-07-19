@@ -18,7 +18,7 @@ class GalaxyRequirement {
 
 export class Galaxy {
   static get remoteStart() {
-    return RealityUpgrade(21).effectOrDefault(800);
+    return 99999999999999999999999999;
   }
 
   static get requirement() {
@@ -49,7 +49,7 @@ export class Galaxy {
     } else if (type === GALAXY_TYPE.DISTANT || type === GALAXY_TYPE.REMOTE) {
       const galaxyCostScalingStart = this.costScalingStart;
       const galaxiesBeforeDistant = Math.clampMin(galaxies - galaxyCostScalingStart + 1, 0);
-      amount += Math.pow(galaxiesBeforeDistant, 2) + galaxiesBeforeDistant;
+      amount += (Math.pow(galaxiesBeforeDistant, 2) + galaxiesBeforeDistant) * 5;
     }
 
     if (type === GALAXY_TYPE.REMOTE) {
@@ -57,7 +57,6 @@ export class Galaxy {
     }
 
     amount -= Effects.sum(InfinityUpgrade.resetBoost);
-    if (InfinityChallenge(5).isCompleted) amount -= 1;
 
     if (GlyphAlteration.isAdded("power")) amount *= getSecondaryGlyphEffect("powerpow");
 
@@ -67,11 +66,11 @@ export class Galaxy {
   }
 
   static get costMult() {
-    return Effects.min(NormalChallenge(10).isRunning ? 90 : 60, TimeStudy(42));
+    return Effects.min(45, BreakInfinityUpgrade.galaxyBoost, InfinityChallenge(5).reward, TimeStudy(42));
   }
 
   static get baseCost() {
-    return NormalChallenge(10).isRunning ? 99 : 80;
+    return NormalChallenge(10).isRunning ? 90 : 80;
   }
 
   static get requiredTier() {
@@ -80,7 +79,7 @@ export class Galaxy {
 
   static get canBeBought() {
     if (EternityChallenge(6).isRunning && !Enslaved.isRunning) return false;
-    if (NormalChallenge(8).isRunning || InfinityChallenge(7).isRunning) return false;
+    if (InfinityChallenge(7).isRunning) return false;
     if (player.records.thisInfinity.maxAM.gt(Player.infinityGoal) &&
        (!player.break || Player.isInAntimatterChallenge)) return false;
     return true;
@@ -91,17 +90,11 @@ export class Galaxy {
     if (EternityChallenge(6).isRunning) return "Locked (Eternity Challenge 6)";
     if (InfinityChallenge(7).isRunning) return "Locked (Infinity Challenge 7)";
     if (InfinityChallenge(1).isRunning) return "Locked (Infinity Challenge 1)";
-    if (NormalChallenge(8).isRunning) return "Locked (8th Antimatter Dimension Autobuyer Challenge)";
     return null;
   }
 
   static get costScalingStart() {
-    return 100 + TimeStudy(302).effectOrDefault(0) + Effects.sum(
-      TimeStudy(223),
-      TimeStudy(224),
-      EternityChallenge(5).reward,
-      GlyphSacrifice.power
-    );
+    return 2
   }
 
   static get type() {
@@ -123,7 +116,7 @@ function galaxyReset() {
   EventHub.dispatch(GAME_EVENT.GALAXY_RESET_BEFORE);
   player.galaxies++;
   if (!Achievement(143).isUnlocked || (Pelle.isDoomed && !PelleUpgrade.galaxyNoResetDimboost.canBeApplied)) {
-    player.dimensionBoosts = 0;
+    player.dimensionBoosts = Math.clampMax(player.dimensionBoosts, 20 * (10 - Player.tickSpeedMultDecrease));
   }
   softReset(0);
   if (Notations.current === Notation.emoji) player.requirementChecks.permanent.emojiGalaxies++;

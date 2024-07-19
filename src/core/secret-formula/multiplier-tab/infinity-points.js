@@ -22,7 +22,7 @@ export const IP = {
     isBase: true,
     fakeValue: DC.D5,
     multValue: () => {
-      const div = Effects.min(308, Achievement(103), TimeStudy(111));
+      const div = 308;
       return Decimal.pow10(player.records.thisInfinity.maxAM.log10() / div - 0.75);
     },
     isActive: () => player.break,
@@ -36,21 +36,17 @@ export const IP = {
     isActive: () => player.break,
     icon: MultiplierTabIcons.ANTIMATTER,
   },
-  divisor: {
-    name: "Formula Improvement",
-    displayOverride: () => {
-      const div = Effects.min(308, Achievement(103), TimeStudy(111));
-      return `log(AM)/${formatInt(308)} ➜ log(AM)/${format(div, 2, 1)}`;
-    },
-    powValue: () => 308 / Effects.min(308, Achievement(103), TimeStudy(111)),
-    isActive: () => Achievement(103).canBeApplied || TimeStudy(111).isBought,
-    icon: MultiplierTabIcons.DIVISOR("IP"),
-  },
   infinityUpgrade: {
     name: () => `Infinity Upgrade - Repeatable ${formatX(2)} IP`,
     multValue: () => InfinityUpgrade.ipMult.effectOrDefault(1),
     isActive: () => player.break && !Pelle.isDoomed,
     icon: MultiplierTabIcons.UPGRADE("infinity"),
+  },
+  infinityChallenge: {
+    name: "Infinity Challenges",
+    multValue: () => InfinityChallenge(7).reward.effectOrDefault(1),
+    isActive: () => player.break && !Pelle.isDoomed,
+    icon: MultiplierTabIcons.CHALLENGE("infinity"),
   },
   achievement: {
     name: "Achievements",
