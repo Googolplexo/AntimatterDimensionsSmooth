@@ -49,7 +49,7 @@ export default {
       const parts = [Math.max(this.galaxies.normal, 0)];
       if (this.galaxies.replicanti > 0) parts.push(this.galaxies.replicanti);
       if (this.galaxies.dilation > 0) parts.push(this.galaxies.dilation);
-      if (InfinityUpgarde.galaxyBoost.isBought) parts.push(1);
+      if (InfinityUpgrade.galaxyBoost.isBought) parts.push(1);
       const sum = parts.map(this.formatGalaxies).join(" + ");
       if (parts.length >= 2) {
         return `${sum} = ${this.formatGalaxies(parts.sum())}`;
