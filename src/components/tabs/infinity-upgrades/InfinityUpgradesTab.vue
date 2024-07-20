@@ -170,12 +170,6 @@ export default {
         :class="btnClassObject(1)"
       />
     </div>
-    <div v-if="eternityUnlocked && bottomRowUnlocked">
-      The Infinity Point multiplier becomes more expensive
-      <br>
-      above {{ formatPostBreak(ipMultSoftCap) }} Infinity Points, and cannot be purchased past
-      {{ formatPostBreak(ipMultHardCap) }} Infinity Points.
-    </div>
   </div>
 </template>
 
