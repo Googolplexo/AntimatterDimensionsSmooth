@@ -651,11 +651,11 @@ export const normalAchievements = [
   {
     id: 95,
     name: "Is this safe?",
-    get description() { return `Gain ${format(DC.E5, 1, 0)} Replicanti in the first ${formatInt(20)} minutes of an Infinity.`; },
+    get description() { return `Gain ${format(DC.D5E4, 1, 0)} Replicanti in the first ${formatInt(10)} minutes of an Infinity.`; },
     get reward() { return `You keep your Replicanti and ${formatInt(1)} Replicanti Galaxy on Infinity.`; },
     checkRequirement: () =>
-      (Replicanti.amount.gte(DC.E5) || (Replicanti.galaxies.bought > 0 && Replicanti.galaxies.startingCost.gte(DC.E5))) &&
-      Time.thisInfinityRealTime.totalMinutes <= 20,
+      (Replicanti.amount.gte(DC.D5E4) || (Replicanti.galaxies.bought > 0 && Replicanti.galaxies.startingCost.gte(DC.D5E4))) &&
+      Time.thisInfinityRealTime.totalMinutes <= 10,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {

@@ -359,7 +359,7 @@ window.player = {
     previousRuns: {}
   },
   IPMultPurchases: 0,
-  version: 100,
+  version: 101,
   infinityPower: DC.D1,
   postC4Tier: 0,
   eternityPoints: DC.D0,
@@ -379,7 +379,7 @@ window.player = {
     boughtGalaxyCap: 0,
     galaxies: 0,
     galCost: DC.E570,
-    galaxyCost: DC.E5
+    galaxyCost: DC.D5E4
   },
   timestudy: {
     theorem: DC.D0,

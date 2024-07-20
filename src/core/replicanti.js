@@ -443,7 +443,7 @@ export const Replicanti = {
       boughtGalaxyCap: 0,
       galaxies: 0,
       galCost: DC.E570,
-      galaxyCost: DC.E5,
+      galaxyCost: DC.D5E4,
     };
   },
   unlock(freeUnlock = false) {
@@ -483,7 +483,7 @@ export const Replicanti = {
       return ReplicantiUpgrade.galaxies.value + ReplicantiUpgrade.galaxies.extra;
     },
     get startingCost() {
-      return DC.E5
+      return DC.D5E4
     },
     get currentCost() {
       return RGCost(this.startingCost, this.bought, this.max);
