@@ -654,7 +654,7 @@ secondary cost scaling ${formatX(DC.E5)} IP
 <b>Replicanti Galaxy cost scaling reduction cost:</b> Base ${format(DC.E570)} IP, primary cost scaling ${formatX(DC.E75)} IP,
 secondary cost scaling ${formatX(DC.E55)} IP
 <br>
-<b>Replicanti Galaxy cost:</b> Base ${format(DC.E5)} Replicanti, primary cost scaling ${formatX(1)} Replicanti,
+<b>Replicanti Galaxy cost:</b> Base ${format(DC.D5E4)} Replicanti, primary cost scaling ${formatX(1)} Replicanti,
 secondary cost scaling ${formatX(2)} Replicanti
 
 `,
