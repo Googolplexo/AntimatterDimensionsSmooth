@@ -135,8 +135,8 @@ export const normalAchievements = [
   {
     id: 32,
     name: "The Gods are pleased",
-    get description() { return `Get over ${formatX(600)} from Dimensional Sacrifice outside of Challenge 8.`; },
-    checkRequirement: () => !NormalChallenge(8).isOnlyActiveChallenge && Sacrifice.totalBoost.gte(600),
+    get description() { return `Get over ${formatX(600)} from Dimensional Sacrifice.`; },
+    checkRequirement: () => Sacrifice.totalBoost.gte(600),
     checkEvent: GAME_EVENT.SACRIFICE_RESET_AFTER,
     get reward() {
       return `Dimensional Sacrifice bonus is raised to a power of 1.1.`;
