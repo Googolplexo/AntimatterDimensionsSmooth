@@ -53,7 +53,8 @@ export const tickspeed = {
       const ag = player.galaxies + GalaxyGenerator.galaxies;
       const rg = Replicanti.galaxies.total;
       const tg = player.dilation.totalTachyonGalaxies;
-      return `${formatInt(ag + rg + tg)} Total`;
+      const extra = Effects.sum(InfinityUpgrade.galaxyBoost);
+      return `${formatInt(ag + rg + tg + extra)} Total`;
     },
     multValue: () => new Decimal.pow10(100 * MultiplierTabHelper.decomposeTickspeed().galaxies),
     isActive: true,

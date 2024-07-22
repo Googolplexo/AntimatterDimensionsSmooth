@@ -36,41 +36,18 @@ export const MultiplierTabHelper = {
     const effects = this.globalGalaxyMult();
 
     let galFrac, tickFrac;
-    if (effectiveCount < 3) {
-      let baseMult = 1.1245;
-      if (player.galaxies === 1) baseMult = 1.11888888;
-      if (player.galaxies === 2) baseMult = 1.11267177;
-      if (NormalChallenge(5).isRunning) {
-        baseMult = 1.08;
-        if (player.galaxies === 1) baseMult = 1.07632;
-        if (player.galaxies === 2) baseMult = 1.072;
-      }
-      // This is needed for numerical consistency with the other conditional case
-      baseMult /= 0.965 ** 2;
-      const logBase = Math.log10(baseMult);
 
-      const perGalaxy = 0.02 * effects;
-      effectiveCount *= Pelle.specialGlyphEffect.power;
+    effectiveCount *= effects;
+    effectiveCount *= getAdjustedGlyphEffect("realitygalaxies") * (1 + ImaginaryUpgrade(9).effectOrDefault(0));
+    effectiveCount *= Pelle.specialGlyphEffect.power;
 
-      tickFrac = Tickspeed.totalUpgrades * logBase;
-      galFrac = -Math.log10(Math.max(0.01, 1 / baseMult - (effectiveCount * perGalaxy))) / logBase;
-    } else {
-      effectiveCount -= 2;
-      effectiveCount *= effects;
-      effectiveCount *= getAdjustedGlyphEffect("realitygalaxies") * (1 + ImaginaryUpgrade(9).effectOrDefault(0));
-      effectiveCount *= Pelle.specialGlyphEffect.power;
+    // These all need to be framed as INCREASING x/sec tick rate (ie. all multipliers > 1, all logs > 0)
+    const baseMult = NormalChallenge(5).isRunning ? 1.5 : 2;
+    const logBase = Math.log10(baseMult);
+    const logPerGalaxy = -DC.D0_8.log10();
 
-      // These all need to be framed as INCREASING x/sec tick rate (ie. all multipliers > 1, all logs > 0)
-      const baseMult = 0.965 ** 2 / (NormalChallenge(5).isRunning ? 0.83 : 0.8);
-      const logBase = Math.log10(baseMult);
-      const logPerGalaxy = -DC.D0_965.log10();
-
-      tickFrac = Tickspeed.totalUpgrades * logBase;
-      galFrac = (1 + effectiveCount / logBase * logPerGalaxy);
-    }
-
-    // Artificially inflate the galaxy portion in order to make the breakdown closer to 50/50 in common situations
-    galFrac *= 3;
+    tickFrac = Tickspeed.totalUpgrades * logBase;
+    galFrac = (1 + effectiveCount / logBase * logPerGalaxy);
 
     // Calculate what proportion base tickspeed takes out of the entire tickspeed multiplier
     const base = DC.D1.dividedByEffectsOf(
