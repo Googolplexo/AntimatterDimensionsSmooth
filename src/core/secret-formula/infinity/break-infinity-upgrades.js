@@ -44,8 +44,8 @@ export const breakInfinityUpgrades = {
   galaxyBoost: {
     id: "postGalaxy",
     cost: 2e31,
-    description: () => `The primary Antimatter Galaxy cost scaling is reduced to ${formatInt(30)}`,
-    effect: 30
+    description: () => `The primary Antimatter Galaxy cost scaling is reduced by ${formatInt(15)}`,
+    effect: 15
   },
   infinitiedMult: {
     id: "infinitiedMult",

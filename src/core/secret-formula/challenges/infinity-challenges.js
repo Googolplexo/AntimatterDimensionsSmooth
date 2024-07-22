@@ -68,8 +68,8 @@ export const infinityChallenges = [
     isQuickResettable: true,
     reward: {
       description: () =>
-        `Reduce the requirements for Dimension Boosts by ${formatInt(1)}; reduce the primary Antimatter Galaxy cost scaling to ${formatInt(23)}`,
-      effect: 23
+        `Reduce the requirements for Dimension Boosts by ${formatInt(1)}; reduce the primary Antimatter Galaxy cost scaling by ${formatInt(7)}`,
+      effect: 7
     },
     unlockAM: DC.E31000,
   },
