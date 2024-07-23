@@ -86,7 +86,8 @@ export const normalChallenges = [
     id: 8,
     legacyId: 11,
     isQuickResettable: true,
-    description: `all Antimatter Dimensions decay exponentially, at the rate of 1% per second.`,
+    description: () => `all Antimatter Dimensions decay exponentially, at the rate of ${formatPercents(0.01)} per second. ` +
+      "The lost dimension amounts contribute to the Dimensional Sacrifice multiplier.",
     name: "8th Antimatter Dimension Autobuyer",
     reward: "Upgradeable 8th Antimatter Dimension Autobuyer",
     lockedAt: DC.D0,

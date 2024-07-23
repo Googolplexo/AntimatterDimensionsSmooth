@@ -8,7 +8,7 @@ export class Sacrifice {
   }
 
   static get canSacrifice() {
-    return DimBoost.purchasedBoosts > 4 && !EternityChallenge(3).isRunning && this.nextBoost.gt(1) &&
+    return DimBoost.purchasedBoosts > 4 && !EternityChallenge(3).isRunning && this.nextBoost.gt(1.01) &&
       AntimatterDimension(8).totalAmount.gt(0) && Currency.antimatter.lt(Player.infinityLimit) &&
       !Enslaved.isRunning;
   }
@@ -18,7 +18,7 @@ export class Sacrifice {
     if (EternityChallenge(3).isRunning) return "Eternity Challenge 3";
     if (DimBoost.purchasedBoosts < 5) return `Requires ${formatInt(5)} Dimension Boosts`;
     if (AntimatterDimension(8).totalAmount.eq(0)) return "No 8th Antimatter Dimensions";
-    if (this.nextBoost.lte(1)) return `${formatX(1)} multiplier`;
+    if (this.nextBoost.lte(1.01)) return `${formatX(1)} multiplier`;
     if (Player.isInAntimatterChallenge) return "Challenge goal reached";
     return "Need to Crunch";
   }
@@ -36,8 +36,8 @@ export class Sacrifice {
   static get nextBoost() {
     const nd1Amount = AntimatterDimension(1).amount;
     if (nd1Amount.eq(0)) return DC.D1;
-    const sacrificed = player.sacrificed.clampMin(1);
-    let prePowerSacrificeMult = new Decimal((nd1Amount.log10() / 10) / Math.max(sacrificed.log10() / 10, 1));
+    const sacrificed = player.sacrificed.plus(DC.E10);
+    let prePowerSacrificeMult = new Decimal((nd1Amount.plus(sacrificed).log10() / 10) / Math.max(sacrificed.log10() / 10, 1));
 
     return prePowerSacrificeMult.clampMin(1).pow(this.sacrificeExponent);
   }
@@ -45,9 +45,9 @@ export class Sacrifice {
   static get totalBoost() {
     if (player.sacrificed.eq(0)) return DC.D1;
 
-    let prePowerBoost = new Decimal(player.sacrificed.log10() / 10);
+    let prePowerBoost = new Decimal(player.sacrificed.plus(DC.E10).log10() / 10);
 
-    return prePowerBoost.clampMin(1).pow(this.sacrificeExponent);
+    return prePowerBoost.pow(this.sacrificeExponent);
   }
 }
 

@@ -658,7 +658,10 @@ export const AntimatterDimensions = {
     }
     if (NormalChallenge(8).isRunning) {
       for (let tier = 1; tier < 9; tier++) {
-        AntimatterDimension(tier).amount = AntimatterDimension(tier).amount.times(DC.D0_99.pow(diff / 1000));
+        const amount = AntimatterDimension(tier).amount;
+        const afterDecay = amount.times(DC.D0_99.pow(diff / 1000));
+        player.sacrificed = player.sacrificed.plus(amount).minus(afterDecay);
+        AntimatterDimension(tier).amount = afterDecay;
       }
     }
     // Production may overshoot the goal on the final tick of the challenge
