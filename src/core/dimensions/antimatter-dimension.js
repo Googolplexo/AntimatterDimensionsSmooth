@@ -419,10 +419,13 @@ class AntimatterDimensionState extends DimensionState {
    */
   get rateOfChange() {
     const tier = this.tier;
+
+    const loss = NormalChallenge(8).isRunning ? DC.DM1 : DC.D0;
+
     if (tier === 8 ||
       (tier > 3 && EternityChallenge(3).isRunning) ||
       (tier > 6 && NormalChallenge(12).isRunning)) {
-      return DC.D0;
+      return loss;
     }
 
     let toGain;
@@ -433,7 +436,8 @@ class AntimatterDimensionState extends DimensionState {
     } else {
       toGain = AntimatterDimension(tier + 1).productionPerSecond;
     }
-    return toGain.times(10).dividedBy(this.amount.max(1)).times(getGameSpeedupForDisplay());
+
+    return toGain.times(10).dividedBy(this.amount.max(1)).plus(loss).times(getGameSpeedupForDisplay());
   }
 
   /**
