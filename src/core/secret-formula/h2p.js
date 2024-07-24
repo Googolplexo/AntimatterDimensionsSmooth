@@ -556,11 +556,6 @@ gain for crunching is multiplied by ${formatInt(10)} for every additional factor
 ${formatPostBreak(Number.MAX_VALUE, 2)} antimatter you gain (in a continuous manner). This is rounded down to the
 nearest integer <i>after</i> all multipliers are applied.
 <br>
-<br>
-The antimatter costs of all Dimensions begin to increase faster after they pass
-${formatPostBreak(Number.MAX_VALUE, 2)}. The cost <i>between</i> upgrades will increase by ${formatX(10)}
-<i>per upgrade</i> above ${formatPostBreak(Number.MAX_VALUE, 2)}, and a similar scaling happens to
-Tickspeed Upgrade costs as well.
 `,
       isUnlocked: () => Autobuyer.bigCrunch.hasMaxedInterval || PlayerProgress.eternityUnlocked(),
       tags: ["limit", "crunch", "upgrades", "midgame"],
