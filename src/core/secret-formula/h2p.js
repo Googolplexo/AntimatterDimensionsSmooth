@@ -659,7 +659,7 @@ secondary cost scaling ${formatX(2)} Replicanti
     }, {
       name: "Eternity",
       info: () => `
-Upon reaching ${formatPostBreak(Number.MAX_VALUE, 2)} IP, you can Eternity. Eternities will reset everything before this
+Upon reaching ${formatPostBreak(DC.E2000, 2)} IP, you can Eternity. Eternities will reset everything before this
 point except challenge times, Achievements, and anything under the General section of the Statistics tab. You will be
 able to access more content after your first Eternity.
 <br>
