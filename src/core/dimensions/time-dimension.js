@@ -142,7 +142,7 @@ class TimeDimensionState extends DimensionState {
     super(() => player.dimensions.time, tier);
     const BASE_COSTS = [null, DC.D1, DC.D5, DC.E2, DC.E3, DC.E2350, DC.E2650, DC.E3000, DC.E3350];
     this._baseCost = BASE_COSTS[tier];
-    const COST_MULTS = [null, 3, 9, 27, 81, 24300, 72900, 218700, 656100];
+    const COST_MULTS = [null, 300, 900, 2700, 8100, 24300, 72900, 218700, 656100];
     this._costMultiplier = COST_MULTS[tier];
     const E6000_SCALING_AMOUNTS = [null, 7322, 4627, 3382, 2665, 833, 689, 562, 456];
     this._e6000ScalingAmount = E6000_SCALING_AMOUNTS[tier];
