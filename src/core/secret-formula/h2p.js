@@ -664,7 +664,7 @@ point except challenge times, Achievements, and anything under the General secti
 able to access more content after your first Eternity.
 <br>
 <br>
-You can pass ${formatPostBreak(Number.MAX_VALUE, 2)} IP without anything being forced upon you, unlike the first time
+You can pass ${formatPostBreak(DC.E2000, 2)} IP without anything being forced upon you, unlike the first time
 you reached ${formatPostBreak(Number.MAX_VALUE, 2)} antimatter. You will receive more Eternity Points the more
 Infinity Points you had before going Eternal. You will also gain one "Eternity" for completing an Eternity.
 <br>
