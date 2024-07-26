@@ -628,7 +628,7 @@ Replicanti give a multiplier to all Infinity Dimensions, which is proportional t
 ${formatInt(2)}. That power also can be increased by spending IP.
 <br>
 <br>
-When you reach ${format(DC.E5)} Replicanti, you will be able to purchase a Replicanti Galaxy, which will
+When you reach ${format(DC.D5E4)} Replicanti, you will be able to purchase a Replicanti Galaxy, which will
 reset your Replicanti count back to ${formatInt(0)}. This Galaxy is free in that it will act as if it was an
 Antimatter Galaxy, but it will not make your next Antimatter Galaxy more expensive. However, it will still reset the
 same things as an Antimatter Galaxy does. The secondary cost scaling of Replicanti Galaxies can be reduced by spending IP.
