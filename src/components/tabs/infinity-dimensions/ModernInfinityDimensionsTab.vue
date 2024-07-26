@@ -52,7 +52,7 @@ export default {
       if (this.isEC9Running) {
         this.dimMultiplier.copyFrom(Decimal.pow(Math.max(this.infinityPower.log2(), 1), 4).max(1));
       } else {
-        this.dimMultiplier.copyFrom(this.infinityPower.pow(this.conversionRate).max(1));
+        this.dimMultiplier.copyFrom(this.infinityPower.pow(this.conversionRate).plus(1));
       }
       this.powerPerSecond.copyFrom(InfinityDimension(1).productionPerSecond);
       this.incomeType = EternityChallenge(7).isRunning ? "Seventh Dimensions" : "Infinity Power";
