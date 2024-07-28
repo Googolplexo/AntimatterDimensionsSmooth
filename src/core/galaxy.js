@@ -89,7 +89,6 @@ export class Galaxy {
     if (this.canBeBought) return null;
     if (EternityChallenge(6).isRunning) return "Locked (Eternity Challenge 6)";
     if (InfinityChallenge(7).isRunning) return "Locked (Infinity Challenge 7)";
-    if (InfinityChallenge(1).isRunning) return "Locked (Infinity Challenge 1)";
     return null;
   }
 
