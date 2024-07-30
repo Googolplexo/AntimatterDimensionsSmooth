@@ -423,10 +423,10 @@ export const migrations = {
     101: player => {
       player.replicanti.galaxyCost = player.replicanti.galaxyCost.div(2);
     },
-    103: player => {
+    104: player => {
       for (let tier = 1; tier < 9; tier++) {
         const dim = InfinityDimension(tier);
-        if (dim.isUnlocked) player.dimensions.infinity[tier - 1].cost = dim.costMultiplier.toDecimal().pow(player.dimensions.infinity[tier - 1].bought).times(dim.baseCost);
+        if (dim.isUnlocked) player.dimensions.infinity[tier].cost = dim.costMultiplier.toDecimal().pow(player.dimensions.infinity[tier].bought).times(dim.baseCost);
       }
     }
   },
