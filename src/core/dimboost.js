@@ -156,7 +156,7 @@ export function softReset(tempBulk, forcedADReset = false, forcedAMReset = false
   resetChallengeStuff();
   const canKeepDimensions = Pelle.isDoomed
     ? PelleUpgrade.dimBoostResetsNothing.canBeApplied
-    : Perk.antimatterNoReset.canBeApplied || (InfinityChallenge(4).isCompleted && bulk > 0);
+    : Perk.antimatterNoReset.canBeApplied || (InfinityChallenge(4).isCompleted && bulk);
   if (forcedADReset || !canKeepDimensions) {
     AntimatterDimensions.reset();
     player.sacrificed = DC.D0;

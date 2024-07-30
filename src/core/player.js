@@ -20,7 +20,7 @@ window.player = {
       isUnlocked: false,
       bought: 0,
       amount: DC.D0,
-      cost: [DC.E8, DC.E9, DC.E10, DC.E20, DC.E140, DC.E200, DC.E250, DC.E280][tier],
+      cost: [DC.E16, DC.E40, DC.E60, DC.E80, DC.E210, DC.E580, DC.E900, DC.E1100][tier],
       baseAmount: 0
     })),
     time: Array.range(0, 8).map(tier => ({
@@ -359,7 +359,7 @@ window.player = {
     previousRuns: {}
   },
   IPMultPurchases: 0,
-  version: 101,
+  version: 102,
   infinityPower: DC.D1,
   postC4Tier: 0,
   eternityPoints: DC.D0,

@@ -421,7 +421,13 @@ export const migrations = {
       if (player.celestials.pelle.doomed) player.dilation.rebuyables[3] = 0;
     },
     101: player => {
-      player.replicanti.galaxyCost = player.replicanti.galaxyCost.div(2)
+      player.replicanti.galaxyCost = player.replicanti.galaxyCost.div(2);
+    },
+    102: player => {
+      for (let tier = 1; tier < 9; tier++) {
+        const dim = InfinityDimension(tier);
+        player.dimensions.infinity[tier].cost = dim.baseCost.times(dim.costMultiplier.pow(player.dimensions.infinity[tier].amount));
+      }
     }
   },
 
