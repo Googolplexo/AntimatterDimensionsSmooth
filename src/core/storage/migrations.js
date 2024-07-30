@@ -426,7 +426,7 @@ export const migrations = {
     102: player => {
       for (let tier = 1; tier < 9; tier++) {
         const dim = InfinityDimension(tier);
-        player.dimensions.infinity[tier].cost = dim.costMultiplier.toDecimal().pow(player.dimensions.infinity[tier].amount).times(dim.baseCost);
+        if (dim.isUnlocked) player.dimensions.infinity[tier].cost = dim.costMultiplier.toDecimal().pow(player.dimensions.infinity[tier].amount).times(dim.baseCost);
       }
     }
   },
