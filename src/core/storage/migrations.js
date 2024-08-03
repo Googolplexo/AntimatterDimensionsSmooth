@@ -429,6 +429,9 @@ export const migrations = {
         player.dimensions.infinity[tier].bought = 0;
         player.dimensions.infinity[tier].cost = InfinityDimension(tier + 1).baseCost;
       }
+    },
+    106: player => {
+      player.infinityPower = player.infinityPower.minus(1);
     }
   },
 
