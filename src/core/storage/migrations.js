@@ -430,8 +430,8 @@ export const migrations = {
         player.dimensions.infinity[tier].cost = InfinityDimension(tier + 1).baseCost;
       }
     },
-    107: player => {
-      player.infinityPower = DC.D0;
+    108: player => {
+      player.infinityPower = new Decimal("0");
     }
   },
 
