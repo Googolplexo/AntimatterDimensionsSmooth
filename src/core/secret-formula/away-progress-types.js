@@ -18,11 +18,11 @@ export const awayProgressTypes = [
   }, {
     name: "replicanti",
     reference: ["replicanti", "amount"],
-    isUnlocked: () => PlayerProgress.replicantiUnlocked() || PlayerProgress.eternityUnlocked(),
+    isUnlocked: () => PlayerProgress.replicantiUnlocked(),
   }, {
     name: "replicantiGalaxies",
     reference: ["replicanti", "galaxies"],
-    isUnlocked: () => PlayerProgress.replicantiUnlocked() || PlayerProgress.eternityUnlocked(),
+    isUnlocked: () => PlayerProgress.eternityUnlocked(),
   }, {
     name: "eternities",
     isUnlocked: () => PlayerProgress.eternityUnlocked(),
@@ -49,7 +49,7 @@ export const awayProgressTypes = [
     name: "achievementAmount",
     reference: ["achievementBits"],
     applyFn: x => x.map(b => countValuesFromBitmask(b)).sum(),
-    isUnlocked: () => PlayerProgress.realityUnlocked(),
+    isUnlocked: () => true,
   }, {
     name: "realities",
     isUnlocked: () => PlayerProgress.realityUnlocked(),
@@ -125,7 +125,7 @@ export const awayProgressTypes = [
   }, {
     name: "singularities",
     reference: ["celestials", "laitela", "singularities"],
-    isUnlocked: () => Laitela.isUnlocked,
+    isUnlocked: () => player.celestials.laitela.singularities,
   }, {
     name: "realityShards",
     reference: ["celestials", "pelle", "realityShards"],
