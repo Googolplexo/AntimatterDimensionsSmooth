@@ -16,7 +16,7 @@ export class DimBoost {
   static get power() {
     let boost = DC.D2;
     if (InfinityUpgrade.dimboostMult.isBought && Player.isInAntimatterChallenge) boost = DC.D2_5;
-    if (InfinityChallenge(7).isRunning) boost = DC.E1
+    if (InfinityChallenge(7).isRunning) boost = DC.E1;
     return boost;
   }
 

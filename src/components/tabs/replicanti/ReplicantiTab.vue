@@ -161,7 +161,7 @@ export default {
     },
     // This is copied out of a short segment of ReplicantiGainText with comments and unneeded variables stripped
     calculateEstimate() {
-      return this.maxReplicanti.minus(this.amount).div(getReplicantiInterval())
+      return this.maxReplicanti.minus(this.amount).div(getReplicantiInterval());
     }
   },
 };

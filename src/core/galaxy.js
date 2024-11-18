@@ -93,7 +93,7 @@ export class Galaxy {
   }
 
   static get costScalingStart() {
-    return 2
+    return 2;
   }
 
   static get type() {

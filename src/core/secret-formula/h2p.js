@@ -595,7 +595,7 @@ Instead of antimatter, the 1st Infinity Dimension produces Infinity Power, which
 to all Antimatter Dimensions equal to (power<sup>${formatInt(7)}</sup>). Infinity Dimensions are not
 affected by Tickspeed Upgrades.
 `,
-      isUnlocked: () => Autobuyer.bigCrunch.hasMaxedInterval || PlayerProgress.eternityUnlocked(),
+      isUnlocked: () => player.break,
       tags: ["id", "power", "new", "dims", "unlock", "break", "midgame"],
       tab: "dimensions/infinity"
     }, {
@@ -614,7 +614,7 @@ amount of antimatter before you can attempt them.
 <b>Infinity Challenge unlock thresholds:</b> ${GameDatabase.challenges.infinity
     .map(ic => formatPostBreak(ic.unlockAM)).join(", ")}
 `,
-      isUnlocked: () => Autobuyer.bigCrunch.hasMaxedInterval || PlayerProgress.eternityUnlocked(),
+      isUnlocked: () => player.break,
       tags: ["rewards", "break", "ic", "midgame"],
       tab: "challenges/infinity"
     }, {
@@ -634,7 +634,7 @@ Antimatter Galaxy, but it will not make your next Antimatter Galaxy more expensi
 same things as an Antimatter Galaxy does. The secondary cost scaling of Replicanti Galaxies can be reduced by spending IP.
 <br>
 <br>
-All Replicanti upgrades and Replicanti galaxies have their cost scaled similarly to Tickspeed Upgrades and Antimatter
+All Replicanti upgrades and Replicanti Galaxies have their cost scaled similarly to Tickspeed Upgrades and Antimatter
 Galaxies, with primary and secondary cost scalings.
 <br>
 <br>

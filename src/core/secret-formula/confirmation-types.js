@@ -2,11 +2,11 @@ export const confirmationTypes = [
   {
     name: "Dimension Boost",
     option: "dimensionBoost",
-    isUnlocked: () => PlayerProgress.infinityUnlocked() || player.galaxies > 0 || player.dimensionBoosts > 0,
+    isUnlocked: () => true,
   }, {
     name: "Antimatter Galaxy",
     option: "antimatterGalaxy",
-    isUnlocked: () => PlayerProgress.infinityUnlocked() || player.galaxies > 0,
+    isUnlocked: () => true,
   }, {
     name: "Sacrifice",
     option: "sacrifice",
@@ -34,7 +34,7 @@ export const confirmationTypes = [
   }, {
     name: "Dilation",
     option: "dilation",
-    isUnlocked: () => PlayerProgress.realityUnlocked() || !Currency.tachyonParticles.eq(0),
+    isUnlocked: () => PlayerProgress.realityUnlocked() || PlayerProgress.dilationUnlocked(),
   }, {
     name: "Reset Reality",
     option: "resetReality",
