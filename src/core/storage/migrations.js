@@ -432,6 +432,12 @@ export const migrations = {
     },
     108: player => {
       player.infinityPower = new Decimal("0");
+    },
+    109: player => {
+      if (player.records.bestInfinity.time === 999999999999) player.records.bestInfinity.time = Number.MAX_VALUE;
+      if (player.records.bestInfinity.realTime === 999999999999) player.records.bestInfinity.realTime = Number.MAX_VALUE;
+      if (player.records.bestEternity.time === 999999999999) player.records.bestEternity.time = Number.MAX_VALUE;
+      if (player.records.bestEternity.realTime === 999999999999) player.records.bestEternity.realTime = Number.MAX_VALUE;
     }
   },
 

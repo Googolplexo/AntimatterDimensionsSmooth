@@ -104,7 +104,7 @@ export default {
           TimeStudy(191)
         );
         infinity.bankRate = infinity.projectedBanked.div(Math.clampMin(33, records.thisEternity.time)).times(60000);
-        infinity.hasBest = bestInfinity.time < 999999999999;
+        infinity.hasBest = bestInfinity.time < Number.MAX_VALUE;
         infinity.best.setFrom(bestInfinity.time);
         infinity.this.setFrom(records.thisInfinity.time);
         infinity.bestRate.copyFrom(bestInfinity.bestIPminEternity);
@@ -116,7 +116,7 @@ export default {
       eternity.isUnlocked = isEternityUnlocked;
       if (isEternityUnlocked) {
         eternity.count.copyFrom(Currency.eternities);
-        eternity.hasBest = bestEternity.time < 999999999999;
+        eternity.hasBest = bestEternity.time < Number.MAX_VALUE;
         eternity.best.setFrom(bestEternity.time);
         eternity.this.setFrom(records.thisEternity.time);
         eternity.bestRate.copyFrom(bestEternity.bestEPminReality);

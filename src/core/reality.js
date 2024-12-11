@@ -622,8 +622,8 @@ export function finishProcessReality(realityProps) {
 
   Currency.infinities.reset();
   Currency.infinitiesBanked.reset();
-  player.records.bestInfinity.time = 999999999999;
-  player.records.bestInfinity.realTime = 999999999999;
+  player.records.bestInfinity.time = Number.MAX_VALUE;
+  player.records.bestInfinity.realTime = Number.MAX_VALUE;
   player.records.thisInfinity.time = 0;
   player.records.thisInfinity.lastBuyTime = 0;
   player.records.thisInfinity.realTime = 0;
@@ -644,8 +644,8 @@ export function finishProcessReality(realityProps) {
   if (!PelleUpgrade.eternitiesNoReset.canBeApplied) Currency.eternities.reset();
   player.records.thisEternity.time = 0;
   player.records.thisEternity.realTime = 0;
-  player.records.bestEternity.time = 999999999999;
-  player.records.bestEternity.realTime = 999999999999;
+  player.records.bestEternity.time = Number.MAX_VALUE;
+  player.records.bestEternity.realTime = Number.MAX_VALUE;
   if (!PelleUpgrade.keepEternityUpgrades.canBeApplied) player.eternityUpgrades.clear();
   player.totalTickGained = 0;
   if (!PelleUpgrade.keepEternityChallenges.canBeApplied) player.eternityChalls = {};
