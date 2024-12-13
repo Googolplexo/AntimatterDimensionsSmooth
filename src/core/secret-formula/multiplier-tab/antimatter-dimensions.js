@@ -158,6 +158,7 @@ export const AD = {
     powValue: () => Achievement(183).effectOrDefault(1),
     isActive: () => !EternityChallenge(11).isRunning,
     icon: MultiplierTabIcons.ACHIEVEMENT,
+    isNotARealThing: true,
   },
   infinityUpgrade: {
     name: dim => (dim ? `Infinity Upgrades (AD ${dim})` : "Infinity Upgrades"),

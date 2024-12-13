@@ -26,6 +26,11 @@ export default {
       type: BreakdownEntryInfo,
       required: true,
     },
+    higherEntries: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
     isRoot: {
       type: Boolean,
       required: false,
@@ -59,6 +64,9 @@ export default {
      */
     entries() {
       return this.groups[this.selected].entries;
+    },
+    allEntries() {
+      return this.resource.isNotARealThing ? this.entries.concat(this.higherEntries) : this.entries;
     },
     rollingAverage() {
       return new PercentageRollingAverage();
@@ -116,8 +124,8 @@ export default {
       if (!isEmpty) {
         this.lastNotEmptyAt = Date.now();
       }
-      const totalEffect = this.combineEffects(this.entries);
-      let percentList = this.entries.map(entry => totalEffect.div(this.combineEffects(this.entries.filter(e => e !== entry))).log10());
+      const totalEffect = this.combineEffects(this.allEntries);
+      let percentList = this.entries.map(entry => totalEffect.div(this.combineEffects(this.allEntries.filter(e => e !== entry))).log10());
       const unit = Math.max(percentList.filter(x => x >= 0).sum(), -percentList.filter(x => x < 0).sum());
       percentList = percentList ? percentList.map(x => x / unit) : [];
       this.percentList = percentList;
@@ -352,6 +360,7 @@ export default {
           <MultiplierBreakdownEntry
             v-if="showGroup[index] && hasChildEntries(index)"
             :resource="entry"
+            :higherEntries="allEntries"
           />
         </div>
       </div>
