@@ -47,9 +47,6 @@ export default {
       // multipliers are split up; the animation which results from not doing this looks very awkward
       lastLayoutChange: Date.now(),
       now: Date.now(),
-      totalMultiplier: DC.D1,
-      totalPositivePower: 1,
-      replacePowers: player.options.multiplierTab.replacePowers,
       inNC12: false,
     };
   },
@@ -81,26 +78,6 @@ export default {
         ? `You cannot gain this resource (prestige requirement not reached)`
         : `You have no multipliers for this resource (will gain ${format(1)} on prestige)`;
     },
-    // IC4 is the first time the player sees a power-based effect, not counting how infinity power is handled.
-    // This doesn't need to be reactive because completing IC4 for the first time forces a tab switch
-    hasSeenPowers() {
-      return InfinityChallenge(4).isCompleted || PlayerProgress.eternityUnlocked();
-    },
-    // While infinity power is a power-based effect, we want to disallow showing that as an equivalent multiplier
-    // since that it doesn't make a whole lot of sense to do that. We also want to hide this for entries related
-    // to tickspeed/galaxies because we already mostly hack those with fake values and should thus not allow those
-    // to be changed either.
-    allowPowerToggle() {
-      const forbiddenEntries = ["AD_infinityPower", "galaxies", "tickspeed"];
-      // Uses startsWith instead of String equality since it has to match both the top-level entry and any
-      // related children entries further down the tree.
-      return !forbiddenEntries.some(key => this.resource.key.startsWith(key));
-    },
-  },
-  watch: {
-    replacePowers(newValue) {
-      player.options.multiplierTab.replacePowers = newValue;
-    },
   },
   created() {
     if (this.groups.length > 1 && player.options.multiplierTab.showAltGroup) {
@@ -122,7 +99,6 @@ export default {
       this.isDilated = this.dilationExponent !== 1;
       this.calculatePercents();
       this.now = Date.now();
-      this.replacePowers = player.options.multiplierTab.replacePowers && this.allowPowerToggle;
       this.inNC12 = NormalChallenge(12).isRunning;
     },
     changeGroup() {
@@ -135,53 +111,18 @@ export default {
       this.update();
     },
     calculatePercents() {
-      const powList = this.entries.map(e => e.data.pow);
-      const totalPosPow = powList.filter(p => p > 1).reduce((x, y) => x * y, 1);
-      const totalNegPow = powList.filter(p => p < 1).reduce((x, y) => x * y, 1);
-      const log10Mult = (this.resource.fakeValue ?? this.resource.mult).log10() / totalPosPow;
+      const log10Mult = (this.resource.fakeValue ?? this.resource.mult).log10();
       const isEmpty = log10Mult === 0;
       if (!isEmpty) {
         this.lastNotEmptyAt = Date.now();
       }
-      let percentList = [];
-      for (const entry of this.entries) {
-        const multFrac = log10Mult === 0
-          ? 0
-          : Decimal.log10(entry.data.mult) / log10Mult;
-        const powFrac = totalPosPow === 1 ? 0 : Math.log(entry.data.pow) / Math.log(totalPosPow);
-
-        // Handle nerf powers differently from everything else in order to render them with the correct bar percentage
-        const perc = entry.data.pow >= 1
-          ? multFrac / totalPosPow + powFrac * (1 - 1 / totalPosPow)
-          : Math.log(entry.data.pow) / Math.log(totalNegPow) * (totalNegPow - 1);
-
-        // This is clamped to a minimum of something that's still nonzero in order to show it at <0.1% instead of 0%
-        percentList.push(
-          [entry.ignoresNerfPowers, nerfBlacklist.includes(entry.key) ? Math.clampMin(perc, 0.0001) : perc]
-        );
-      }
-
-      // Shortly after a prestige, these may add up to a lot more than the base amount as production catches up. This
-      // is also necessary to suppress some visual weirdness for certain categories which have lots of exponents but
-      // actually apply only to specific dimensions (eg. charged infinity upgrades)
-      // We have a nerfedPerc variable to give a percentage breakdown as if all multipliers which ARE affected by nerf
-      // power effects already had them applied; there is support in the classes to allow for some to be affected but
-      // not others. The only actual case of this occurring is V's Reality not affecting gamespeed for DT, but it was
-      // cleaner to adjust the class structure instead of specifically special-casing it here
-      const totalPerc = percentList.filter(p => p[1] > 0).map(p => p[1]).sum();
-      const nerfedPerc = percentList.filter(p => p[1] > 0)
-        .reduce((x, y) => x + (y[0] ? y[1] : y[1] * totalNegPow), 0);
-      percentList = percentList.map(p => {
-        if (p[1] > 0) {
-          return (p[0] ? p[1] : p[1] * totalNegPow) / nerfedPerc;
-        }
-        return Math.clampMin(p[1] * (totalPerc - nerfedPerc) / totalPerc / totalNegPow, -1);
-      });
+      const totalEffect = this.combineEffects(this.entries);
+      let percentList = this.entries.map(entry => totalEffect.div(this.combineEffects(this.entries.filter(e => e !== entry))).log10());
+      const unit = Math.max(percentList.filter(x => x >= 0).sum(), -percentList.filter(x => x < 0).sum());
+      percentList = percentList ? percentList.map(x => x / unit) : [];
       this.percentList = percentList;
       this.rollingAverage.add(isEmpty ? undefined : percentList);
       this.averagedPercentList = this.rollingAverage.average;
-      this.totalMultiplier = Decimal.pow10(log10Mult);
-      this.totalPositivePower = totalPosPow;
     },
     styleObject(index) {
       const netPerc = this.averagedPercentList.sum();
@@ -261,17 +202,8 @@ export default {
             ? format(x, 2, 2)
             : formatX(x, 2, 2);
         };
-        if (this.replacePowers && entry.data.pow !== 1) {
-          // For replacing powers with equivalent multipliers, we calculate what the total additional multiplier
-          // from ALL power effects taken together would be, and then we split up that additional multiplier
-          // proportionally to this individual power's contribution to all positive powers
-          const powFrac = Math.log(entry.data.pow) / Math.log(this.totalPositivePower);
-          const equivMult = this.totalMultiplier.pow((this.totalPositivePower - 1) * powFrac);
-          values.push(formatFn(entry.data.mult.times(equivMult)));
-        } else {
-          if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult));
-          if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
-        }
+        if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult));
+        if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
         valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
       }
 
@@ -291,15 +223,9 @@ export default {
       if (overrideStr) valueStr = `(${overrideStr})`;
       else {
         const values = [];
-        if (this.replacePowers && entry.data.pow !== 1) {
-          const finalMult = this.resource.fakeValue ?? this.resource.mult;
-          values.push(formatFn(finalMult.pow(1 - 1 / entry.data.pow)));
-        } else {
-          if (Decimal.neq(entry.data.mult, 1)) {
-            values.push(formatFn(entry.data.mult));
-          }
-          if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
-        }
+        if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult));
+        if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
+        valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
         valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
       }
 
@@ -350,6 +276,11 @@ export default {
     },
     isRecent(date) {
       return (this.now - date) < 200;
+    },
+    combineEffects(entryList) {
+      return entryList.filter(entry => entry.ignoresPowerNerfs).reduce((x, y) => x.times(y.data.mult),
+        entryList.reduce((x, y) => x.pow(y.data.pow),
+        entryList.filter(entry => !entry.ignoresPowerNerfs).reduce((x, y) => x.times(y.data.mult), DC.D1)));
     }
   },
 };
@@ -383,14 +314,6 @@ export default {
           {{ totalString() }}
         </b>
         <span class="c-display-settings">
-          <PrimaryToggleButton
-            v-if="hasSeenPowers && allowPowerToggle"
-            v-model="replacePowers"
-            v-tooltip="'Change Display for Power effects'"
-            off="^N"
-            on="×N"
-            class="o-primary-btn c-change-display-btn"
-          />
           <i
             v-if="groups.length > 1"
             v-tooltip="'Change Multiplier Grouping'"

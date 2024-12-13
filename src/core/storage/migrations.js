@@ -438,6 +438,9 @@ export const migrations = {
       if (player.records.bestInfinity.realTime === 999999999999) player.records.bestInfinity.realTime = Number.MAX_VALUE;
       if (player.records.bestEternity.time === 999999999999) player.records.bestEternity.time = Number.MAX_VALUE;
       if (player.records.bestEternity.realTime === 999999999999) player.records.bestEternity.realTime = Number.MAX_VALUE;
+    },
+    110: player => {
+      delete player.options.multiplierTab.replacePowers;
     }
   },
 

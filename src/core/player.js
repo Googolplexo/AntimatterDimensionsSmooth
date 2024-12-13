@@ -359,7 +359,7 @@ window.player = {
     previousRuns: {}
   },
   IPMultPurchases: 0,
-  version: 109,
+  version: 110,
   infinityPower: DC.D0,
   postC4Tier: 0,
   eternityPoints: DC.D0,
@@ -802,7 +802,6 @@ window.player = {
     multiplierTab: {
       currTab: 0,
       showAltGroup: false,
-      replacePowers: false,
     },
     autosaveInterval: 30000,
     showTimeSinceSave: true,
