@@ -133,11 +133,11 @@ export default {
       this.averagedPercentList = this.rollingAverage.average;
     },
     styleObject(index) {
-      const netPerc = this.averagedPercentList.sum();
+      const netPerc = this.averagedPercentList.map(perc => Math.abs(perc)).sum();
       const isNerf = this.averagedPercentList[index] < 0;
       const iconObj = this.entries[index].icon;
       const percents = this.averagedPercentList[index];
-      const barSize = perc => (perc > 0 ? perc * netPerc : -perc);
+      const barSize = perc => (Math.abs(perc) / netPerc);
       return {
         position: "absolute",
         top: `${100 * this.averagedPercentList.slice(0, index).map(p => barSize(p)).sum()}%`,
