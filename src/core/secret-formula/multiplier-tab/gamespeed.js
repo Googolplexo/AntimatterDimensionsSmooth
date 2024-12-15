@@ -5,9 +5,10 @@ import { MultiplierTabIcons } from "./icons";
 export const gamespeed = {
   total: {
     name: "Game speed",
-    displayOverride: () => {
       if (Enslaved.isStoringRealTime) return `Set to ${format(0)} (storing real time)`;
       if (EternityChallenge(12).isRunning) return `${formatX(1)}/${formatInt(1000)} (fixed)`;
+    displayOverride: dimType => {
+      if (dimType) return `${formatX(getGameSpeedupForDisplay(), 2, 2)}`;
       const curr = getGameSpeedupFactor();
 
       const bh = MultiplierTabHelper.blackHoleSpeeds();
@@ -23,8 +24,10 @@ export const gamespeed = {
     multValue: () => getGameSpeedupForDisplay(),
     isActive: () => PlayerProgress.seenAlteredSpeed(),
     dilationEffect: () => (Effarig.isRunning ? Effarig.multDilation : 1),
-    isDilated: true,
+    dimCount: dimType => (dimType ? MultiplierTabHelper.activeDimCount(dimType) : 1),
     overlay: ["Δ", `<i class="fas fa-clock" />`, `<i class="fas fa-circle" />`],
+    ignoresNerfPowers: true,
+    icon: MultiplierTabIcons.GAMESPEED
   },
   glyph: {
     name: "Equipped Glyphs",

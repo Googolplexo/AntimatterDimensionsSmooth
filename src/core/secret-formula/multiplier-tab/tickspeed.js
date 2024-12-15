@@ -21,29 +21,37 @@ export const tickspeed = {
     // No point in showing this breakdown at all unless both components are nonzero; however they will always be nonzero
     // due to the way the calculation works, so we have to manually hide it here
     isActive: () => Tickspeed.perSecond.gt(1),
-    dilationEffect: () => (Effarig.isRunning ? Effarig.tickDilation : 1),
+    dilationEffect: () => {
+      const baseEff = (player.dilation.active || Enslaved.isRunning)
+        ? 0.75 * Effects.product(DilationUpgrade.dilationPenalty)
+        : 1;
+      return baseEff * (Effarig.isRunning ? Effarig.tickDilation : 1);
+    },
     overlay: ["<i class='fa-solid fa-clock' />"],
     icon: MultiplierTabIcons.TICKSPEED,
   },
   base: {
     name: "Base Tickspeed from Achievements",
-    displayOverride: () => {
-      const val = DC.D1.dividedByEffectsOf(
+    multValue: () => {
+      return DC.D1.dividedByEffectsOf(
         Achievement(36),
         Achievement(45),
         Achievement(66),
         Achievement(83)
       );
-      return `${format(val, 2, 2)}/sec`;
     },
-    multValue: () => new Decimal.pow10(100 * MultiplierTabHelper.decomposeTickspeed().base),
+    ignoresNerfPowers: true,
     isActive: () => [36, 45, 66, 83].some(a => Achievement(a).canBeApplied),
     icon: MultiplierTabIcons.ACHIEVEMENT,
   },
   upgrades: {
     name: "Tickspeed Upgrades",
     displayOverride: () => `${formatInt(Tickspeed.totalUpgrades)} Total`,
-    multValue: () => new Decimal.pow10(100 * MultiplierTabHelper.decomposeTickspeed().tickspeed),
+    multValue: () => {
+      let baseMultiplier = 2;
+      if (NormalChallenge(5).isRunning) baseMultiplier = 1.5;
+      return baseMultiplier.toDecimal().pow(Tickspeed.totalUpgrades);
+    },
     isActive: true,
     icon: MultiplierTabIcons.PURCHASE("AD"),
   },
@@ -56,7 +64,12 @@ export const tickspeed = {
       const extra = Effects.sum(InfinityUpgrade.galaxyBoost);
       return `${formatInt(ag + rg + tg + extra)} Total`;
     },
-    multValue: () => new Decimal.pow10(100 * MultiplierTabHelper.decomposeTickspeed().galaxies),
+    powValue: () => {
+      let baseMultiplier = 1 / 2;
+      if (NormalChallenge(5).isRunning) baseMultiplier = 1 / 1.5;
+      return Tickspeed.multiplier.log10() / Math.log10(baseMultiplier);
+    },
+    fakeValue: DC.E1,
     isActive: true,
     icon: MultiplierTabIcons.GALAXY,
   },

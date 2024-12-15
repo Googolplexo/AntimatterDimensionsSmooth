@@ -7,12 +7,7 @@ import { MultiplierTabIcons } from "./icons";
 export const TP = {
   total: {
     name: "Total Tachyon Particles",
-    displayOverride: () => {
-      const baseTPStr = format(new Decimal(Currency.tachyonParticles.value), 2, 2);
-      return PelleRifts.paradox.milestones[1].canBeApplied
-        ? `${baseTPStr}${formatPow(PelleRifts.paradox.milestones[1].effectValue, 1, 1)}`
-        : baseTPStr;
-    },
+    displayOverride: () => format(new Decimal(Currency.tachyonParticles.value), 2, 2),
     // This is treated as a multiplier and not a prestige currency, with an overridden display;
     // therefore we need to return 1 "by default"
     multValue: () => {

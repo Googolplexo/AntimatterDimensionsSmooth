@@ -31,7 +31,6 @@ export const ID = {
         : 1;
       return baseEff * (Effarig.isRunning ? Effarig.multDilation : 1);
     },
-    isDilated: true,
     overlay: ["∞", "<i class='fa-solid fa-cube' />"],
     icon: dim => MultiplierTabIcons.DIMENSION("ID", dim),
   },
@@ -59,59 +58,6 @@ export const ID = {
     isActive: () => InfinityDimension(1).isProducing,
     icon: MultiplierTabIcons.DIMENSION("ID"),
   },
-
-  basePurchase: {
-    name: "Base purchases",
-    multValue: dim => {
-      const getMult = id => {
-        const purchases = id === 8
-          ? Math.floor(InfinityDimension(id).baseAmount / 10)
-          : Math.min(InfinityDimensions.HARDCAP_PURCHASES, Math.floor(InfinityDimension(id).baseAmount / 10));
-        const baseMult = InfinityDimension(id)._powerMultiplier;
-        return Decimal.pow(baseMult, purchases);
-      };
-      if (dim) return getMult(dim);
-      return InfinityDimensions.all
-        .filter(id => id.isProducing)
-        .map(id => getMult(id.tier))
-        .reduce((x, y) => x.times(y), DC.D1);
-    },
-    isActive: true,
-    icon: MultiplierTabIcons.PURCHASE("baseID"),
-  },
-  tesseractPurchase: {
-    name: "Tesseracts",
-    multValue: dim => {
-      const getMult = id => {
-        if (id === 8) return DC.D1;
-        const purchases = Math.floor(InfinityDimension(id).baseAmount / 10);
-        return Decimal.pow(InfinityDimension(id)._powerMultiplier,
-          Math.clampMin(purchases - InfinityDimensions.HARDCAP_PURCHASES, 0));
-      };
-      if (dim) return getMult(dim);
-      return InfinityDimensions.all
-        .filter(id => id.isProducing)
-        .map(id => getMult(id.tier))
-        .reduce((x, y) => x.times(y), DC.D1);
-    },
-    isActive: () => Tesseracts.bought > 0,
-    icon: MultiplierTabIcons.PURCHASE("tesseractID"),
-  },
-  infinityGlyphSacrifice: {
-    name: "Infinity Glyph sacrifice",
-    multValue: () => (InfinityDimension(8).isProducing
-      ? Decimal.pow(GlyphSacrifice.infinity.effectValue, Math.floor(InfinityDimension(8).baseAmount / 10))
-      : DC.D1),
-    isActive: () => GlyphSacrifice.infinity.effectValue > 1,
-    icon: MultiplierTabIcons.SACRIFICE("infinity"),
-  },
-  powPurchase: {
-    name: "Imaginary Upgrade - Recollection of Intrusion",
-    powValue: () => ImaginaryUpgrade(14).effectOrDefault(1),
-    isActive: () => ImaginaryUpgrade(14).canBeApplied,
-    icon: MultiplierTabIcons.UPGRADE("imaginary"),
-  },
-
   replicanti: {
     name: "Replicanti Multiplier",
     multValue: dim => Decimal.pow(replicantiMult(), dim ? 1 : MultiplierTabHelper.activeDimCount("ID")),

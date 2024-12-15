@@ -52,7 +52,7 @@ export default {
       // multipliers are split up; the animation which results from not doing this looks very awkward
       lastLayoutChange: Date.now(),
       now: Date.now(),
-      inNC12: false,
+      seenNC12: false,
     };
   },
   computed: {
@@ -97,7 +97,7 @@ export default {
       for (let i = 0; i < this.entries.length; i++) {
         const entry = this.entries[i];
         entry.update();
-        const hasChildEntries = getResourceEntryInfoGroups(entry.key)
+        const hasChildEntries = getResourceEntryInfoGroups(this.neutralize(entry).key)
           .some(group => group.hasVisibleEntries);
         if (hasChildEntries) {
           this.hadChildEntriesAt[i] = Date.now();
@@ -107,7 +107,7 @@ export default {
       this.isDilated = this.dilationExponent !== 1;
       this.calculatePercents();
       this.now = Date.now();
-      this.inNC12 = NormalChallenge(12).isRunning;
+      this.seenNC12 = player.infinities.gte(16) || PlayerProgress.eternityUnlocked();
     },
     changeGroup() {
       this.selected = (this.selected + 1) % this.groups.length;
@@ -210,7 +210,7 @@ export default {
             ? format(x, 2, 2)
             : formatX(x, 2, 2);
         };
-        if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult));
+        if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult.pow(entry.dimCount)));
         if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
         valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
       }
@@ -231,9 +231,8 @@ export default {
       if (overrideStr) valueStr = `(${overrideStr})`;
       else {
         const values = [];
-        if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult));
+        if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult.pow(entry.dimCount)));
         if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
-        valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
         valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
       }
 
@@ -245,7 +244,7 @@ export default {
       const overrideStr = resource.displayOverride;
       if (overrideStr) return `${name}: ${overrideStr}`;
 
-      const val = resource.mult;
+      const val = resource.mult.pow(resource.dimCount);
       return resource.isBase
         ? `${name}: ${format(val, 2, 2)}`
         : `${name}: ${formatX(val, 2, 2)}`;
@@ -255,26 +254,12 @@ export default {
     },
     dilationString() {
       const resource = this.resource;
-      const baseMult = resource.mult;
+      const gamespeed = this.entries.find(entry => entry.name === "Game speed");
+      const value = gamespeed ? gamespeed.data.mult : 1;
+      const baseMult = resource.mult.div(value);
 
-      // This is tricky to handle properly; if we're not careful, sometimes the dilation gets applied twice since
-      // it's already applied in the multiplier itself. In that case we need to apply an appropriate "anti-dilation"
-      // to make the UI look correct. However, this cause some mismatches in individual dimension breakdowns due to
-      // the dilation function not being linear (ie. multiply=>dilate gives a different result than dilate=>multiply).
-      // In that case we check for isDilated one level down and combine the actual multipliers together instead.
-      let beforeMult, afterMult;
-      if (this.isDilated && resource.isDilated) {
-        const dilProd = this.entries
-          .filter(entry => entry.isVisible && entry.isDilated)
-          .map(entry => entry.mult)
-          .map(val => this.applyDilationExp(val, 1 / this.dilationExponent))
-          .reduce((x, y) => x.times(y), DC.D1);
-        beforeMult = dilProd.neq(1) ? dilProd : this.applyDilationExp(baseMult, 1 / this.dilationExponent);
-        afterMult = resource.mult;
-      } else {
-        beforeMult = baseMult;
-        afterMult = this.applyDilationExp(beforeMult, this.dilationExponent);
-      }
+      let beforeMult = this.applyDilationExp(baseMult, 1 / this.dilationExponent).times(value).pow(resource.dimCount);
+      let afterMult = baseMult.times(value).pow(resource.dimCount);
 
       const formatFn = resource.isBase
         ? x => format(x, 2, 2)
@@ -286,9 +271,13 @@ export default {
       return (this.now - date) < 200;
     },
     combineEffects(entryList) {
-      return entryList.filter(entry => entry.ignoresPowerNerfs).reduce((x, y) => x.times(y.data.mult),
+      return entryList.filter(entry => entry.ignoresNerfPowers).reduce((x, y) => x.times(y.data.mult.pow(y.dimCount)),
         entryList.reduce((x, y) => x.pow(y.data.pow),
-        entryList.filter(entry => !entry.ignoresPowerNerfs).reduce((x, y) => x.times(y.data.mult), DC.D1)));
+        entryList.filter(entry => !entry.ignoresNerfPowers).reduce((x, y) => x.times(y.data.mult.pow(y.dimCount)), DC.D1)));
+    },
+    neutralize(entry) {
+      const k = entry.key;
+      return new BreakdownEntryInfo(k.includes("speed_total") ? k.slice(0, 15) : k);
     }
   },
 };
@@ -359,7 +348,7 @@ export default {
           </div>
           <MultiplierBreakdownEntry
             v-if="showGroup[index] && hasChildEntries(index)"
-            :resource="entry"
+            :resource="neutralize(entry)"
             :higherEntries="allEntries"
           />
         </div>

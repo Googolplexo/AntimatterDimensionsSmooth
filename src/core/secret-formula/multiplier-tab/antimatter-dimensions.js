@@ -55,7 +55,6 @@ export const AD = {
         : 1;
       return baseEff * (Effarig.isRunning ? Effarig.multDilation : 1);
     },
-    isDilated: true,
     overlay: ["Ω", "<i class='fas fa-cube' />"],
     icon: dim => MultiplierTabIcons.DIMENSION("AD", dim),
   },

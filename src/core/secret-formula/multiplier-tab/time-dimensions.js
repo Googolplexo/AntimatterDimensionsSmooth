@@ -62,38 +62,6 @@ export const TD = {
     isActive: () => TimeDimension(1).isProducing,
     icon: MultiplierTabIcons.DIMENSION("TD"),
   },
-
-  basePurchase: {
-    name: "Base purchases",
-    multValue: dim => {
-      const getMult = td => Decimal.pow(4,
-        td === 8 ? Math.clampMax(TimeDimension(td).bought, 1e8) : TimeDimension(td).bought);
-      if (dim) return getMult(dim);
-      return TimeDimensions.all
-        .filter(td => td.isProducing)
-        .map(td => getMult(td.tier))
-        .reduce((x, y) => x.times(y), DC.D1);
-    },
-    isActive: dim => (dim
-      ? ImaginaryUpgrade(14).canBeApplied || (dim === 8 && GlyphSacrifice.time.effectValue > 1)
-      : TimeDimension(1).isProducing),
-    icon: dim => MultiplierTabIcons.PURCHASE("TD", dim),
-  },
-  timeGlyphSacrifice: {
-    name: "Time Glyph Sacrifice",
-    multValue: () => (TimeDimension(8).isProducing
-      ? Decimal.pow(GlyphSacrifice.time.effectValue, Math.clampMax(TimeDimension(8).bought, 1e8))
-      : DC.D1),
-    isActive: () => GlyphSacrifice.time.effectValue > 1,
-    icon: MultiplierTabIcons.SACRIFICE("time"),
-  },
-  powPurchase: {
-    name: "Imaginary Upgrade - Recollection of Intrusion",
-    powValue: () => ImaginaryUpgrade(14).effectOrDefault(1),
-    isActive: () => ImaginaryUpgrade(14).canBeApplied,
-    icon: MultiplierTabIcons.UPGRADE("imaginary"),
-  },
-
   achievementMult: {
     name: "Eternity Upgrade - Achievement Multiplier",
     multValue: dim => Decimal.pow(EternityUpgrade.tdMultAchs.effectOrDefault(1),
