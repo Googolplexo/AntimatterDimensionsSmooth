@@ -371,7 +371,7 @@ export default {
           producing for a while, but the relative mismatch will become smaller as you progress further in the game
           and numbers become larger.
         </div>
-        <div v-if="inNC12">
+        <div v-if="seenNC12">
           The breakdown in this tab within Normal Challenge 12 may be inaccurate for some entries, and might count
           extra multipliers which apply to all Antimatter Dimensions rather than just the ones which are displayed.
         </div>
