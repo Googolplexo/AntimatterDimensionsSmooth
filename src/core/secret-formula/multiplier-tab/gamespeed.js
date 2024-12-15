@@ -5,10 +5,10 @@ import { MultiplierTabIcons } from "./icons";
 export const gamespeed = {
   total: {
     name: "Game speed",
-      if (Enslaved.isStoringRealTime) return `Set to ${format(0)} (storing real time)`;
-      if (EternityChallenge(12).isRunning) return `${formatX(1)}/${formatInt(1000)} (fixed)`;
     displayOverride: dimType => {
       if (dimType) return `${formatX(getGameSpeedupForDisplay(), 2, 2)}`;
+      if (Enslaved.isStoringRealTime) return `Set to ${format(0)} (storing real time)`;
+      if (EternityChallenge(12).isRunning) return `${formatX(1)}/${formatInt(1000)} (fixed)`;
       const curr = getGameSpeedupFactor();
 
       const bh = MultiplierTabHelper.blackHoleSpeeds();
