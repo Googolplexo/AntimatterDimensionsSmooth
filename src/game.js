@@ -467,6 +467,8 @@ export function gameLoop(passDiff, options = {}) {
     diff = Enslaved.nextTickDiff;
   }
 
+  applyRUPG10(false);
+
   Autobuyers.tick();
   Tutorial.tutorialLoop();
 

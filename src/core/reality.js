@@ -768,15 +768,17 @@ function restoreCelestialRuns(celestialRunState) {
 
 // This is also called when the upgrade is purchased, be aware of potentially having "default" values overwrite values
 // which might otherwise be higher. Most explicit values here are the values of upgrades at their caps.
-export function applyRUPG10() {
-  NormalChallenges.completeAll();
-  if (PelleUpgrade.replicantiStayUnlocked.canBeApplied) {
+export function applyRUPG10(real = true) {
+  if (real && !Pelle.isDoomed) Currency.eternities.bumpTo(100);
+  playerInfinityUpgradesOnReset();
+  if (player.eternities.gte(2)) NormalChallenges.completeAll();
+  if (PelleUpgrade.replicantiStayUnlocked.canBeApplied || (!Pelle.isDoomed && player.eternities.gte(10))) {
     Replicanti.amount = Replicanti.amount.clampMin(1);
     Replicanti.unlock(true);
   }
   if (Pelle.isDisabled("rupg10")) return;
 
-  player.auto.antimatterDims.all = player.auto.antimatterDims.all.map(current => ({
+  if (player.eternities.gte(2)) player.auto.antimatterDims.all = player.auto.antimatterDims.all.map(current => ({
     isUnlocked: true,
     // These costs are approximately right; if bought manually all dimensions are slightly different from one another
     cost: 1e14,
@@ -788,16 +790,13 @@ export function applyRUPG10() {
     lastTick: player.records.realTimePlayed
   }));
 
-  for (const autobuyer of Autobuyers.all) {
+  if (player.eternities.gte(2)) for (const autobuyer of Autobuyers.all) {
     if (autobuyer.data.interval !== undefined) autobuyer.data.interval = 100;
   }
 
-  player.dimensionBoosts = Math.max(4, player.dimensionBoosts);
-  player.galaxies = Math.max(1, player.galaxies);
-  player.break = true;
-  Currency.eternities.bumpTo(100);
-  Replicanti.amount = Replicanti.amount.clampMin(1);
-  Replicanti.unlock(true);
+  if (player.eternities.gte(4)) player.dimensionBoosts = Math.max(4, player.dimensionBoosts);
+  if (player.eternities.gte(4)) player.galaxies = Math.max(1, player.galaxies);
+  if (player.eternities.gte(2)) player.break = true;
 
   applyEU1();
 }
