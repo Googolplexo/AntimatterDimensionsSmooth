@@ -384,23 +384,6 @@ export const GameStorage = {
     GameUI.notify.info("Successfully downloaded save file backups to your computer");
   },
 
-  importBackupsFromFile(importText) {
-    const backupData = GameSaveSerializer.deserialize(importText);
-    localStorage.setItem(this.backupTimeKey(this.currentSlot), GameSaveSerializer.serialize(backupData.time));
-    for (const backupKey of Object.keys(backupData)) {
-      if (backupKey === "time") continue;
-      const id = Number(backupKey);
-      const storageKey = this.backupDataKey(this.currentSlot, id);
-      localStorage.setItem(storageKey, GameSaveSerializer.serialize(backupData[backupKey]));
-      this.backupTimeData[id] = {
-        backupTimer: backupData.time[id].backupTimer,
-        date: backupData.time[id].date,
-      };
-    }
-    this.resetBackupTimer();
-    GameUI.notify.info("Successfully imported save file backups from file");
-  },
-
   // There are a couple props which may need to export with different values, so we handle that here
   exportModifiedSave() {
     // Speedrun segmented is exported as true
