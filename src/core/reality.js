@@ -787,7 +787,7 @@ export function applyRUPG10(real = true) {
     mode: current.mode,
     priority: current.priority,
     isActive: current.isActive,
-    lastTick: player.records.realTimePlayed
+    lastTick: current.lastTick ?? player.records.realTimePlayed
   }));
 
   if (player.eternities.gte(2)) for (const autobuyer of Autobuyers.all) {
