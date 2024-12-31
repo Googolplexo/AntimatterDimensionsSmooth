@@ -16,7 +16,7 @@ if (GlobalErrorHandler.handled) {
 }
 GlobalErrorHandler.cleanStart = true;
 
-export function playerInfinityUpgradesOnReset() {
+export function playerInfinityUpgradesOnReset(reset = true) {
 
   const infinityUpgrades = new Set(
     ["timeMult", "dimMult", "timeMult2",
@@ -28,44 +28,31 @@ export function playerInfinityUpgradesOnReset() {
   );
 
   const breakInfinityUpgrades = new Set(
-    ["timeMult", "dimMult", "timeMult2",
-      "skipReset1", "skipReset2", "unspentBonus",
-      "27Mult", "18Mult", "36Mult", "resetMult",
-      "skipReset3", "passiveGen", "45Mult",
-      "resetBoost", "galaxyBoost", "skipResetGalaxy",
-      "totalMult", "currentMult", "postGalaxy",
+    ["totalMult", "currentMult", "postGalaxy",
       "challengeMult", "achievementMult", "infinitiedMult",
-      "infinitiedGeneration", "autoBuyerUpgrade", "autobuyMaxDimboosts",
-      "ipOffline"]
+      "infinitiedGeneration", "autoBuyerUpgrade", "autobuyMaxDimboosts"]
   );
 
-  if (PelleUpgrade.keepBreakInfinityUpgrades.canBeApplied) {
-    player.infinityUpgrades = new Set([...player.infinityUpgrades].filter(u => breakInfinityUpgrades.has(u)));
-    return;
+  let keptUpgrades = new Set();
+  let keptRebuyables = [0, 0, 0];
+
+  if (PelleUpgrade.keepBreakInfinityUpgrades.canBeApplied || EternityMilestone.keepBreakUpgrades.isReached) {
+    keptUpgrades = breakInfinityUpgrades;
+    keptRebuyables = [5, 9, 10];
   }
 
-  if (PelleUpgrade.keepInfinityUpgrades.canBeApplied) {
-    player.infinityUpgrades = new Set([...player.infinityUpgrades].filter(u => infinityUpgrades.has(u)));
-    player.infinityRebuyables = [0, 0, 0];
-    GameCache.tickSpeedMultDecrease.invalidate();
-    GameCache.dimensionMultDecrease.invalidate();
-    return;
+  if (PelleUpgrade.keepInfinityUpgrades.canBeApplied || EternityMilestone.keepInfinityUpgrades.isReached) {
+    keptUpgrades = keptUpgrades.union(infinityUpgrades);
   }
 
-  if (RealityUpgrade(10).isBought || EternityMilestone.keepBreakUpgrades.isReached) {
-    player.infinityUpgrades = breakInfinityUpgrades;
-    player.infinityRebuyables = [8, 7, 10];
-  } else if (EternityMilestone.keepInfinityUpgrades.isReached) {
-    player.infinityUpgrades = infinityUpgrades;
-    player.infinityRebuyables = [0, 0, 0];
+  if (reset) {
+    player.infinityUpgrades = keptUpgrades;
+    player.infinityRebuyables = keptRebuyables;
   } else {
-    player.infinityUpgrades.clear();
-    player.infinityRebuyables = [0, 0, 0];
-  }
-
-  if (Pelle.isDoomed) {
-    player.infinityUpgrades.clear();
-    player.infinityRebuyables = [0, 0, 0];
+    player.infinityUpgrades = keptUpgrades.union(player.infinityUpgrades);
+    for (let i = 0; i < 3; i++) {
+      player.infinityRebuyables[i] = Math.max(player.infinityRebuyables[i], keptRebuyables[i]);
+    }
   }
 
   GameCache.tickSpeedMultDecrease.invalidate();
