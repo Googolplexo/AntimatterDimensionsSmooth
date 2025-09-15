@@ -1,6 +1,6 @@
 export const dilationTimeStudies = [
   {
-    id: 1,
+    id: 0,
     description: "Unlock Time Dilation",
     cost: 5000,
     requirement: () => {
@@ -15,6 +15,17 @@ export const dilationTimeStudies = [
       if (Perk.bypassECDilation.canBeApplied) return tsRequirement;
       const ecRequirement = EternityChallenge(11).isFullyCompleted && EternityChallenge(12).isFullyCompleted;
       return tsRequirement && ecRequirement && ttRequirement;
+    }
+  },
+  {
+    id: 1,
+    description: "Unlock the 4th Time Dimension",
+    cost: 45,
+    requirement: () => {
+      const ttRequirement = Currency.timeTheorems.max.gte(TimeStudy.timeDimension(4).totalTimeTheoremRequirement);
+      const epRequirement = Currency.eternityPoints.value.gte(TimeDimension(4)._baseCost);
+      const tsRequirement = [141, 142, 143].some(id => TimeStudy(id).isBought);
+      return tsRequirement && epRequirement && ttRequirement;
     }
   },
   {

@@ -102,7 +102,7 @@ export const pelleUpgrades = {
   },
   dimBoostResetsNothing: {
     id: 7,
-    description: "Dimension Boosts no longer reset anything",
+    description: "Reinstate the reward for Infinity Challenge 4",
     cost: 1e11,
     formatCost,
   },
@@ -124,11 +124,11 @@ export const pelleUpgrades = {
     cost: 1e15,
     formatCost,
   },
-  galaxyNoResetDimboost: {
+  galaxyNoReset: {
     id: 11,
-    description: "Galaxies no longer reset Dimension Boosts",
+    description: "Antimatter Galaxies no longer reset anything",
     cost: 1e16,
-    formatCost
+    formatCost,
   },
   replicantiAutobuyers: {
     id: 12,
@@ -188,12 +188,6 @@ export const pelleUpgrades = {
     id: 21,
     description: "Tachyon Particles no longer reset on Armageddon",
     cost: 1e50,
-    formatCost,
-  },
-  replicantiGalaxyEM40: {
-    id: 22,
-    description: "Replicanti Galaxies no longer reset anything they normally reset",
-    cost: 1e30,
     formatCost,
   }
 };

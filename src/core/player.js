@@ -24,7 +24,7 @@ window.player = {
       baseAmount: 0
     })),
     time: Array.range(0, 8).map(tier => ({
-      cost: [DC.D1, DC.D5, DC.E2, DC.E3, DC.E2350, DC.E2650, DC.E3000, DC.E3350][tier],
+      cost: [DC.D1, DC.D5, DC.E2, DC.D5E16, DC.E2350, DC.E2650, DC.E3000, DC.E3350][tier],
       amount: DC.D0,
       bought: 0
     }))
@@ -276,6 +276,8 @@ window.player = {
     fullGameCompletions: 0,
     previousRunRealTime: 0,
     totalAntimatter: DC.E1,
+    firstEternityIP: DC.D0,
+    secondsSinceLastRG: 0,
     recentInfinities: Array.range(0, 10).map(() =>
       [Number.MAX_VALUE, Number.MAX_VALUE, DC.D1, DC.D1, ""]),
     recentEternities: Array.range(0, 10).map(() =>
@@ -359,7 +361,7 @@ window.player = {
     previousRuns: {}
   },
   IPMultPurchases: 0,
-  version: 110,
+  version: 111,
   infinityPower: DC.D0,
   postC4Tier: 0,
   eternityPoints: DC.D0,

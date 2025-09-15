@@ -7,11 +7,11 @@ function chargedDimInfinityMult() {
   return 1 + Math.log10(Math.max(1, Currency.infinitiesTotal.value.pLog10())) * Math.sqrt(Ra.pets.teresa.level) / 150;
 }
 function dimBoughtMult() {
-  let mult = 1
+  let mult = 1;
   for (let tier = 1; tier < 9; tier++) {
     mult *= (AntimatterDimension(tier).bought + 1);
   }
-  return Math.pow(mult, 0.07) / 10 + 1
+  return Math.pow(mult, 0.07) / 10 + 1;
 }
 
 export const infinityUpgrades = {
@@ -97,7 +97,7 @@ export const infinityUpgrades = {
   buy10Mult: {
     id: "dimMult",
     cost: 1,
-    description: () => `Antimatter Dimensions gain a multiplier based on the product of purchased Dimension amounts`,
+    description: "Antimatter Dimensions gain a multiplier based on the product of purchased Dimension amounts",
     effect: () => dimBoughtMult().toDecimal(),
     formatEffect: value => formatX(value, 2, 2),
     charged: {
@@ -111,7 +111,9 @@ export const infinityUpgrades = {
     id: "galaxyBoost",
     cost: 30,
     checkRequirement: () => InfinityUpgrade.dim45mult.isBought,
-    description: `Get a free Galaxy that doesn't reset on Big Crunch`,
+    description: () => PlayerProgress.eternityUnlocked()
+      ? staticGalaxyDescription(1)
+      : `Get a free Galaxy that doesn't reset on Big Crunch`,
     effect: 1,
     charged: {
       description: "All Galaxies are stronger based on Teresa level",
@@ -228,13 +230,9 @@ export const infinityUpgrades = {
     id: "ipMult",
     cost: () => InfinityUpgrade.ipMult.cost,
     checkRequirement: () => Achievement(41).isUnlocked,
-    costCap: DC.E1E20,
-    costIncreaseThreshold: DC.E1E20,
     description: () => `Multiply Infinity Points from all sources by ${formatX(2)}`,
-    // Normally the multiplier caps at e993k or so with 3300000 purchases, but if the cost is capped then we just give
-    // an extra e7k to make the multiplier look nice
     effect: () => (DC.D2.pow(player.IPMultPurchases)),
-    cap: () => Effarig.eternityCap ?? DC.E1E20,
+    cap: () => Effarig.eternityCap ?? Infinity,
     formatEffect: value => formatX(value, 2, 2),
   }
 };

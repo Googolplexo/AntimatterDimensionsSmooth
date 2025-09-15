@@ -16,6 +16,67 @@ if (GlobalErrorHandler.handled) {
 }
 GlobalErrorHandler.cleanStart = true;
 
+export function totalGalaxies() {
+  return player.galaxies
+    + GalaxyGenerator.galaxies
+    + Replicanti.galaxies.bought
+    + player.dilation.totalTachyonGalaxies
+    + staticGalaxies();
+}
+
+export function staticGalaxies() {
+  return Effects.sum(
+    InfinityUpgrade.galaxyBoost,
+    TimeStudy(111));
+}
+
+export function timeUntilReplicanti(goal) {
+  return goal.minus(Replicanti.amount).div(replicantiGainPerSecond()).clamp(0, Number.MAX_VALUE).toNumber();
+}
+
+export function timeToNextRG() {
+  const galaxies = Replicanti.galaxies;
+  const canBulk = Autobuyer.replicantiGalaxy.isUnlocked && galaxies.canBuyMore;
+  const bulk = galaxies.bulk;
+  const goal = canBulk
+    ? bulk.purchasePrice.plus(RGCost(galaxies.startingCost, galaxies.bought + bulk.quantity, galaxies.max))
+    : galaxies.currentCost;
+
+  if (TimeStudy(133).isBought) {
+    // The answer is given by the following equation: r + x = a / ((s + x) / 100 + 1) ^ 2
+    const s = player.records.secondsSinceLastRG + TimeSpan.fromMinutes(Perk.studyIdleEP.effectOrDefault(0)).totalSeconds;
+    const a = goal.timesEffectsOf(TimeStudy(133)).div(replicantiGainPerSecond()).clampMax(Number.MAX_VALUE).toNumber();
+    const r = Replicanti.amount.div(replicantiGainPerSecond()).clampMax(Number.MAX_VALUE).toNumber();
+    return cubicRealRoots(0.0001, (r + 2 * s) / 10000 + 0.02, s * (2 * r + s) / 10000 + (r + s) / 50 + 1, r * (s / 100 + 1) ** 2 - a).max();
+  }
+
+  return timeUntilReplicanti(goal);
+}
+
+export function canKeepDimensionsOnSoftReset(reset) {
+  if (reset === PRESTIGE_EVENT.DIMENSION_BOOST) {
+    return InfinityChallenge(4).isCompleted && (!Pelle.isDoomed || PelleUpgrade.dimBoostResetsNothing.canBeApplied);
+  }
+
+  if (reset === PRESTIGE_EVENT.ANTIMATTER_GALAXY) {
+    return canKeepDimBoostsOnGalaxy();
+  }
+
+  throw new Error("Unexpected type of soft reset");
+}
+
+export function canKeepAntimatterOnSoftReset(reset) {
+  return (reset === PRESTIGE_EVENT.ANTIMATTER_GALAXY && EternityMilestone.galaxiesPreserveAM.isReached) || canKeepDimensionsOnSoftReset(reset);
+}
+
+export function canKeepDimBoostsOnGalaxy() {
+  return PelleUpgrade.galaxyNoReset.canBeApplied || Achievement(111).canBeApplied;
+}
+
+export function staticGalaxyDescription(base) {
+  return `Gain ${quantifyInt("Galaxy", base)} for free`;
+}
+
 export function playerInfinityUpgradesOnReset(reset = true) {
 
   const infinityUpgrades = new Set(
@@ -119,8 +180,7 @@ function totalEPMult() {
 }
 
 export function gainedEternityPoints() {
-  let ep = DC.D5.pow(player.records.thisEternity.maxIP.plus(
-    gainedInfinityPoints()).log10() / (308 - PelleRifts.recursion.effectValue.toNumber()) - 1.5).times(totalEPMult());
+  let ep = player.infinityPoints.div(DC.E2000).pow(0.00025).times(totalEPMult());
 
   if (Teresa.isRunning) {
     ep = ep.pow(0.55);
@@ -137,8 +197,7 @@ export function gainedEternityPoints() {
 }
 
 export function requiredIPForEP(epAmount) {
-  return Decimal.pow10(308 * (Decimal.log(Decimal.divide(epAmount, totalEPMult()), 5) + 1.5))
-    .clampMin(DC.E200000);
+  return Decimal.divide(epAmount, totalEPMult()).clampMin(1).pow(4000).times(DC.E2000);
 }
 
 export function gainedGlyphLevel() {
@@ -456,6 +515,8 @@ export function gameLoop(passDiff, options = {}) {
 
   applyRUPG10(false);
 
+  if (!PlayerProgress.eternityUnlocked()) player.records.firstEternityIP = player.records.firstEternityIP.clampMin(player.infinityPoints);
+
   Autobuyers.tick();
   Tutorial.tutorialLoop();
 
@@ -524,6 +585,8 @@ export function gameLoop(passDiff, options = {}) {
 
   DeltaTimeState.update(realDiff, diff);
 
+  player.records.secondsSinceLastRG += diff / 1000;
+
   updateNormalAndInfinityChallenges(diff);
 
   // IP generation is broken into a couple of places in gameLoop; changing that might change the
@@ -555,7 +618,6 @@ export function gameLoop(passDiff, options = {}) {
   player.totalTickGained += gain;
 
   updatePrestigeRates();
-  tryCompleteInfinityChallenges();
 
   EternityChallenges.autoComplete.tick();
 

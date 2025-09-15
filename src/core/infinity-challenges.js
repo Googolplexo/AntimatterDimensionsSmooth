@@ -1,12 +1,5 @@
 import { GameMechanicState } from "./game-mechanics";
 
-export function tryCompleteInfinityChallenges() {
-  if (EternityMilestone.autoIC.isReached) {
-    const toComplete = InfinityChallenges.all.filter(x => x.isUnlocked && !x.isCompleted);
-    for (const challenge of toComplete) challenge.complete();
-  }
-}
-
 class InfinityChallengeRewardState extends GameMechanicState {
   constructor(config, challenge) {
     super(config);
@@ -29,7 +22,7 @@ class InfinityChallengeState extends GameMechanicState {
   }
 
   get isUnlocked() {
-    return player.records.thisEternity.maxAM.gte(this.unlockAM) || (Achievement(133).isUnlocked && !Pelle.isDoomed) ||
+    return player.records.thisEternity.maxAM.gte(this.unlockAM) || (EternityMilestone.autoIC.isReached && !Pelle.isDoomed) ||
       (PelleUpgrade.keepInfinityChallenges.canBeApplied && Pelle.cel.records.totalAntimatter.gte(this.unlockAM));
   }
 

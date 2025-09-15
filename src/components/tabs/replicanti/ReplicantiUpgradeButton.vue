@@ -19,7 +19,6 @@ export default {
       description: "",
       canBeBought: false,
       costDescription: "",
-      isCapped: false,
       isAutoUnlocked: false,
       isAutobuyerOn: false,
       isEC8Running: false
@@ -41,10 +40,7 @@ export default {
       const upgrade = setup.upgrade;
       this.description = setup.formatDescription(upgrade.value);
       this.canBeBought = upgrade.canBeBought;
-      this.isCapped = upgrade.isCapped;
-      if (!this.isCapped) {
-        this.costDescription = setup.formatCost(upgrade.cost);
-      }
+      this.costDescription = setup.formatCost(upgrade.cost);
       const autobuyer = Autobuyer.replicantiUpgrade(upgrade.id);
       this.isAutoUnlocked = autobuyer.isUnlocked;
       this.isAutobuyerOn = autobuyer.isActive;
@@ -70,7 +66,7 @@ export class ReplicantiUpgradeButtonSetup {
       @click="upgrade.purchase()"
     >
       <span v-html="description" />
-      <template v-if="!isCapped">
+      <template>
         <br>
         <span>{{ costDescription }}</span>
       </template>

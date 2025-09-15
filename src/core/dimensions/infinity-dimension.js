@@ -215,7 +215,7 @@ class InfinityDimensionState extends DimensionState {
     if (Enslaved.isRunning) {
       return 1;
     }
-    return 9999999999999999999999999999999999999999999999999999999999;
+    return Infinity;
   }
 
   get isCapped() {
@@ -328,7 +328,6 @@ export const InfinityDimensions = {
    * @type {InfinityDimensionState[]}
    */
   all: InfinityDimension.index.compact(),
-  HARDCAP_PURCHASES: 999999999999999999999999999999999999999999999999,
 
   unlockNext() {
     if (InfinityDimension(8).isUnlocked) return;

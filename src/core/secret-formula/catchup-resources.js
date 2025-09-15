@@ -94,7 +94,7 @@ export const catchupResources = [
     name: "Eternity",
     id: 12,
     requiredStage: PROGRESS_STAGE.EARLY_ETERNITY,
-    description: () => `Eternity is the second main reset layer. Reaching ${format(Number.MAX_VALUE, 2)} Infinity Points
+    description: () => `Eternity is the second main reset layer. Reaching ${format(DC.E2000, 2)} Infinity Points
       allows you to reset everything up to this point for access to new content and resources.`
   },
   {

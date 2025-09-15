@@ -11,8 +11,7 @@ export default {
   data() {
     return {
       totalUpgrades: 0,
-      multPerTickspeed: 0,
-      tickspeedSoftcap: 0,
+      multPerTickspeed: new Decimal(0),
       timeShards: new Decimal(0),
       upgradeThreshold: new Decimal(0),
       shardsPerSecond: new Decimal(0),
@@ -28,8 +27,7 @@ export default {
     update() {
       this.showLockedDimCostNote = !TimeDimension(8).isUnlocked && player.realities >= 1;
       this.totalUpgrades = player.totalTickGained;
-      this.multPerTickspeed = FreeTickspeed.multToNext;
-      this.tickspeedSoftcap = FreeTickspeed.softcap;
+      this.multPerTickspeed.copyFrom(FreeTickspeed.multToNext);
       this.timeShards.copyFrom(Currency.timeShards);
       this.upgradeThreshold.copyFrom(FreeTickspeed.fromShards(Currency.timeShards.value).nextShards);
       this.shardsPerSecond.copyFrom(TimeDimension(1).productionPerSecond);
@@ -72,14 +70,13 @@ export default {
       </p>
       <p>
         Next Tickspeed upgrade at
-        <span class="c-time-dim-description__accent">{{ format(upgradeThreshold, 2, 1) }}</span>, increasing by
-        <span class="c-time-dim-description__accent">{{ formatX(multPerTickspeed, 2, 2) }}</span> per
+        <span class="c-time-dim-description__accent">{{ format(upgradeThreshold, 2, 1) }}</span>, multiplying by
+        <span class="c-time-dim-description__accent">{{ formatX(multPerTickspeed, 3, 3) }}</span> per
         Tickspeed upgrade gained.
       </p>
     </div>
     <div>
-      The amount each additional upgrade requires will start
-      increasing above {{ formatInt(tickspeedSoftcap) }} Tickspeed upgrades.
+      The Tickspeed Upgrade scaling grows by {{ formatPercents(0.005, 1, 1) }} per upgrade.
     </div>
     <div>You are getting {{ format(shardsPerSecond, 2, 0) }} {{ incomeType }} per second.</div>
     <div class="l-dimensions-container">
@@ -91,15 +88,9 @@ export default {
       />
     </div>
     <div>
-      Time Dimension costs jump at {{ format(costIncreases[0], 2, 2) }} and
-      {{ format(costIncreases[1]) }} Eternity Points,
-      <br>
-      and costs increase much faster after {{ format(costIncreases[2]) }} Eternity Points.
-      <br>
       <div v-if="showLockedDimCostNote">
         Hold shift to see the Eternity Point cost for locked Time Dimensions.
       </div>
-      Any 8th Time Dimensions purchased above {{ format(1e8) }} will not further increase the multiplier.
     </div>
   </div>
 </template>

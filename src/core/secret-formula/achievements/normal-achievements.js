@@ -88,7 +88,7 @@ export const normalAchievements = [
     checkRequirement: () => Currency.antimatter.exponent >= 80,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Multilpier to Antimatter Dimensions based on current antimatter.",
-    effect: () => Currency.antimatter.value.plus(10).log10().toDecimal().pow(8).div(1600000000000000).plus(1),
+    effect: () => Currency.antimatter.value.plus(1).log10().toDecimal().pow(8).div(1600000000000000).plus(1),
     formatEffect: value => `${formatX(value, 2, 2)}`
   },
   {
@@ -638,7 +638,7 @@ export const normalAchievements = [
   {
     id: 94,
     name: "4.3333 minutes of Infinity",
-    get description() { return `Get your multiplier from Infinity Power above ${format(DC.E260)}.`; },
+    get description() { return `Get your multiplier from Infinity Power above ${formatX(DC.E260)}.`; },
     checkRequirement: () => InfinityDimension(1).isUnlocked && player.infinityPower.log10() * 7 >= 260,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Double Infinity Power gain.",
@@ -702,8 +702,8 @@ export const normalAchievements = [
     get description() { return `Eternity in under ${formatInt(30)} seconds.`; },
     checkRequirement: () => Time.thisEternity.totalSeconds <= 30,
     checkEvent: GAME_EVENT.ETERNITY_RESET_BEFORE,
-    get reward() { return `Start Eternities with ${format(5e25)} Infinity Points.`; },
-    effect: 5e25
+    get reward() { return `Start Eternities with ${format(1e100)} Infinity Points.`; },
+    effect: 1e100
   },
   {
     id: 105,
@@ -730,26 +730,26 @@ export const normalAchievements = [
     id: 108,
     name: "We COULD afford 9",
     get description() { return `Eternity with at most ${formatInt(9)} Replicanti without buying Replicanti Galaxies.`; },
-    checkRequirement: () => Replicanti.amount.lte(9) && Replicanti.galaxies.bought == 0,
+    checkRequirement: () => Replicanti.amount.lte(9) && player.requirementChecks.eternity.noRG,
     checkEvent: GAME_EVENT.ETERNITY_RESET_BEFORE
   },
   {
     id: 111,
     name: "Yo dawg, I heard you liked infinities...",
     get description() {
-      return `Have all your Infinities in your past ${formatInt(10)} Infinities be at least
-      ${format(Decimal.NUMBER_MAX_VALUE, 1, 0)} times higher Infinity Points than the previous one.`;
+      return `Get at least ${format(6.66, 2, 2)} times more Infinities on every next Crunch than on the previous one
+        for ${formatInt(10)} consecutive Crunches.`;
     },
     checkRequirement: () => {
       if (player.records.recentInfinities.some(i => i[0] === Number.MAX_VALUE)) return false;
-      const infinities = player.records.recentInfinities.map(run => run[2]);
+      const infinities = player.records.recentInfinities.map(run => run[3]);
       for (let i = 0; i < infinities.length - 1; i++) {
-        if (infinities[i].lt(infinities[i + 1].times(Decimal.NUMBER_MAX_VALUE))) return false;
+        if (infinities[i].lt(infinities[i + 1].times(DC.D6_66))) return false;
       }
       return true;
     },
     checkEvent: GAME_EVENT.BIG_CRUNCH_AFTER,
-    reward: "Your antimatter doesn't reset on Dimension Boosts or Antimatter Galaxies."
+    reward: "Antimatter Galaxies no longer reset anything."
   },
   {
     id: 112,
@@ -760,7 +760,7 @@ export const normalAchievements = [
   },
   {
     id: 113,
-    name: "Eternities are the new infinity",
+    name: "Eternities are the new infinities",
     get description() { return `Eternity in under ${formatInt(250)}ms.`; },
     checkRequirement: () => Time.thisEternity.totalMilliseconds <= 250,
     checkEvent: GAME_EVENT.ETERNITY_RESET_BEFORE,
@@ -789,7 +789,7 @@ export const normalAchievements = [
     checkRequirement: () => Currency.infinities.lte(1),
     checkEvent: GAME_EVENT.ETERNITY_RESET_BEFORE,
     reward: "Multiplier to Infinity Points based on Infinities.",
-    effect: () => Decimal.pow(Currency.infinitiesTotal.value.plus(1), LOG10_2 / 4).powEffectOf(TimeStudy(31)),
+    effect: () => Decimal.pow(Currency.infinitiesTotal.value.plus(1), 1.3).powEffectOf(TimeStudy(31)),
     cap: () => Effarig.eternityCap,
     formatEffect: value => {
       // Since TS31 is already accounted for in the effect prop, we need to "undo" it to display the base value here
@@ -802,8 +802,8 @@ export const normalAchievements = [
   {
     id: 117,
     name: "Costco sells Dimboosts now!",
-    get description() { return `Bulk buy ${format(500000, 2, 2)} Dimension Boosts at once.`; },
-    checkRequirement: ([bulk]) => bulk >= 500000,
+    get description() { return `Bulk buy ${formatInt(150000)} Dimension Boosts at once.`; },
+    checkRequirement: ([bulk]) => bulk >= 150000,
     checkEvent: GAME_EVENT.DIMBOOST_AFTER
   },
   {
@@ -818,8 +818,8 @@ export const normalAchievements = [
   {
     id: 121,
     name: "Can you get infinite IP?",
-    get description() { return `Reach ${formatPostBreak("1e30008")} Infinity Points.`; },
-    checkRequirement: () => Currency.infinityPoints.exponent >= 30008,
+    get description() { return `Reach ${formatPostBreak("1e300008")} Infinity Points.`; },
+    checkRequirement: () => Currency.infinityPoints.exponent >= 300008,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {
@@ -855,16 +855,15 @@ export const normalAchievements = [
     id: 125,
     name: "Like feasting on a behind",
     get description() {
-      return `Reach ${format(DC.E90)} Infinity Points without having any Infinities
-      or any 1st Antimatter Dimensions in your current Eternity.`;
+      return `Eternity without ever having any Infinities
+      or 1st Antimatter Dimensions.`;
     },
-    checkRequirement: () => Currency.infinityPoints.exponent >= 90 &&
-      player.requirementChecks.eternity.noAD1 && Currency.infinities.eq(0),
-    checkEvent: GAME_EVENT.GAME_TICK_AFTER,
+    checkRequirement: () => player.requirementChecks.eternity.noAD1 && Currency.infinities.eq(0),
+    checkEvent: GAME_EVENT.ETERNITY_RESET_BEFORE,
     reward: "Infinity Point multiplier based on time spent this Infinity.",
     effect() {
       const thisInfinity = Time.thisInfinity.totalSeconds * 10 + 1;
-      return DC.D2.pow(Math.log(thisInfinity) * 5);
+      return DC.D2.pow(Math.log(thisInfinity) * 28);
     },
     cap: () => Effarig.eternityCap,
     formatEffect: value => `${formatX(value, 2, 2)}`
@@ -889,8 +888,8 @@ export const normalAchievements = [
   {
     id: 128,
     name: "What do I have to do to get rid of you",
-    get description() { return `Reach ${formatPostBreak("1e22000")} Infinity Points without any Time Studies.`; },
-    checkRequirement: () => Currency.infinityPoints.exponent >= 22000 && player.timestudy.studies.length === 0,
+    get description() { return `Reach ${formatPostBreak("1e220000")} Infinity Points without any Time Studies.`; },
+    checkRequirement: () => Currency.infinityPoints.exponent >= 220000 && player.timestudy.studies.length === 0,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Time Dimension multiplier based on the number of Time Studies you have.",
     effect: () => player.timestudy.studies.length + 1,
@@ -916,10 +915,10 @@ export const normalAchievements = [
     id: 132,
     name: "Unique snowflakes",
     get description() {
-      return `Have ${formatInt(569)} Antimatter Galaxies without gaining any
+      return `Have ${formatInt(5690)} Antimatter Galaxies without gaining any
         Replicanti Galaxies in your current Eternity.`;
     },
-    checkRequirement: () => player.galaxies >= 569 && player.requirementChecks.eternity.noRG,
+    checkRequirement: () => player.galaxies >= 5690 && player.requirementChecks.eternity.noRG,
     checkEvent: GAME_EVENT.GALAXY_RESET_AFTER,
     reward: "Gain a multiplier to Tachyon Particle and Dilated Time gain based on Antimatter Galaxies.",
     effect: () => 1.22 * (Math.pow(player.galaxies, 0.04) + 1),
@@ -935,9 +934,8 @@ export const normalAchievements = [
     checkRequirement: () =>
       Array.dimensionTiers.map(InfinityDimension).every(dim => dim.baseAmount === 0) &&
       player.IPMultPurchases === 0 &&
-      Currency.infinityPoints.exponent >= 200000,
-    checkEvent: GAME_EVENT.GAME_TICK_AFTER,
-    reward: "You start Eternities with all Infinity Challenges unlocked and completed."
+      Currency.infinityPoints.exponent >= 2000000,
+    checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {
     id: 134,
@@ -951,9 +949,9 @@ export const normalAchievements = [
   },
   {
     id: 135,
-    name: "Faster than a potato^286078",
-    get description() { return `Get more than ${formatPostBreak("1e8296262")} ticks per second.`; },
-    checkRequirement: () => Tickspeed.current.exponent <= -8296262,
+    name: "Faster than a potato^2860780",
+    get description() { return `Get more than ${formatPostBreak("1e82962620")} ticks per second.`; },
+    checkRequirement: () => Tickspeed.current.exponent <= -82962617,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {
@@ -999,9 +997,7 @@ export const normalAchievements = [
     get reward() {
       return `${formatX(4)} Infinity Point gain.`;
     },
-    effects: {
-      ipGain: 4
-    }
+    effect: 4
   },
   {
     id: 142,
@@ -1026,8 +1022,7 @@ export const normalAchievements = [
       }
       return true;
     },
-    checkEvent: GAME_EVENT.ETERNITY_RESET_AFTER,
-    reward: "Galaxies no longer reset Dimension Boosts."
+    checkEvent: GAME_EVENT.ETERNITY_RESET_AFTER
   },
   {
     id: 144,

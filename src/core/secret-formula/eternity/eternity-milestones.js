@@ -18,9 +18,10 @@ export const eternityMilestones = {
     givenByPelle: () => PelleUpgrade.keepInfinityUpgrades.isBought,
     pelleUseless: true
   },
-  bigCrunchModes: {
+  autoIC: {
     eternities: 5,
-    reward: "Unlock more Big Crunch Autobuyer options"
+    reward: `You start Eternities with all Infinity Challenges unlocked and completed`,
+    pelleUseless: true
   },
   autoEP: {
     eternities: 6,
@@ -41,10 +42,9 @@ export const eternityMilestones = {
         (${formatInt(200)} or ${formatInt(1000)}) are also active`
       : ""),
   },
-  autoIC: {
+  bigCrunchModes: {
     eternities: 7,
-    reward: `You complete Infinity Challenges as soon as you unlock them`,
-    pelleUseless: true
+    reward: "Unlock more Big Crunch Autobuyer options"
   },
   keepBreakUpgrades: {
     eternities: 8,
@@ -54,13 +54,11 @@ export const eternityMilestones = {
   },
   autobuyMaxGalaxies: {
     eternities: 9,
-    reward: "Unlock the buy max Antimatter Galaxies Autobuyer mode"
+    reward: "Antimatter Galaxies are bought in bulk"
   },
   unlockReplicanti: {
     eternities: 10,
-    reward: "You start with Replicanti unlocked",
-    givenByPelle: () => PelleUpgrade.replicantiStayUnlocked.isBought,
-    pelleUseless: true
+    reward: "You start with Replicanti unlocked and can buy max Replicanti Upgrades"
   },
   autobuyerID1: {
     eternities: 11,
@@ -110,6 +108,12 @@ export const eternityMilestones = {
     givenByPelle: () => PelleUpgrade.IDAutobuyers.isBought,
     pelleUseless: true
   },
+  galaxiesPreserveAM: {
+    eternities: 20,
+    reward: "Keep your Antimatter on Galaxy resets",
+    givenByPelle: () => PelleUpgrade.galaxyNoReset.isBought,
+    pelleUseless: true
+  },
   autoUnlockID: {
     eternities: 25,
     reward: "You automatically unlock Infinity Dimensions upon reaching them"
@@ -118,27 +122,21 @@ export const eternityMilestones = {
     eternities: 30,
     reward: "Start with all Antimatter Dimensions available for purchase"
   },
-  replicantiNoReset: {
-    eternities: 40,
-    reward: `Replicanti Galaxies no longer reset Antimatter, Antimatter Dimensions,
-      Tickspeed, Dimensional Sacrifice, or Dimension Boosts`,
-    pelleUseless: true
-  },
   autobuyerReplicantiChance: {
     eternities: 50,
-    reward: "Unlock the Replicanti Chance Upgrade Autobuyer",
+    reward: "Unlock the Replicanti Multiplier Power Upgrade Autobuyer",
     givenByPelle: () => PelleUpgrade.replicantiAutobuyers.isBought,
     pelleUseless: true
   },
   autobuyerReplicantiInterval: {
     eternities: 60,
-    reward: "Unlock the Replicanti Interval Upgrade Autobuyer",
+    reward: "Unlock the Replicanti Gain Speed Upgrade Autobuyer",
     givenByPelle: () => PelleUpgrade.replicantiAutobuyers.isBought,
     pelleUseless: true
   },
   autobuyerReplicantiMaxGalaxies: {
     eternities: 80,
-    reward: "Unlock the Max Replicanti Galaxy Upgrade Autobuyer",
+    reward: "Unlock the Replicanti Galaxy Cost Scaling Upgrade Autobuyer",
     givenByPelle: () => PelleUpgrade.replicantiAutobuyers.isBought,
     pelleUseless: true
   },

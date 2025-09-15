@@ -18,17 +18,10 @@ export const galaxies = {
   replicanti: {
     name: "Replicanti Galaxies",
     displayOverride: () => {
-      const num = Replicanti.galaxies.total;
+      const num = Replicanti.galaxies.bought;
       return `${formatInt(num)}`;
     },
-    multValue: () => {
-      let rg = Replicanti.galaxies.bought;
-      rg *= (1 + Effects.sum(TimeStudy(132), TimeStudy(133)));
-      rg += Replicanti.galaxies.extra;
-      rg += Math.min(Replicanti.galaxies.bought, ReplicantiUpgrade.galaxies.value) *
-          Effects.sum(EternityChallenge(8).reward);
-      return Decimal.pow10(rg);
-    },
+    multValue: () => Decimal.pow10(Replicanti.galaxies.bought),
     isActive: () => Replicanti.areUnlocked,
     icon: MultiplierTabIcons.SPECIFIC_GLYPH("replication"),
   },
@@ -49,12 +42,22 @@ export const galaxies = {
   infinity: {
     name: "Infinity Upgrades",
     displayOverride: () => {
-      const num = Effects.sum(InfinityUpgrade.galaxyBoost);
+      const num = InfinityUpgrade.galaxyBoost.effectValue;
       return `${formatInt(num)}`;
     },
     multValue: () => new Decimal(10),
     isActive: () => InfinityUpgrade.galaxyBoost.isBought,
     icon: MultiplierTabIcons.UPGRADE("infinity"),
+  },
+  timeStudy: {
+    name: "Time Study 111",
+    displayOverride: () => {
+      const num = TimeStudy(111).effectValue;
+      return `${formatInt(num)}`;
+    },
+    multValue: () => new Decimal(10000),
+    isActive: () => TimeStudy(111).isBought,
+    icon: MultiplierTabIcons.TIME_STUDY,
   },
   nerfPelle: {
     name: "Doomed Reality",

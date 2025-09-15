@@ -23,12 +23,19 @@ export class DilationTimeStudyState extends TimeStudyState {
   }
 
   get totalTimeTheoremRequirement() {
-    return this.id === 1 ? 12900 : 0;
+    switch (this.id) {
+      case 0:
+        return 12900;
+      case 1:
+        return 120;
+      default:
+        return 0;
+    }
   }
 
   purchase(quiet = false) {
     if (this.isBought || !this.canBeBought) return false;
-    if (this.id === 1) {
+    if (this.id === 0) {
       // ID 1 is the dilation unlock study
       if (!quiet) {
         Tab.eternity.dilation.show();
@@ -71,7 +78,7 @@ DilationTimeStudyState.studies = mapGameData(
 /**
  * @type {DilationTimeStudyState}
  */
-TimeStudy.dilation = DilationTimeStudyState.studies[1];
+TimeStudy.dilation = DilationTimeStudyState.studies[0];
 
 /**
  * @param {number} tier

@@ -530,5 +530,57 @@ dev.unlockAllCosmeticSets = function() {
 };
 
 dev.skipToNextRG = function() {
-  simulateTime(Replicanti.galaxies.currentCost.minus(Replicanti.amount).clampMin(0).div(getReplicantiInterval(ReplicantiUpgrade.interval.value)).toNumber());
+  simulateTime(timeToNextRG());
+};
+
+dev.optimiseCrunchAutobuyer = function(left, right, mode, tps) {
+  GameIntervals.stop();
+  Autobuyer.bigCrunch.mode = mode;
+  const save = GameStorage.exportModifiedSave();
+
+  let diff, leftNew, rightNew, leftValue, rightValue;
+  
+  if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) {
+    left = Decimal.pow(10, left);
+    right = Decimal.pow(10, right);
+  }
+  
+  function isPrecise(left, right, mode) {
+    if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) return right.div(left).log10() < 10;
+    if (mode === AUTO_CRUNCH_MODE.TIME) return right - left < 0.1;
+  };
+
+  function EPGain(setting, mode, save) {
+    if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) Autobuyer.bigCrunch.xHighest = setting;
+    if (mode === AUTO_CRUNCH_MODE.TIME) Autobuyer.bigCrunch.time = setting;
+    eternity(true);
+    for (let i = 0; i < 5000; i++) {
+      gameLoop(1000 / tps);
+    }
+    const result = player.records.thisEternity.bestEPmin;
+    console.log(format(setting, 2, 2), format(result, 2, 2));
+    GameStorage.import(save);
+    return result;
+  }
+  
+  while (!isPrecise(left, right, mode)) {
+    if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) {
+      diff = right.div(left).cbrt();
+      leftNew = left.times(diff);
+      rightNew = right.div(diff);
+    }
+    if (mode === AUTO_CRUNCH_MODE.TIME) {
+      diff = (right - left) / 3;
+      leftNew = left + diff;
+      rightNew = right - diff;
+    }
+    
+    if (EPGain(leftNew, mode, save).gt(EPGain(rightNew, mode, save))) {
+      right = rightNew;
+    } else {
+      left = leftNew;
+    }
+  }
+  
+  GameIntervals.start();
 };

@@ -56,7 +56,7 @@ export class DimBoost {
   static get canBeBought() {
     if (DimBoost.purchasedBoosts >= this.maxBoosts) return false;
     if (player.records.thisInfinity.maxAM.gt(Player.infinityGoal) &&
-       (!player.break || Player.isInAntimatterChallenge)) return false;
+       (!player.break || Player.isInAntimatterChallenge) && !InfinityChallenge(4).isCompleted) return false;
     return true;
   }
 
@@ -88,7 +88,7 @@ export class DimBoost {
       amount += Math.pow(targetResets - 1, 3) + targetResets - 1;
     }
 
-    amount -= Effects.sum(InfinityUpgrade.resetBoost);
+    amount -= Effects.sum(InfinityUpgrade.resetBoost, TimeStudy(81));
     if (InfinityChallenge(5).isCompleted) amount -= 1;
 
     amount *= InfinityUpgrade.resetBoost.chargedEffect.effectOrDefault(1);
@@ -120,10 +120,8 @@ export class DimBoost {
     else boostEffects = `${newUnlock} and ${formattedMultText} ${dimensionRange}`;
 
     if (boostEffects === "") return "Dimension Boosts are currently useless";
-    const areDimensionsKept = (Perk.antimatterNoReset.isBought || Achievement(111).canBeApplied) &&
-      (!Pelle.isDoomed || PelleUpgrade.dimBoostResetsNothing.isBought);
-    if (areDimensionsKept) return boostEffects[0].toUpperCase() + boostEffects.substring(1);
-    return `Reset your Dimensions to ${boostEffects}`;
+    if (canKeepDimensionsOnSoftReset(PRESTIGE_EVENT.DIMENSION_BOOST)) return boostEffects[0].toUpperCase() + boostEffects.substring(1);
+    return `Reset your Antimatter, Antimatter Dimensions and Tickspeed to ${boostEffects}`;
   }
 
   static get purchasedBoosts() {
@@ -154,19 +152,14 @@ export function softReset(tempBulk, forcedADReset = false, forcedAMReset = false
   EventHub.dispatch(GAME_EVENT.DIMBOOST_BEFORE, bulk);
   player.dimensionBoosts = Math.max(0, player.dimensionBoosts + bulk);
   resetChallengeStuff();
-  const canKeepDimensions = Pelle.isDoomed
-    ? PelleUpgrade.dimBoostResetsNothing.canBeApplied
-    : Perk.antimatterNoReset.canBeApplied || (InfinityChallenge(4).isCompleted && bulk);
-  if (forcedADReset || !canKeepDimensions) {
+  const reset = bulk ? PRESTIGE_EVENT.DIMENSION_BOOST : PRESTIGE_EVENT.ANTIMATTER_GALAXY;
+  if (forcedADReset || !canKeepDimensionsOnSoftReset(reset)) {
     AntimatterDimensions.reset();
     player.sacrificed = DC.D0;
     resetTickspeed();
   }
   skipResetsIfPossible(enteringAntimatterChallenge);
-  const canKeepAntimatter = Pelle.isDoomed
-    ? PelleUpgrade.dimBoostResetsNothing.canBeApplied
-    : (Achievement(111).isUnlocked || Perk.antimatterNoReset.canBeApplied);
-  if (!forcedAMReset && canKeepAntimatter) {
+  if (!forcedAMReset && canKeepAntimatterOnSoftReset(reset)) {
     Currency.antimatter.bumpTo(Currency.antimatter.startingValue);
   } else {
     Currency.antimatter.reset();

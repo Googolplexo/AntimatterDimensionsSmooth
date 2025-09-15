@@ -87,7 +87,7 @@ export const multiplierTabTree = {
     ["tickspeedUpgrades_purchased", "tickspeedUpgrades_free"]
   ],
   tickspeed_galaxies: [
-    ["galaxies_antimatter", "galaxies_replicanti", "galaxies_tachyon", "galaxies_infinity", "galaxies_nerfPelle"]
+    ["galaxies_antimatter", "galaxies_replicanti", "galaxies_tachyon", "galaxies_infinity", "galaxies_timeStudy", "galaxies_nerfPelle"]
   ],
   infinities_total: [
     getProps("infinities")
@@ -126,12 +126,12 @@ const targetedEffects = {
   },
   timeStudy: {
     checkFn: MultiplierTabHelper.timeStudyDimCheck,
-    AD: [71, 91, 101, 161, 193, 214, 234],
-    ID: [72, 82, 92, 102, 162],
-    TD: [11, 73, 93, 103, 151, 221, 227, 301],
+    AD: [91, 101, 161, 193, 214, 234],
+    ID: [72, 82, 92, 162],
+    TD: [11, 73, 83, 93, 103, 171, 221, 227, 301],
     IP: [41, 51, 141, 142, 143],
     EP: [61, 121, 122, 123],
-    replicanti: [22, 62, 132, 213],
+    replicanti: [21, 62, 131, 213],
   },
   infinityChallenge: {
     checkFn: MultiplierTabHelper.ICDimCheck,

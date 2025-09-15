@@ -85,9 +85,11 @@ export const ID = {
         TimeStudy(92),
         TimeStudy(162)
       );
-      if (dim) return dim === 4 ? allMult.times(TimeStudy(72).effectOrDefault(1)) : allMult;
+      let individualMults = Array(9).fill(DC.D1);
+      individualMults[4] = TimeStudy(72).effectOrDefault(1);
+      if (dim) return allMult.times(individualMults[dim]);
       const maxActiveDim = MultiplierTabHelper.activeDimCount("ID");
-      return Decimal.pow(allMult, maxActiveDim).times(maxActiveDim >= 4 ? TimeStudy(72).effectOrDefault(1) : DC.D1);
+      return individualMults.slice(1, maxActiveDim + 1).reduce((x, y) => x.times(y), Decimal.pow(allMult, maxActiveDim));
     },
     isActive: () => PlayerProgress.eternityUnlocked(),
     icon: MultiplierTabIcons.TIME_STUDY,

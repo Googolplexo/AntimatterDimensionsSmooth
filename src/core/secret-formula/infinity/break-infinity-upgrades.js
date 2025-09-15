@@ -96,7 +96,7 @@ export const breakInfinityUpgrades = {
   autobuyMaxDimboosts: {
     id: "autobuyMaxDimboosts",
     cost: 2e15,
-    description: "Unlock the buy max Dimension Boost Autobuyer mode"
+    description: "Dimension Boosts are bought in bulk"
   },
   autobuyerSpeed: {
     id: "autoBuyerUpgrade",

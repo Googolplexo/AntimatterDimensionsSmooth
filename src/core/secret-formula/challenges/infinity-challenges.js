@@ -54,7 +54,7 @@ export const infinityChallenges = [
     effect: 0.25,
     reward: {
       description: () => `Dimension Boosts don't reset anything; all Antimatter Dimensions recieve a ${formatX(2.5, 2, 2)} multiplier per Galaxy`,
-      effect: () => DC.D2_5.pow(Replicanti.galaxies.total + player.galaxies + player.dilation.totalTachyonGalaxies + Effects.sum(InfinityUpgrade.galaxyBoost)),
+      effect: () => DC.D2_5.pow(totalGalaxies()),
       formatEffect: value => formatX(value, 2, 2)
     },
     unlockAM: DC.E26500,
@@ -91,18 +91,9 @@ export const infinityChallenges = [
   },
   {
     id: 7,
-    description: () => {
-      // Copied from DimBoost.power; this is the base amount before any multipliers. Post-eternity this isn't
-      // necessarily 2.5x by the time the player sees this challenge; it's probably most accurate to say what it
-      // currently is, and this phrasing avoids 10x ➜ 10x with the old description.
-      const mult = Effects.max(
-        2,
-        InfinityUpgrade.dimboostMult,
-        TimeStudy(81)
-      );
-      return `you cannot buy Antimatter Galaxies. Dimension Boost multiplier is increased to a maximum
-        of ${formatX(10)}. (Current base multiplier: ${formatX(mult, 2, 1)})`;
-    },
+    description: () => 
+      `you cannot buy Antimatter Galaxies. Dimension Boost multiplier
+      is increased to ${formatX(10)}.`,
     goal: DC.E12500,
     isQuickResettable: false,
     effect: 10,

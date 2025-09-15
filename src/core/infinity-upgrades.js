@@ -97,7 +97,7 @@ export function totalIPMult() {
       Achievement(93),
       Achievement(116),
       Achievement(125),
-      Achievement(141).effects.ipGain,
+      Achievement(141),
       InfinityUpgrade.ipMult,
       DilationUpgrade.ipMultDT,
       GlyphEffect.ipMult
@@ -136,10 +136,6 @@ export function disChargeAll() {
 // GameDatabase.infinity.upgrades.ipMult
 class InfinityIPMultUpgrade extends GameMechanicState {
   get cost() {
-    if (this.purchaseCount >= this.purchasesAtIncrease) {
-      return this.config.costIncreaseThreshold
-        .times(Decimal.pow(this.costIncrease, this.purchaseCount - this.purchasesAtIncrease));
-    }
     return Decimal.pow(this.costIncrease, this.purchaseCount + 1);
   }
 
@@ -147,24 +143,12 @@ class InfinityIPMultUpgrade extends GameMechanicState {
     return player.IPMultPurchases;
   }
 
-  get purchasesAtIncrease() {
-    return this.config.costIncreaseThreshold.log10() - 1;
-  }
-
-  get hasIncreasedCost() {
-    return this.purchaseCount >= this.purchasesAtIncrease;
-  }
-
   get costIncrease() {
-    return this.hasIncreasedCost ? 1e10 : 10;
-  }
-
-  get isCapped() {
-    return this.cost.gte(this.config.costCap);
+    return 10;
   }
 
   get isBought() {
-    return this.isCapped;
+    return false;
   }
 
   get isRequirementSatisfied() {
@@ -172,7 +156,7 @@ class InfinityIPMultUpgrade extends GameMechanicState {
   }
 
   get canBeBought() {
-    return !Pelle.isDoomed && !this.isCapped && Currency.infinityPoints.gte(this.cost) && this.isRequirementSatisfied;
+    return !Pelle.isDoomed && Currency.infinityPoints.gte(this.cost) && this.isRequirementSatisfied;
   }
 
   // This is only ever called with amount = 1 or within buyMax under conditions that ensure the scaling doesn't
@@ -189,22 +173,10 @@ class InfinityIPMultUpgrade extends GameMechanicState {
 
   buyMax() {
     if (!this.canBeBought) return;
-    if (!this.hasIncreasedCost) {
-      // Only allow IP below the softcap to be used
-      const availableIP = Currency.infinityPoints.value.clampMax(this.config.costIncreaseThreshold);
-      const purchases = Decimal.affordGeometricSeries(availableIP, this.cost, this.costIncrease, 0).toNumber();
-      if (purchases <= 0) return;
-      this.purchase(purchases);
-    }
-    // Do not replace it with `if else` - it's specifically designed to process two sides of threshold separately
-    // (for example, we have 1e4000000 IP and no mult - first it will go to (but not including) 1e3000000 and then
-    // it will go in this part)
-    if (this.hasIncreasedCost) {
-      const availableIP = Currency.infinityPoints.value.clampMax(this.config.costCap);
-      const purchases = Decimal.affordGeometricSeries(availableIP, this.cost, this.costIncrease, 0).toNumber();
-      if (purchases <= 0) return;
-      this.purchase(purchases);
-    }
+    const availableIP = Currency.infinityPoints.value;
+    const purchases = Decimal.affordGeometricSeries(availableIP, this.cost, this.costIncrease, 0).toNumber();
+    if (purchases <= 0) return;
+    this.purchase(purchases);
   }
 }
 

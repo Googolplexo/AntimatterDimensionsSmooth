@@ -122,7 +122,7 @@ function applyNDMultipliers(mult, tier) {
         TimeStudy(234)
       );
   }
-  if (tier === 8) {
+  if (tier === 8 || TimeStudy(71).isBought) {
     multiplier = multiplier.times(Sacrifice.totalBoost);
   }
 
@@ -130,7 +130,6 @@ function applyNDMultipliers(mult, tier) {
     tier === 8 ? Achievement(23) : null,
     tier < 8 ? Achievement(34) : null,
     tier <= 4 ? Achievement(64) : null,
-    tier < 8 ? TimeStudy(71) : null,
     tier === 8 ? TimeStudy(214) : null,
     tier > 1 && tier < 8 ? InfinityChallenge(8).reward : null
   );
@@ -350,8 +349,8 @@ class AntimatterDimensionState extends DimensionState {
     return new ExponentialCostScaling({
       baseCost: NormalChallenge(6).isRunning ? this._c6BaseCost : this._baseCost,
       baseIncrease: NormalChallenge(6).isRunning ? this._c6BaseCostMultiplier : this._baseCostMultiplier,
-      costScale: Player.dimensionMultDecrease,
-      scalingCostThreshold: DC.E1E20
+      costScale: 1,
+      scalingCostThreshold: Infinity
     });
   }
 

@@ -1,6 +1,4 @@
 <script>
-import wordShift from "@/core/word-shift";
-
 import ReplicantiUpgradeButton, { ReplicantiUpgradeButtonSetup } from "./ReplicantiUpgradeButton";
 import PrimaryButton from "@/components/PrimaryButton";
 import ReplicantiGainText from "./ReplicantiGainText";
@@ -17,6 +15,7 @@ export default {
   data() {
     return {
       isUnlocked: false,
+      isMaxAllUnlocked: false,
       isUnlockAffordable: false,
       isInEC8: false,
       ec8Purchases: 0,
@@ -28,19 +27,8 @@ export default {
       multDT: new Decimal(),
       hasIPMult: false,
       multIP: new Decimal(),
-      hasRaisedCap: false,
-      replicantiCap: new Decimal(),
-      capMultText: "",
-      distantRG: 0,
-      remoteRG: 0,
-      effarigInfinityBonusRG: 0,
-      isUncapped: false,
-      nextEffarigRGThreshold: 0,
-      canSeeGalaxyButton: false,
       unlockCost: new Decimal(),
-      scrambledText: "",
       maxReplicanti: new Decimal(),
-      estimateToMax: 0,
     };
   },
   computed: {
@@ -48,11 +36,11 @@ export default {
     replicantiChanceSetup() {
       const upgrade = ReplicantiUpgrade.chance;
       function formatChance(chance) {
-        return `${formatPow(chance / 10 + 2, 2, 2)}`;
+        return `${formatPow(getReplicantiPower(chance), 2, 2)}`;
       }
       return new ReplicantiUpgradeButtonSetup(
         upgrade,
-        value => `Replicanti multiplier: ${formatChance(value)}`,
+        value => `Replicanti power: ${formatChance(value)}`,
         cost =>
           `➜ ${formatChance(upgrade.nextValue)} Costs: ${format(cost)} IP`
       );
@@ -105,22 +93,23 @@ export default {
     },
     hasMaxText: () => PlayerProgress.realityUnlocked() && !Pelle.isDoomed,
     toMaxTooltip() {
-      if (this.amount.lte(this.replicantiCap)) return null;
-      return this.estimateToMax.lt(0.01)
-        ? "Currently Increasing"
-        : TimeSpan.fromSeconds(this.estimateToMax.toNumber()).toStringShort();
+      const t = this.estimateToMax;
+      if (t === Number.MAX_VALUE) return "Impossibly far away";
+      return (t < 0.01)
+        ? "Currently increasing"
+        : timeUntilReplicanti(this.maxReplicanti).toStringShort();
     }
   },
   methods: {
     update() {
       this.isUnlocked = Replicanti.areUnlocked;
       this.unlockCost = new Decimal("1e210").dividedByEffectOf(PelleRifts.vacuum.milestones[1]);
-      if (this.isDoomed) this.scrambledText = this.vacuumText();
       if (!this.isUnlocked) {
         this.isUnlockAffordable = Currency.infinityPoints.gte(this.unlockCost);
         return;
       }
       this.isInEC8 = EternityChallenge(8).isRunning;
+      this.isMaxAllUnlocked = this.isUnlocked && EternityMilestone.unlockReplicanti.isReached && !this.isinEC8;
       if (this.isInEC8) {
         this.ec8Purchases = player.eterc8repl;
       }
@@ -136,32 +125,13 @@ export default {
       );
       this.hasIPMult = AlchemyResource.exponential.amount > 0 && !this.isDoomed;
       this.multIP = Replicanti.amount.powEffectOf(AlchemyResource.exponential);
-      this.isUncapped = PelleRifts.vacuum.milestones[1].canBeApplied;
-      this.hasRaisedCap = EffarigUnlock.infinity.isUnlocked && !this.isUncapped;
-      this.replicantiCap.copyFrom(replicantiCap());
-      if (this.hasRaisedCap) {
-        const mult = this.replicantiCap.div(Decimal.NUMBER_MAX_VALUE);
-        this.capMultText = TimeStudy(31).canBeApplied
-          ? `Base: ${formatX(mult.pow(1 / TimeStudy(31).effectValue), 2)}; after TS31: ${formatX(mult, 2)}`
-          : formatX(mult, 2);
-      }
-      this.distantRG = ReplicantiUpgrade.galaxies.distantRGStart;
-      this.remoteRG = ReplicantiUpgrade.galaxies.remoteRGStart;
-      this.effarigInfinityBonusRG = Effarig.bonusRG;
-      this.nextEffarigRGThreshold = Decimal.NUMBER_MAX_VALUE.pow(
-        Effarig.bonusRG + 2
-      );
-      this.canSeeGalaxyButton = true;
-      //  Replicanti.galaxies.max >= 1 || PlayerProgress.eternityUnlocked();
       this.maxReplicanti.copyFrom(player.records.thisReality.maxReplicanti);
-      this.estimateToMax = this.calculateEstimate();
     },
-    vacuumText() {
-      return wordShift.wordCycle(PelleRifts.vacuum.name);
-    },
-    // This is copied out of a short segment of ReplicantiGainText with comments and unneeded variables stripped
-    calculateEstimate() {
-      return this.maxReplicanti.minus(this.amount).div(getReplicantiInterval());
+    maxAll() {
+      const r = ReplicantiUpgrade;
+      for (const upgrade of [r.galaxies, r.interval, r.chance]) {
+        upgrade.autobuyerTick();
+      }
     }
   },
 };
@@ -181,24 +151,15 @@ export default {
       Cost: {{ format(unlockCost) }} IP
     </PrimaryButton>
     <template v-else>
-      <div
-        v-if="isDoomed"
-        class="modified-cap"
+    <div class="c-subtab-option-container">
+      <PrimaryButton
+        v-if="isMaxAllUnlocked"
+        class="o-primary-btn--subtab-option"
+        @click="maxAll"
       >
-        Your Replicanti cap has been removed due to the second {{ scrambledText }} milestone.
-      </div>
-      <div
-        v-else-if="hasRaisedCap"
-        class="modified-cap"
-      >
-        Completion of Effarig's Infinity is giving you the following rewards:
-        <br>
-        Your Replicanti cap without TS192 is now {{ format(replicantiCap, 2) }}
-        ({{ capMultText }})
-        <br>
-        {{ quantifyInt("extra Replicanti Galaxy", effarigInfinityBonusRG) }}
-        (Next Replicanti Galaxy at {{ format(nextEffarigRGThreshold, 2) }} cap)
-      </div>
+        Max all
+      </PrimaryButton>
+    </div>
       <p class="c-replicanti-description">
         You have
         <span class="c-replicanti-description__accent">{{ format(amount, 2, 0) }}</span>
@@ -228,7 +189,7 @@ export default {
       <br><br>
       <ReplicantiGainText />
       <br>
-      <ReplicantiGalaxyButton v-if="canSeeGalaxyButton" />
+      <ReplicantiGalaxyButton />
     </template>
   </div>
 </template>
@@ -238,10 +199,5 @@ export default {
   color: var(--color-accent);
   text-shadow: 0 0 0.2rem var(--color-reality-dark);
   cursor: default;
-}
-
-.modified-cap {
-  margin: -0.8rem 0 0.8rem;
-  font-weight: bold;
 }
 </style>

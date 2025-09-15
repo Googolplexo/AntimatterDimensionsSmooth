@@ -82,9 +82,10 @@ export const TD = {
     name: dim => (dim ? `Time Studies (TD ${dim})` : "Time Studies"),
     multValue: dim => {
       const allMult = DC.D1.timesEffectsOf(
+        TimeStudy(83),
         TimeStudy(93),
         TimeStudy(103),
-        TimeStudy(151),
+        TimeStudy(171),
         TimeStudy(221),
         TimeStudy(301),
       );

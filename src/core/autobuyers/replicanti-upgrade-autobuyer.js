@@ -4,7 +4,7 @@ export class ReplicantiUpgradeAutobuyerState extends IntervaledAutobuyerState {
   get _upgradeName() { return ["chance", "interval", "galaxies"][this.id - 1]; }
 
   get name() {
-    return `Replicanti ${[`Chance`, `Interval`, `Max Galaxies`][this.id - 1]}`;
+    return [`Replicanti power`, `Replicanti gain`, `RG cost scaling`][this.id - 1];
   }
 
   get data() {

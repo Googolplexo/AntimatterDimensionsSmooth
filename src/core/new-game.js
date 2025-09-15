@@ -65,6 +65,7 @@ export const NG = {
     const hasSpeedrun = player.speedrun.isUnlocked;
     const presets = JSON.stringify(player.timestudy.presets);
     const companions = JSON.stringify(Glyphs.allGlyphs.filter(g => g.type === "companion"));
+    const firstEternityIP = player.records.firstEternityIP;
     Modal.hideAll();
     Quote.clearAll();
     GameStorage.hardReset();
@@ -88,6 +89,7 @@ export const NG = {
     JSON.parse(companions).forEach(g => {
       Glyphs.addToInventory(g);
     });
+    player.records.firstEternityIP = firstEternityIP;
     Themes.find(Theme.currentName()).set();
     Notations.all.find(n => n.name === player.options.notation).setAsCurrent();
     ADNotations.Settings.exponentCommas.min = 10 ** player.options.notationDigits.comma;

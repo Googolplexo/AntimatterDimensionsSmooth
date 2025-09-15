@@ -1,9 +1,3 @@
-export const GALAXY_TYPE = {
-  NORMAL: 0,
-  DISTANT: 1,
-  REMOTE: 2
-};
-
 class GalaxyRequirement {
   constructor(tier, amount) {
     this.tier = tier;
@@ -17,10 +11,6 @@ class GalaxyRequirement {
 }
 
 export class Galaxy {
-  static get remoteStart() {
-    return 99999999999999999999999999;
-  }
-
   static get requirement() {
     return this.requirementAt(player.galaxies);
   }
@@ -40,25 +30,11 @@ export class Galaxy {
   }
 
   static requirementAt(galaxies) {
-    let amount = Galaxy.baseCost + (galaxies * Galaxy.costMult);
+    let amount = Galaxy.baseCost + galaxies * Galaxy.costMult;
 
-    const type = Galaxy.typeAt(galaxies);
-
-    if (type === GALAXY_TYPE.DISTANT && EternityChallenge(5).isRunning) {
-      amount += Math.pow(galaxies, 2) + galaxies;
-    } else if (type === GALAXY_TYPE.DISTANT || type === GALAXY_TYPE.REMOTE) {
-      const galaxyCostScalingStart = this.costScalingStart;
-      const galaxiesBeforeDistant = Math.clampMin(galaxies - galaxyCostScalingStart + 1, 0);
-      amount += (Math.pow(galaxiesBeforeDistant, 2) + galaxiesBeforeDistant) * 5;
-    }
-
-    if (type === GALAXY_TYPE.REMOTE) {
-      amount *= Math.pow(1.002, galaxies - (Galaxy.remoteStart - 1));
-    }
+    amount += (galaxies - 1) * galaxies * 5;
 
     amount -= Effects.sum(InfinityUpgrade.resetBoost);
-
-    if (GlyphAlteration.isAdded("power")) amount *= getSecondaryGlyphEffect("powerpow");
 
     amount = Math.floor(amount);
     const tier = Galaxy.requiredTier;
@@ -66,7 +42,7 @@ export class Galaxy {
   }
 
   static get costMult() {
-    return 45 - Effects.sum(BreakInfinityUpgrade.galaxyBoost, InfinityChallenge(5).reward, TimeStudy(42));
+    return 45 - Effects.sum(BreakInfinityUpgrade.galaxyBoost, InfinityChallenge(5).reward);
   }
 
   static get baseCost() {
@@ -81,7 +57,7 @@ export class Galaxy {
     if (EternityChallenge(6).isRunning && !Enslaved.isRunning) return false;
     if (InfinityChallenge(7).isRunning) return false;
     if (player.records.thisInfinity.maxAM.gt(Player.infinityGoal) &&
-       (!player.break || Player.isInAntimatterChallenge)) return false;
+       (!player.break || Player.isInAntimatterChallenge) && !Achievement(111).isUnlocked) return false;
     return true;
   }
 
@@ -91,30 +67,12 @@ export class Galaxy {
     if (InfinityChallenge(7).isRunning) return "Locked (Infinity Challenge 7)";
     return null;
   }
-
-  static get costScalingStart() {
-    return 2;
-  }
-
-  static get type() {
-    return this.typeAt(player.galaxies);
-  }
-
-  static typeAt(galaxies) {
-    if (galaxies >= Galaxy.remoteStart) {
-      return GALAXY_TYPE.REMOTE;
-    }
-    if (EternityChallenge(5).isRunning || galaxies >= this.costScalingStart) {
-      return GALAXY_TYPE.DISTANT;
-    }
-    return GALAXY_TYPE.NORMAL;
-  }
 }
 
 function galaxyReset() {
   EventHub.dispatch(GAME_EVENT.GALAXY_RESET_BEFORE);
   player.galaxies++;
-  if (!Achievement(143).isUnlocked || (Pelle.isDoomed && !PelleUpgrade.galaxyNoResetDimboost.canBeApplied)) {
+  if (!canKeepDimBoostsOnGalaxy()) {
     player.dimensionBoosts = Math.clampMax(player.dimensionBoosts, 20 * (10 - Player.tickSpeedMultDecrease));
   }
   softReset(0);

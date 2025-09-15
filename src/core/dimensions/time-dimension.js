@@ -104,9 +104,10 @@ export function timeDimensionCommonMultiplier() {
   let mult = new Decimal(ShopPurchase.allDimPurchases.currentMult)
     .timesEffectsOf(
       Achievement(128),
+      TimeStudy(83),
       TimeStudy(93),
       TimeStudy(103),
-      TimeStudy(151),
+      TimeStudy(171),
       TimeStudy(221),
       TimeStudy(301),
       EternityChallenge(1).reward,
@@ -140,9 +141,9 @@ export function updateTimeDimensionCosts() {
 class TimeDimensionState extends DimensionState {
   constructor(tier) {
     super(() => player.dimensions.time, tier);
-    const BASE_COSTS = [null, DC.D1, DC.D5, DC.E2, DC.E3, DC.E2350, DC.E2650, DC.E3000, DC.E3350];
+    const BASE_COSTS = [null, DC.D1, DC.D5, DC.E2, DC.D5E16, DC.E2350, DC.E2650, DC.E3000, DC.E3350];
     this._baseCost = BASE_COSTS[tier];
-    const COST_MULTS = [null, 300, 900, 2700, 8100, 24300, 72900, 218700, 656100];
+    const COST_MULTS = [null, 3, 9, 27, 81, 243, 729, 2187, 6561];
     this._costMultiplier = COST_MULTS[tier];
     const E6000_SCALING_AMOUNTS = [null, 7322, 4627, 3382, 2665, 833, 689, 562, 456];
     this._e6000ScalingAmount = E6000_SCALING_AMOUNTS[tier];
@@ -159,25 +160,7 @@ class TimeDimensionState extends DimensionState {
   set cost(value) { this.data.cost = value; }
 
   nextCost(bought) {
-    if (this._tier > 4 && bought < this.e6000ScalingAmount) {
-      const cost = Decimal.pow(this.costMultiplier, bought).times(this.baseCost);
-      if (PelleRifts.paradox.milestones[0].canBeApplied) {
-        return cost.div("1e2250").pow(0.5);
-      }
-      return cost;
-    }
-
-    const costMultIncreases = [1, 1.5, 2.2];
-    for (let i = 0; i < this._costIncreaseThresholds.length; i++) {
-      const cost = Decimal.pow(this.costMultiplier * costMultIncreases[i], bought).times(this.baseCost);
-      if (cost.lt(this._costIncreaseThresholds[i])) return cost;
-    }
-
-    let base = this.costMultiplier;
-    if (this._tier <= 4) base *= 2.2;
-    const exponent = this.e6000ScalingAmount + (bought - this.e6000ScalingAmount) * TimeDimensions.scalingPast1e6000;
-    const cost = Decimal.pow(base, exponent).times(this.baseCost);
-
+    const cost = Decimal.pow(this.costMultiplier, bought).times(this.baseCost);
     if (PelleRifts.paradox.milestones[0].canBeApplied && this._tier > 4) {
       return cost.div("1e2250").pow(0.5);
     }
@@ -185,7 +168,7 @@ class TimeDimensionState extends DimensionState {
   }
 
   get isUnlocked() {
-    return this._tier < 5 || TimeStudy.timeDimension(this._tier).isBought;
+    return this._tier < 4 || TimeStudy.timeDimension(this._tier).isBought;
   }
 
   get isAvailableForPurchase() {
@@ -208,15 +191,8 @@ class TimeDimensionState extends DimensionState {
       );
 
     const dim = TimeDimension(tier);
-    const bought = tier === 8 ? Math.clampMax(dim.bought, 1e8) : dim.bought;
-    mult = mult.times(Decimal.pow(dim.powerMultiplier, bought));
+    mult = mult.times(Decimal.pow(dim.powerMultiplier, dim.bought));
 
-    mult = mult.pow(getAdjustedGlyphEffect("timepow"));
-    mult = mult.pow(getAdjustedGlyphEffect("effarigdimensions"));
-    mult = mult.pow(getAdjustedGlyphEffect("curseddimensions"));
-    mult = mult.powEffectOf(AlchemyResource.time);
-    mult = mult.pow(Ra.momentumValue);
-    mult = mult.pow(ImaginaryUpgrade(11).effectOrDefault(1));
     mult = mult.powEffectOf(PelleRifts.paradox);
 
     if (player.dilation.active || PelleStrikes.dilation.hasStrike) {
@@ -243,9 +219,6 @@ class TimeDimensionState extends DimensionState {
     let production = this.amount.times(this.multiplier);
     if (EternityChallenge(7).isRunning) {
       production = production.times(Tickspeed.perSecond);
-    }
-    if (this._tier === 1 && !EternityChallenge(7).isRunning) {
-      production = production.pow(getAdjustedGlyphEffect("timeshardpow"));
     }
     return production;
   }
@@ -279,9 +252,7 @@ class TimeDimensionState extends DimensionState {
   }
 
   get powerMultiplier() {
-    return DC.D4
-      .timesEffectsOf(this._tier === 8 ? GlyphSacrifice.time : null)
-      .pow(ImaginaryUpgrade(14).effectOrDefault(1));
+    return DC.D4;
   }
 
   get e6000ScalingAmount() {
@@ -293,8 +264,8 @@ class TimeDimensionState extends DimensionState {
   }
 
   get requirementReached() {
-    return this._tier < 5 ||
-      (TimeStudy.timeDimension(this._tier).isAffordable && TimeStudy.timeDimension(this._tier - 1).isBought);
+    return this._tier > 4 &&
+      TimeStudy.timeDimension(this._tier).isAffordable && TimeStudy.timeDimension(this._tier - 1).isBought;
   }
 
   tryUnlock() {

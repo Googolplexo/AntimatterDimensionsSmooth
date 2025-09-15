@@ -100,7 +100,7 @@ export const ecTimeStudies = [
   {
     id: 9,
     cost: 415,
-    requirement: [151],
+    requirement: [141, 142, 143],
     reqType: TS_REQUIREMENT_TYPE.AT_LEAST_ONE,
     secondary: {
       resource: "Infinity Power",

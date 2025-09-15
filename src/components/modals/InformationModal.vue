@@ -24,14 +24,26 @@ export default {
       project in 2016, it was expanded upon by a large team of developers and testers from then on.
       <br>
       <br>
+      You are currently playing Antimatter Dimensions: Smooth, which is a modification of Antimatter Dimensions
+      designed to have exclusively smooth formulas, created by Russian developer Googolplexo in 2024.
+      <br>
+      <br>
+      The modification is currently balanced up to 1e20 EP, as it needs much rebalancing. Use unbalanced content at your own risk. 
+      <br>
+      <br>
       The game has unfolding gameplay and multiple prestige layers. The "How to Play" button contains useful
-      information about progressing.
-    </div>
+      information about progressing, inculding but not limited to describing changes made to various mechanics in this modification of the game.
+     </div>
     <div class="l-socials">
+      <InformationModalButton
+        name="Original Antimatter Dimensions"
+        icon="fa-solid fa-globe"
+        link="https://ivark.github.io/AntimatterDimensions/"
+      />
       <InformationModalButton
         name="GitHub repository"
         icon="fa-brands fa-github"
-        link="https://github.com/IvarK/AntimatterDimensionsSourceCode"
+        link="https://github.com/Googolplexo/AntimatterDimensionsSmooth"
       />
       <InformationModalButton
         name="r/AntimatterDimensions"

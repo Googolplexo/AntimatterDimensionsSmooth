@@ -441,6 +441,15 @@ export const migrations = {
     },
     110: player => {
       delete player.options.multiplierTab.replacePowers;
+    },
+    111: player => {
+      if (player.infinityPoints.gte(Decimal.pow(10, 2000))) {
+        SecretAchievement(33).unlock();
+        player.secretAchievementBits[2] |= 4;
+      }
+      for (let tier = 0; tier < 8; tier++) {
+        player.dimensions.time[tier].cost = TimeDimension(tier + 1).baseCost;
+      }
     }
   },
 

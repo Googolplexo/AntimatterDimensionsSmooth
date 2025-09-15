@@ -15,20 +15,10 @@ export const replicanti = {
     multValue: () => getIntervalBoost(player.replicanti.interval),
     isActive: () => PlayerProgress.replicantiUnlocked(),
     icon: MultiplierTabIcons.SPECIFIC_GLYPH("replication"),
-  },  
-  achievement: {
-    name: "Achievement 134",
-    // This is explicitly 2 in the replicanti code as well, inside of a replicanti amount check
-    multValue: 2,
-    isActive: () => Achievement(134).canBeApplied && Replicanti.amount.lte(replicantiCap()) && !Pelle.isDoomed,
-    icon: MultiplierTabIcons.ACHIEVEMENT,
   },
   timeStudy: {
     name: "Time Studies",
-    multValue: () => {
-      const preReality = Effects.product(TimeStudy(62), TimeStudy(213)) * (TimeStudy(132).isBought ? 1.5 : 1);
-      return preReality * (Perk.studyPassive.isBought && TimeStudy(132).isBought ? 2 : 1);
-    },
+    multValue: () => new Decimal(1).timesEffectsOf(TimeStudy(21), TimeStudy(62), TimeStudy(131), TimeStudy(213)),
     isActive: () => PlayerProgress.eternityUnlocked() && !Pelle.isDoomed,
     icon: MultiplierTabIcons.TIME_STUDY,
   },

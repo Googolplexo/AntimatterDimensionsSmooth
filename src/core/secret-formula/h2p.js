@@ -620,7 +620,7 @@ amount of antimatter before you can attempt them.
     }, {
       name: "Replicanti",
       info: () => `
-Replicanti are another resource you unlock at ${format(DC.E210)} IP. Initially, you will gain 1 Replicanti per second,
+Replicanti are another resource you unlock at ${format(DC.E210)} IP. Initially, you will gain ${formatInt(1)} Replicanti per second,
 which can be improved by spending IP.
 <br>
 <br>
@@ -630,8 +630,8 @@ ${formatInt(2)}. That power also can be increased by spending IP.
 <br>
 When you reach ${format(DC.D5E4)} Replicanti, you will be able to purchase a Replicanti Galaxy, which will
 reset your Replicanti count back to ${formatInt(0)}. This Galaxy is free in that it will act as if it was an
-Antimatter Galaxy, but it will not make your next Antimatter Galaxy more expensive. However, it will still reset the
-same things as an Antimatter Galaxy does. The secondary cost scaling of Replicanti Galaxies can be reduced by spending IP.
+Antimatter Galaxy, but it will not make your next Antimatter Galaxy more expensive. The secondary cost scaling of
+Replicanti Galaxies can be reduced by spending IP.
 <br>
 <br>
 All Replicanti upgrades and Replicanti Galaxies have their cost scaled similarly to Tickspeed Upgrades and Antimatter
@@ -640,17 +640,17 @@ Galaxies, with primary and secondary cost scalings.
 <br>
 <b>Hotkey: R</b> will try to purchase a Replicanti Galaxy.
 <br>
-<b>Replicanti multiplier power increase cost:</b> Base ${format(DC.E230)} IP, primary cost scaling ${formatX(DC.E15)} IP,
-secondary cost scaling ${formatX(DC.E5)} IP
+<b>Replicanti multiplier power increase cost:</b> Base ${format(DC.E230)} IP, primary cost scaling ${formatX(DC.E15)},
+secondary cost scaling ${formatX(DC.E5)}
 <br>
-<b>Replicanti gain improvement cost:</b> Base ${format(DC.E270)} IP, primary cost scaling ${formatX(DC.E10)} IP,
-secondary cost scaling ${formatX(DC.E5)} IP
+<b>Replicanti gain improvement cost:</b> Base ${format(DC.E270)} IP, primary cost scaling ${formatX(DC.E10)},
+secondary cost scaling ${formatX(DC.E5)}
 <br>
-<b>Replicanti Galaxy cost scaling reduction cost:</b> Base ${format(DC.E570)} IP, primary cost scaling ${formatX(DC.E75)} IP,
-secondary cost scaling ${formatX(DC.E55)} IP
+<b>Replicanti Galaxy cost scaling reduction cost:</b> Base ${format(DC.E570)} IP, primary cost scaling ${formatX(DC.E75)},
+secondary cost scaling ${formatX(DC.E55)}
 <br>
-<b>Replicanti Galaxy cost:</b> Base ${format(DC.D5E4)} Replicanti, primary cost scaling ${formatX(1)} Replicanti,
-secondary cost scaling ${formatX(2)} Replicanti
+<b>Replicanti Galaxy cost:</b> Base ${format(DC.D5E4)} Replicanti, primary cost scaling ${formatX(1)},
+secondary cost scaling ${formatX(2)}
 
 `,
       isUnlocked: () => Replicanti.areUnlocked || PlayerProgress.eternityUnlocked(),
@@ -670,10 +670,10 @@ Infinity Points you had before going Eternal. You will also gain one "Eternity" 
 <br>
 <br>
 Eternity Point gain scales similarly to Infinity Point gain, but scaling off of Infinity Points instead of antimatter.
-The base amount of EP gained at ${formatPostBreak(Number.MAX_VALUE, 2)} IP is ~${format(1.62, 2, 2)} EP, multiplied by
-${formatInt(5)} for every factor of ${formatPostBreak(Number.MAX_VALUE, 2)} more IP you have. This is always rounded
-down, which means that you will get ${formatInt(1)} EP at ${formatPostBreak(Number.MAX_VALUE, 2)} IP but will not reach
-${formatInt(2)} EP until ${formatPostBreak(DC.E349)}.
+The base amount of EP gained at ${formatPostBreak(DC.E2000, 2)} IP is ${formatInt(1)} EP, multiplied by
+${formatInt(10)} for every factor of ${formatPostBreak(DC.E4000, 2)} more IP you have. This is always rounded
+down, which means that you will get ${formatInt(1)} EP at ${formatPostBreak(DC.E2000, 2)} IP but will not reach
+${formatInt(2)} EP until ${formatPostBreak(DC.C2P4000E2000, 2, 2)} IP.
 <br>
 <br>
 <b>Hotkey: E</b> will try to perform an Eternity reset.
@@ -714,32 +714,24 @@ their cost. Time Dimensions, Time Shards, and the Tickspeed Upgrades they provid
 but reset every Eternity.
 <br>
 <br>
-Similarly to the other dimensions, Second Time Dimensions produce 1st Time Dimensions and so on. Similarly to Infinity
+Similarly to the other dimensions, 2nd Time Dimensions produce 1st Time Dimensions and so on. Similarly to Infinity
 Dimensions, your production will be reset to the amount you purchased after every Eternity, but you will keep any
 upgrades to your multipliers you purchased.
 <br>
 <br>
-Each purchase increases the multiplier of that specific Time Dimension by ${formatX(4)}. The cost multiplier between
-upgrades has a base value, but is increased by ${formatX(1.5, 1, 1)} at
-${format(TimeDimension(1)._costIncreaseThresholds[0], 2)} EP and ${formatX(2.2, 1, 1)} (of the base value) at
-${format(TimeDimension(1)._costIncreaseThresholds[1])} EP. These increases apply retroactively, causing the cost to
-jump when they reach those thresholds, and only apply to the first four dimensions. Beyond
-${format(TimeDimension(1)._costIncreaseThresholds[2])} EP each dimension purchase counts as four purchases for the
-purpose of cost increases, causing the price to rise much more steeply.
+Each purchase increases the multiplier of that specific Time Dimension by ${formatX(4)}.
 <br>
 <b>Time Dimension base prices (EP):</b> ${Array.range(1, 8)
     .map(tier => format(TimeDimension(tier)._baseCost))
     .join(", ")}
 <br>
-<b>Time Dimension base price increases:</b> ${Array.range(1, 8)
-    .map(tier => format(TimeDimension(tier)._costMultiplier))
+<b>Time Dimension price increases:</b> ${Array.range(1, 8)
+    .map(tier => format(TimeDimension(tier)._costMultiplier, 3))
     .join(", ")}
 <br>
 <br>
 Each threshold to gain another Tickspeed Upgrade is ${formatPercents(0.33)} more Time Shards than the previous,
-or ${formatPercents(0.25)} with the relevant Time Study. After ${formatInt(FreeTickspeed.softcap)} upgrades, the
-multiplier between each successive free Tickspeed Upgrade will gradually increase at a rate of ~${formatX(1.35, 0, 2)}
-per ${formatInt(50000)} upgrades (${formatX(1.000006, 0, 6)} per upgrade).
+but this multiplier increases by ${formatPercents(0.005, 1,)} per upgrade.
 `,
       isUnlocked: () => PlayerProgress.eternityUnlocked(),
       tags: ["dims", "td", "shards", "eternity", "midgame"],
@@ -801,9 +793,9 @@ the middle of an Eternity.
 <br>
 <b>Costs for Time Theorems:</b>
 <br>
-<b>Antimatter:</b> Initially ${format(DC.E20000)}, ${formatX(DC.E20000)} per Theorem
+<b>Antimatter:</b> Initially ${format(DC.E200000)}, ${formatX(DC.E200000)} per Theorem
 <br>
-<b>Infinity Points:</b> Initially ${formatInt(1)}, ${formatX(DC.E100)} per Theorem
+<b>Infinity Points:</b> Initially ${formatInt(1)}, ${formatX(DC.E1000)} per Theorem
 <br>
 <b>Eternity Points:</b> Initially ${formatInt(1)}, ${formatX(2)} per Theorem
 `,

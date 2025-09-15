@@ -1,37 +1,18 @@
 import { DC } from "./constants";
 
-// Slowdown parameters for replicanti growth, interval will increase by scaleFactor for every scaleLog10
-// OoM past the cap (default is 308.25 (log10 of 1.8e308), 1.2, Number.MAX_VALUE)
-export const ReplicantiGrowth = {
-  get scaleLog10() {
-    return Math.log10(Number.MAX_VALUE);
-  },
-  get scaleFactor() {
-    if (PelleStrikes.eternity.hasStrike && Replicanti.amount.gte(DC.E2000)) return 10;
-    if (Pelle.isDoomed) return 2;
-    return AlchemyResource.cardinality.effectValue;
-  }
-};
-
 // Internal function to add RGs; called both from within the fast replicanti code and from the function
 // used externally. Only called in cases of automatic RG and does not actually modify replicanti amount
 function addReplicantiGalaxies(newGalaxies) {
   if (newGalaxies > 0) {
     player.replicanti.galaxies += newGalaxies;
     player.requirementChecks.eternity.noRG = false;
-    const keepResources = Pelle.isDoomed
-      ? PelleUpgrade.replicantiGalaxyEM40.canBeApplied
-      : EternityMilestone.replicantiNoReset.isReached;
-    if (!keepResources) {
-      player.dimensionBoosts = 0;
-      softReset(0, true, true);
-    }
+    player.records.secondsSinceLastRG = 0;
   }
 }
 
 export function RGCost(start, bought, max) {
   const scale = new Decimal(1 + 1 / (max + 1));
-  return start.times(scale.pow((bought) * (bought - 1) / 2))
+  return start.times(scale.pow((bought) * (bought - 1) / 2));
 }
 
 // Function called externally for gaining RGs, which adjusts replicanti amount before calling the function
@@ -45,10 +26,7 @@ export function replicantiGalaxy(auto) {
   const bulk = Replicanti.galaxies.bulk
   const galaxyGain = bulk.quantity;
   if (galaxyGain < 1) return;
-  player.replicanti.timer = 0;
-  Replicanti.amount = Achievement(126).isUnlocked && !Pelle.isDoomed
-    ? Replicanti.amount.minus(bulk.purchasePrice)
-    : DC.D0;
+  if (!Achievement(126).isUnlocked || Pelle.isDoomed) Replicanti.amount = Replicanti.start;
   addReplicantiGalaxies(galaxyGain);
 }
 
@@ -60,54 +38,14 @@ export function replicantiGalaxyRequest() {
   else replicantiGalaxy(false);
 }
 
-// Produces replicanti quickly below e308, will auto-bulk-RG if production is fast enough
-// Returns the remaining unused gain factor
-function fastReplicantiBelow308(log10GainFactor, isAutobuyerActive) {
-  const shouldBuyRG = isAutobuyerActive && !RealityUpgrade(6).isLockingMechanics;
-  // More than e308 galaxies per tick causes the game to die, and I don't think it's worth the performance hit of
-  // Decimalifying the entire calculation.  And yes, this can and does actually happen super-lategame.
-  const uncappedAmount = DC.E1.pow(log10GainFactor.plus(Replicanti.amount.log10()));
-  // Checking for uncapped equaling zero is because Decimal.pow returns zero for overflow for some reason
-  if (log10GainFactor.gt(Number.MAX_VALUE) || uncappedAmount.eq(0)) {
-    if (shouldBuyRG) {
-      addReplicantiGalaxies(Replicanti.galaxies.max - player.replicanti.galaxies);
-    }
-    Replicanti.amount = replicantiCap();
-    // Basically we've used nothing.
-    return log10GainFactor;
-  }
-
-  if (!shouldBuyRG) {
-    const remainingGain = log10GainFactor.minus(replicantiCap().log10() - Replicanti.amount.log10()).clampMin(0);
-    Replicanti.amount = Decimal.min(uncappedAmount, replicantiCap());
-    return remainingGain;
-  }
-
-  const gainNeededPerRG = Decimal.NUMBER_MAX_VALUE.log10();
-  const replicantiExponent = log10GainFactor.toNumber() + Replicanti.amount.log10();
-  const toBuy = Math.floor(Math.min(replicantiExponent / gainNeededPerRG,
-    Replicanti.galaxies.max - player.replicanti.galaxies));
-  const maxUsedGain = gainNeededPerRG * toBuy + replicantiCap().log10() - Replicanti.amount.log10();
-  const remainingGain = log10GainFactor.minus(maxUsedGain).clampMin(0);
-  Replicanti.amount = Decimal.pow10(replicantiExponent - gainNeededPerRG * toBuy)
-    .clampMax(replicantiCap());
-  addReplicantiGalaxies(toBuy);
-  return remainingGain;
-}
-
 export function getIntervalBoost(x) {
   return DC.D1_1.pow(x).times(x * x / 4 + x / 2 + 1);
 }
 
-// When the amount is exactly the cap, there are two cases: the player can go
-// over cap (in which case interval should be as if over cap) or the player
-// has just crunched and is still at cap due to "Is this safe?" reward
-// (in which case interval should be as if not over cap). This is why we have
-// the overCapOverride parameter, to tell us which case we are in.
 export function getReplicantiInterval(Interval) {
   let interval = getIntervalBoost(Interval).times(totalReplicantiSpeedMult());
 
-  if ((TimeStudy(133).isBought && !Achievement(138).isUnlocked)) {
+  if (TimeStudy(133).isBought && !Achievement(138).isUnlocked) {
     interval = interval.div(10);
   }
 
@@ -133,17 +71,15 @@ export function totalReplicantiSpeedMult() {
   totalMult = totalMult.times(ShopPurchase.replicantiPurchases.currentMult);
   if (Pelle.isDisabled("replicantiIntervalMult")) return totalMult;
 
-  const preCelestialEffects = Effects.product(
+  totalMult = totalMult.timesEffectsOf(
+    TimeStudy(21),
     TimeStudy(62),
+    TimeStudy(131),
     TimeStudy(213),
     RealityUpgrade(2),
     RealityUpgrade(6),
     RealityUpgrade(23),
   );
-  totalMult = totalMult.times(preCelestialEffects);
-  if (TimeStudy(132).isBought) {
-    totalMult = totalMult.times(Perk.studyPassive.isBought ? 3 : 1.5);
-  }
 
   if (Achievement(134).isUnlocked) {
     totalMult = totalMult.times(2);
@@ -158,42 +94,29 @@ export function totalReplicantiSpeedMult() {
   return totalMult;
 }
 
-export function replicantiCap() {
-  return EffarigUnlock.infinity.canBeApplied
-    ? Currency.infinitiesTotal.value
-      .pow(TimeStudy(31).isBought ? 120 : 30)
-      .clampMin(1)
-      .times(Decimal.NUMBER_MAX_VALUE)
-    : Decimal.NUMBER_MAX_VALUE;
+export function replicantiGainPerSecond() {
+  return getReplicantiInterval(player.replicanti.interval).plusEffectOf(TimeStudy(132));
 }
 
-// eslint-disable-next-line complexity
 export function replicantiLoop(diff) {
   if (!player.replicanti.unl) return;
-  PerformanceStats.start("Replicanti");
-  EventHub.dispatch(GAME_EVENT.REPLICANTI_TICK_BEFORE);
   const areRGsBeingBought = Replicanti.galaxies.areBeingBought;
  
-  Replicanti.amount = Replicanti.amount.plus(getReplicantiInterval(player.replicanti.interval).times(diff / 1000));
+  Replicanti.amount = Replicanti.amount.plus(replicantiGainPerSecond().times(diff / 1000));
 
   if (areRGsBeingBought) {
-    const buyer = Autobuyer.replicantiGalaxy;
-    const isAuto = buyer.canTick && buyer.isEnabled;
-    // There might be a manual and auto tick simultaneously; pass auto === true iff the autobuyer is ticking and
-    // we aren't attempting to manually buy RG, because this controls modals appearing or not
-    replicantiGalaxy(isAuto && !Replicanti.galaxies.isPlayerHoldingR);
+    replicantiGalaxy(true);
   }
   player.records.thisReality.maxReplicanti = player.records.thisReality.maxReplicanti
     .clampMin(Replicanti.amount);
-  EventHub.dispatch(GAME_EVENT.REPLICANTI_TICK_AFTER);
-  PerformanceStats.end();
+}
+
+export function getReplicantiPower(chance) {
+  return chance / 10 + 2 + Effects.sum(TimeStudy(22), TimeStudy(102));
 }
 
 export function replicantiMult() {
-  return Replicanti.amount.div(100).plus(1).pow(Replicanti.chance / 10 + 2)
-    .plusEffectOf(TimeStudy(21))
-    .timesEffectOf(TimeStudy(102))
-    .pow(getAdjustedGlyphEffect("replicationpow"));
+  return Replicanti.amount.div(100).plus(1).pow(getReplicantiPower(Replicanti.chance));
 }
 
 /** @abstract */
@@ -221,14 +144,11 @@ class ReplicantiUpgradeState {
   /** @abstract */
   set baseCost(value) { throw new NotImplementedError(); }
 
-  get cap() { return undefined; }
-  get isCapped() { return false; }
-
   /** @abstract */
   get autobuyerMilestone() { throw new NotImplementedError(); }
 
   get canBeBought() {
-    return !this.isCapped && Currency.infinityPoints.gte(this.cost) && player.eterc8repl !== 0;
+    return Currency.infinityPoints.gte(this.cost) && player.eterc8repl !== 0;
   }
 
   purchase() {
@@ -267,15 +187,6 @@ export const ReplicantiUpgrade = {
 
     get costIncrease() { return DC.E5.pow(this.value + 3); }
 
-    get cap() {
-      // Chance never goes over 100%.
-      return 9999999999999999999999999999999999999999999999999999999999999;
-    }
-
-    get isCapped() {
-      return this.nearestPercent(this.value) >= this.cap;
-    }
-
     get autobuyerMilestone() {
       return EternityMilestone.autobuyerReplicantiChance;
     }
@@ -300,11 +211,6 @@ export const ReplicantiUpgrade = {
       let logCost = logBase + count * logBaseIncrease + (count * (count - 1) / 2) * logCostScaling;
       return Decimal.pow10(logCost);
     }
-
-    // Rounding errors suck
-    nearestPercent(x) {
-      return Math.round(100 * x) / 100;
-    }
   }(),
   interval: new class ReplicantiIntervalUpgrade extends ReplicantiUpgradeState {
     get id() { return 2; }
@@ -324,14 +230,6 @@ export const ReplicantiUpgrade = {
     set baseCost(value) { player.replicanti.intervalCost = value; }
 
     get costIncrease() { return DC.E5.pow(this.value + 2); }
-
-    get cap() {
-      return -1;
-    }
-
-    get isCapped() {
-      return this.value <= this.cap;
-    }
 
     autobuyerTick() {
       // This isn't a hot enough autobuyer to worry about doing an actual inverse.
@@ -357,10 +255,6 @@ export const ReplicantiUpgrade = {
     get autobuyerMilestone() {
       return EternityMilestone.autobuyerReplicantiInterval;
     }
-
-    applyModifiers(value) {
-      return getReplicantiInterval(undefined, value);
-    }
   }(),
   galaxies: new class ReplicantiGalaxiesUpgrade extends ReplicantiUpgradeState {
     get id() { return 3; }
@@ -379,14 +273,6 @@ export const ReplicantiUpgrade = {
     get baseCost() { return player.replicanti.galCost; }
     set baseCost(value) { player.replicanti.galCost = value; }
 
-    get distantRGStart() {
-      return 9999999999999999999999999999999999999999999999999999999999999;
-    }
-
-    get remoteRGStart() {
-      return 9999999999999999999999999999999999999999999999999999999999999;
-    }
-
     get costIncrease() {
       const galaxies = this.value;
       let increase = EternityChallenge(6).isRunning
@@ -397,10 +283,6 @@ export const ReplicantiUpgrade = {
 
     get autobuyerMilestone() {
       return EternityMilestone.autobuyerReplicantiMaxGalaxies;
-    }
-
-    get extra() {
-      return Effects.max(0, TimeStudy(131)) + PelleRifts.decay.milestones[2].effectOrDefault(0);
     }
 
     autobuyerTick() {
@@ -431,11 +313,10 @@ export const Replicanti = {
     return player.replicanti.unl;
   },
   reset(force = false) {
-    const unlocked = force ? false : EternityMilestone.unlockReplicanti.isReached;
+    const unlocked = !force && (PelleUpgrade.replicantiStayUnlocked.canBeApplied || (!Pelle.isDoomed && EternityMilestone.unlockReplicanti.isReached));
     player.replicanti = {
       unl: unlocked,
       amount: DC.D0,
-      timer: 0,
       chance: 0,
       chanceCost: DC.E230,
       interval: 0,
@@ -452,7 +333,6 @@ export const Replicanti = {
     if (freeUnlock || Currency.infinityPoints.gte(cost)) {
       if (!freeUnlock) Currency.infinityPoints.subtract(cost);
       player.replicanti.unl = true;
-      player.replicanti.timer = 0;
       Replicanti.amount = DC.D1;
     }
   },
@@ -465,25 +345,20 @@ export const Replicanti = {
   get chance() {
     return ReplicantiUpgrade.chance.value;
   },
+  get start() {
+    return (TimeStudy(33).isBought && !Pelle.isDoomed)
+      ? this.galaxies.currentCost.div(2)
+      : DC.D0;
+  },
   galaxies: {
-    isPlayerHoldingR: false,
     get bought() {
       return player.replicanti.galaxies;
     },
-    get extra() {
-      return Math.floor((Effects.sum(
-        TimeStudy(225),
-        TimeStudy(226)
-      ) + Effarig.bonusRG) * TimeStudy(303).effectOrDefault(1));
-    },
-    get total() {
-      return this.bought + this.extra;
-    },
     get max() {
-      return ReplicantiUpgrade.galaxies.value + ReplicantiUpgrade.galaxies.extra;
+      return ReplicantiUpgrade.galaxies.value;
     },
     get startingCost() {
-      return DC.D5E4
+      return DC.D5E4.dividedByEffectsOf(TimeStudy(42), TimeStudy(133));
     },
     get currentCost() {
       return RGCost(this.startingCost, this.bought, this.max);
@@ -493,21 +368,16 @@ export const Replicanti = {
     },
     get areBeingBought() {
       const buyer = Autobuyer.replicantiGalaxy;
-      // If the confirmation is enabled, we presume the player wants to confirm each Replicanti Galaxy purchase
-      return (buyer.canTick && buyer.isEnabled) ||
-        (!player.options.confirmations.replicantiGalaxy && this.isPlayerHoldingR);
+      return (buyer.canTick && buyer.isEnabled);
     },
     get bulk() {
       if (!this.canBuyMore) return;
       if (!Autobuyer.replicantiGalaxy.isUnlocked) return { quantity: 1, purchasePrice: this.currentCost };
-      return bulkBuyBinarySearch(Replicanti.amount, {
+      return bulkBuyBinarySearch(player.replicanti.amount, {
         costFunction: x => RGCost(this.startingCost, x, this.max),
         firstCost: this.currentCost,
         cumulative: true,
       }, this.bought);
     },
-  },
-  get isUncapped() {
-    return true;
   }
 };

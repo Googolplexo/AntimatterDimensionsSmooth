@@ -29,52 +29,6 @@ export const MultiplierTabHelper = {
     ) * Pelle.specialGlyphEffect.power;
   },
 
-  // Helper method for galaxies and tickspeed, broken up as contributions of tickspeed*log(perGalaxy) and galaxyCount to
-  // their product, which is proportional to log(tickspeed)
-  decomposeTickspeed() {
-    let effectiveCount = effectiveBaseGalaxies();
-    const effects = this.globalGalaxyMult();
-
-    let galFrac, tickFrac;
-
-    effectiveCount *= effects;
-    effectiveCount *= getAdjustedGlyphEffect("realitygalaxies") * (1 + ImaginaryUpgrade(9).effectOrDefault(0));
-    effectiveCount *= Pelle.specialGlyphEffect.power;
-
-    // These all need to be framed as INCREASING x/sec tick rate (ie. all multipliers > 1, all logs > 0)
-    const baseMult = NormalChallenge(5).isRunning ? 1.5 : 2;
-    const logBase = Math.log10(baseMult);
-    const logPerGalaxy = -DC.D0_8.log10();
-
-    tickFrac = Tickspeed.totalUpgrades * logBase;
-    galFrac = (1 + effectiveCount / logBase * logPerGalaxy);
-
-    // Calculate what proportion base tickspeed takes out of the entire tickspeed multiplier
-    const base = DC.D1.dividedByEffectsOf(
-      Achievement(36),
-      Achievement(45),
-      Achievement(66),
-      Achievement(83)
-    );
-    let baseFrac = base.log10() / Tickspeed.perSecond.log10();
-
-    // We want to make sure to zero out components in some edge cases
-    if (base.eq(1)) baseFrac = 0;
-    if (effectiveCount === 0) galFrac = 0;
-
-    // Normalize the sum by splitting tickspeed and galaxies across what's leftover besides the base value. These three
-    // values must be scaled so that they sum to 1 and none are negative
-    let factor = (1 - baseFrac) / (tickFrac + galFrac);
-    // The actual base tickspeed calculation multiplies things in a different order, which can lead to precision issues
-    // when no tickspeed upgrades have been bought if we don't explicitly set this to zero
-    if (Tickspeed.totalUpgrades === 0) factor = 0;
-    return {
-      base: baseFrac,
-      tickspeed: tickFrac * factor,
-      galaxies: galFrac * factor,
-    };
-  },
-
   // Helper method to check for whether an achievement affects a particular dimension or not. Format of dimStr is
   // expected to be a three-character string "XXN", eg. "AD3" or "TD2"
   achievementDimCheck(ach, dimStr) {
@@ -101,9 +55,7 @@ export const MultiplierTabHelper = {
   timeStudyDimCheck(ts, dimStr) {
     switch (ts) {
       case 11:
-        return dimStr === "TD1";
-      case 71:
-        return dimStr.substr(0, 2) === "AD" && Number(dimStr.charAt(2)) !== 8;
+        return dimStr === "TD1";;
       case 72:
         return dimStr === "ID4";
       case 73:

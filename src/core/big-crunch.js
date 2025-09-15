@@ -74,6 +74,8 @@ function bigCrunchGiveRewards() {
 }
 
 function bigCrunchUpdateStatistics() {
+  player.records.secondsSinceLastRG = 0;
+
   player.records.bestInfinity.bestIPminEternity =
     player.records.bestInfinity.bestIPminEternity.clampMin(player.records.thisInfinity.bestIPmin);
   player.records.thisInfinity.bestIPmin = DC.D0;
@@ -128,10 +130,7 @@ export function bigCrunchResetValues(enteringAntimatterChallenge) {
   let remainingGalaxies = 0;
   if (Achievement(95).isUnlocked && !Pelle.isDoomed) {
     Replicanti.amount = currentReplicanti;
-    remainingGalaxies += Math.min(currentReplicantiGalaxies, 1);
-  }
-  if (TimeStudy(33).isBought && !Pelle.isDoomed) {
-    remainingGalaxies += Math.floor(currentReplicantiGalaxies / 2);
+    remainingGalaxies = 1;
   }
 
   if (PelleUpgrade.replicantiGalaxyNoReset.canBeApplied) {
@@ -158,7 +157,7 @@ export function secondSoftReset(enteringAntimatterChallenge) {
   Currency.antimatter.reset();
   softReset(0, true, true, enteringAntimatterChallenge);
   InfinityDimensions.resetAmount();
-  if (player.replicanti.unl) Replicanti.amount = DC.D1;
+  if (player.replicanti.unl) Replicanti.amount = DC.D0;
   player.replicanti.galaxies = 0;
   player.records.thisInfinity.time = 0;
   player.records.thisInfinity.lastBuyTime = 0;

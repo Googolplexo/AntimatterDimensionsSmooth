@@ -101,8 +101,8 @@ export const AD = {
   },
   sacrifice: {
     name: "Sacrifice Multiplier",
-    multValue: dim => ((!dim || dim === 8) ? Sacrifice.totalBoost : DC.D1),
-    isActive: dim => (!dim || dim === 8) && Sacrifice.totalBoost.gt(1) && !EternityChallenge(11).isRunning,
+    multValue: dim => Decimal.pow(Sacrifice.totalBoost, (dim || !TimeStudy(71).isBought) ? 1 : MultiplierTabHelper.activeDimCount("AD")),
+    isActive: dim => (!dim || dim === 8 || TimeStudy(71).isBought) && Sacrifice.totalBoost.gt(1) && !EternityChallenge(11).isRunning,
     icon: MultiplierTabIcons.SACRIFICE("antimatter"),
   },
   achievementMult: {
@@ -278,7 +278,6 @@ export const AD = {
         dimMults[tier] = dimMults[tier].times(infinitiedMult.pow(TimeStudy(31).effectOrDefault(1) - 1));
 
         dimMults[tier] = dimMults[tier].timesEffectsOf(
-          tier < 8 ? TimeStudy(71) : null,
           tier === 8 ? TimeStudy(214) : null,
           tier === 1 ? TimeStudy(234) : null,
         );

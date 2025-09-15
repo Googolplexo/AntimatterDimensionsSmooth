@@ -66,6 +66,9 @@ export class ECTimeStudyState extends TimeStudyState {
   }
 
   get canBeBought() {
+    if (this.id === 9 && !TimeDimension(4).isUnlocked) {
+      return false;
+    }
     if (!this.isAffordable) {
       return false;
     }

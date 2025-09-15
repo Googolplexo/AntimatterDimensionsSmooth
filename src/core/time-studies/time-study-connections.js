@@ -86,15 +86,15 @@ TimeStudy.allConnections = (function() {
     [TS(132), TS(142)],
     [TS(133), TS(143)],
 
-    [TS(141), TS(151)],
-    [TS(142), TS(151)],
-    [TS(143), TS(151)],
+    [TS(141), TimeStudy.timeDimension(4)],
+    [TS(142), TimeStudy.timeDimension(4)],
+    [TS(143), TimeStudy.timeDimension(4)],
     [TS(143), EC(4)],
 
-    [TS(151), EC(9)],
+    [TimeStudy.timeDimension(4), EC(9)],
 
-    [TS(151), TS(161)],
-    [TS(151), TS(162)],
+    [TimeStudy.timeDimension(4), TS(161)],
+    [TimeStudy.timeDimension(4), TS(162)],
 
     [TS(161), TS(171)],
     [TS(162), TS(171)],

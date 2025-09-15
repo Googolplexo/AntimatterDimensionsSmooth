@@ -42,6 +42,7 @@ export class NormalTimeStudyState extends TimeStudyState {
   }
 
   checkRequirement() {
+    if ([161, 162].includes(this.config.id) && !TimeDimension(4).isUnlocked) return false;
     const check = req => (typeof req === "number"
       ? TimeStudy(req).isBought
       : req());

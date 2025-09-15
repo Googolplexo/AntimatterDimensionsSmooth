@@ -124,6 +124,7 @@ export function eternity(force, auto, specialConditions = {}) {
 
   Currency.infinityPoints.reset();
   InfinityDimensions.resetAmount();
+  player.records.secondsSinceLastRG = 0;
   player.records.thisInfinity.bestIPmin = DC.D0;
   player.records.bestInfinity.bestIPminEternity = DC.D0;
   player.records.thisEternity.bestEPmin = DC.D0;
@@ -177,7 +178,7 @@ export function initializeChallengeCompletions(isReality) {
   if (!isReality && EternityMilestone.keepAutobuyers.isReached || Pelle.isDoomed) {
     NormalChallenges.completeAll();
   }
-  if (Achievement(133).isUnlocked && !Pelle.isDoomed) InfinityChallenges.completeAll();
+  if (EternityMilestone.autoIC.isReached && !Pelle.isDoomed) InfinityChallenges.completeAll();
   player.challenge.normal.current = 0;
   player.challenge.infinity.current = 0;
 }
@@ -334,18 +335,8 @@ class EPMultiplierState extends GameMechanicState {
     this.boughtAmount = 0;
   }
 
-  get costIncreaseThresholds() {
-    return [DC.E100, Decimal.NUMBER_MAX_VALUE, DC.E1300, DC.E4000];
-  }
-
   costAfterCount(count) {
-    const costThresholds = EternityUpgrade.epMult.costIncreaseThresholds;
-    const multPerUpgrade = [50, 100, 500, 1000];
-    for (let i = 0; i < costThresholds.length; i++) {
-      const cost = Decimal.pow(multPerUpgrade[i], count).times(500);
-      if (cost.lt(costThresholds[i])) return cost;
-    }
-    return DC.E3.pow(count + Math.pow(Math.clampMin(count - 1334, 0), 1.2)).times(500);
+    return DC.D5E1.pow(count).times(20000);
   }
 }
 

@@ -19,7 +19,6 @@ export default {
       isEC9Running: false,
       isEnslavedRunning: false,
       isAnyAutobuyerUnlocked: false,
-      conversionRate: 0,
       nextDimCapIncrease: 0,
       tesseractCost: new Decimal(0),
       totalDimCap: 0,
@@ -48,11 +47,10 @@ export default {
       this.showLockedDimCostNote = !InfinityDimension(8).isUnlocked;
       this.isEC9Running = EternityChallenge(9).isRunning;
       this.infinityPower.copyFrom(Currency.infinityPower);
-      this.conversionRate = InfinityDimensions.powerConversionRate;
       if (this.isEC9Running) {
         this.dimMultiplier.copyFrom(Decimal.pow(Math.max(this.infinityPower.log2(), 1), 4).max(1));
       } else {
-        this.dimMultiplier.copyFrom(this.infinityPower.pow(this.conversionRate).plus(1));
+        this.dimMultiplier.copyFrom(this.infinityPower.pow(7).plus(1));
       }
       this.powerPerSecond.copyFrom(InfinityDimension(1).productionPerSecond);
       this.incomeType = EternityChallenge(7).isRunning ? "Seventh Dimensions" : "Infinity Power";
@@ -108,14 +106,7 @@ export default {
         <span class="c-infinity-dim-description__accent">{{ format(infinityPower, 2, 1) }}</span>
         Infinity Power,
         <br>
-        <span v-if="!isEC9Running">
-          increased by
-          <span class="c-infinity-dim-description__accent">{{ formatPow(conversionRate, 2, 3) }}</span>
-        </span>
-        <span v-else>
-          translated
-        </span>
-        to a
+        translated to a
         <span class="c-infinity-dim-description__accent">{{ formatX(dimMultiplier, 2, 1) }}</span>
         multiplier on all
         <span v-if="!isEC9Running">Antimatter Dimensions.</span>

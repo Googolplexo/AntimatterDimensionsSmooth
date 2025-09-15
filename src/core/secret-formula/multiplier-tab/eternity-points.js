@@ -21,8 +21,7 @@ export const EP = {
     name: "Base Eternity Points",
     isBase: true,
     fakeValue: DC.D5,
-    multValue: () => DC.D5.pow(player.records.thisEternity.maxIP.plus(
-      gainedInfinityPoints()).log10() / (308 - PelleRifts.recursion.effectValue.toNumber()) - 0.7),
+    multValue: () => player.infinityPoints.div(DC.E2000).pow(0.00025),
     isActive: () => PlayerProgress.eternityUnlocked(),
     icon: MultiplierTabIcons.CONVERT_FROM("IP"),
   },

@@ -29,10 +29,6 @@ Math.PI_2 = Math.PI * 2;
  * finds a value that is not affordable. After that, it performs a binary search to figure
  * out how much can actually be bought. Returns an object with a quantity and price, or
  * null if nothing can be bought
- * NOTE: this will not work with slowly increasing prices. This makes the assumption that
- * if you can afford purchase N, you can afford the combined cost of everything before N
- * (it does check and make sure you can afford all of that put together. See below in code
- * for details)
  * @param {Decimal} money Amount of currency available
  * @param {Object} costInfo cost parameters:
  * @param {function(number): Decimal} costInfo.costFunction price of the n'th purchase (starting from 0)
@@ -47,7 +43,7 @@ window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alrea
   const costFunction = costInfo.costFunction;
   const firstCost = costInfo.firstCost === undefined ? costFunction(alreadyBought) : costInfo.firstCost;
   const isCumulative = costInfo.cumulative === undefined ? true : costInfo.cumulative;
-  if (money.lt(firstCost)) return null;
+  if (money.lt(firstCost)) return { quantity: 0 };
   // Attempt to find the max we can purchase. We know we can buy 1, so we try 2, 4, 8, etc
   // to figure out the upper limit
   let cantBuy = 1;

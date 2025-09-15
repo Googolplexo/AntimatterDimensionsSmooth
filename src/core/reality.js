@@ -622,6 +622,7 @@ export function finishProcessReality(realityProps) {
 
   Currency.infinities.reset();
   Currency.infinitiesBanked.reset();
+  player.records.secondsSinceLastRG = 0;
   player.records.bestInfinity.time = Number.MAX_VALUE;
   player.records.bestInfinity.realTime = Number.MAX_VALUE;
   player.records.thisInfinity.time = 0;
@@ -771,14 +772,10 @@ function restoreCelestialRuns(celestialRunState) {
 export function applyRUPG10(real = true) {
   if (real && !Pelle.isDoomed) Currency.eternities.bumpTo(100);
   playerInfinityUpgradesOnReset(false);
-  if (player.eternities.gte(2)) NormalChallenges.completeAll();
-  if (PelleUpgrade.replicantiStayUnlocked.canBeApplied || (!Pelle.isDoomed && player.eternities.gte(10))) {
-    Replicanti.amount = Replicanti.amount.clampMin(1);
-    Replicanti.unlock(true);
-  }
+  if (EternityMilestone.keepAutobuyers.isReached) NormalChallenges.completeAll();
   if (Pelle.isDisabled("rupg10")) return;
 
-  if (player.eternities.gte(2)) player.auto.antimatterDims.all = player.auto.antimatterDims.all.map(current => ({
+  if (EternityMilestone.keepAutobuyers.isReached) player.auto.antimatterDims.all = player.auto.antimatterDims.all.map(current => ({
     isUnlocked: true,
     // These costs are approximately right; if bought manually all dimensions are slightly different from one another
     cost: 1e14,
@@ -790,13 +787,13 @@ export function applyRUPG10(real = true) {
     lastTick: current.lastTick ?? player.records.realTimePlayed
   }));
 
-  if (player.eternities.gte(2)) for (const autobuyer of Autobuyers.all) {
+  if (EternityMilestone.keepAutobuyers.isReached) for (const autobuyer of Autobuyers.all) {
     if (autobuyer.data.interval !== undefined) autobuyer.data.interval = 100;
   }
 
-  if (player.eternities.gte(4)) player.dimensionBoosts = Math.max(4, player.dimensionBoosts);
-  if (player.eternities.gte(4)) player.galaxies = Math.max(1, player.galaxies);
-  if (player.eternities.gte(2)) player.break = true;
+  if (EternityMilestone.keepInfinityUpgrades.isReached && !Player.isInAntimatterChallenge) player.dimensionBoosts = Math.max(4, player.dimensionBoosts);
+  if (EternityMilestone.keepInfinityUpgrades.isReached && !Player.isInAntimatterChallenge) player.galaxies = Math.max(3, player.galaxies);
+  if (EternityMilestone.keepAutobuyers.isReached) player.break = true;
 
   applyEU1();
 }

@@ -307,7 +307,7 @@ export const realityUpgrades = [
     requirement: () => `${formatInt(Replicanti.galaxies.total + player.galaxies +
       player.dilation.totalTachyonGalaxies)}/${formatInt(2800)} total Galaxies from all types`,
     checkRequirement: () =>
-      Replicanti.galaxies.total + player.galaxies + player.dilation.totalTachyonGalaxies + Effects.sum(InfinityUpgrade.galaxyBoost) >= 2800,
+      totalGalaxies() >= 2800,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     description: () => `Remote Antimatter Galaxy scaling is moved to ${formatInt(1e5)} galaxies`,
     effect: 1e5

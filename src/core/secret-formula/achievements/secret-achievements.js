@@ -117,8 +117,8 @@ export const secretAchievements = [
   },
   {
     id: 33,
-    name: "A sound financial decision",
-    description: "Click on the button to purchase STD coins."
+    name: "Eternity is the new Reality",
+    get description() { return `Huge thanks for playing the game! You have reached ${formatPostBreak(player.records.firstEternityIP, 2, 2)} Infinity Points on your first Eternity.`; }
   },
   {
     id: 34,

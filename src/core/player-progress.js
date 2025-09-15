@@ -37,11 +37,11 @@ export class PlayerProgress {
   }
 
   static hasBroken() {
-    return player.break || this.isEternityUnlocked || this.isRealityUnlocked;
+    return player.break || this.eternityUnlocked() || this.realityUnlocked();
   }
 
   static replicantiUnlocked() {
-    return Replicanti.areUnlocked || this.isEternityUnlocked;
+    return Replicanti.areUnlocked || this.eternityUnlocked();
   }
 
   static eternityUnlocked() {

@@ -16,7 +16,6 @@ export default {
       isAutoEnabled: false,
       isDivideUnlocked: false,
       boughtGalaxies: 0,
-      extraGalaxies: 0,
       cost: new Decimal(0)
     };
   },
@@ -27,10 +26,7 @@ export default {
         : "Reset the Replicanti amount for";
     },
     galaxyCountDisplay() {
-      const bought = this.boughtGalaxies;
-      const extra = this.extraGalaxies;
-      const galaxyCount = extra > 0 ? `${formatInt(bought)}+${formatInt(extra)}` : formatInt(bought);
-      return `Currently: ${galaxyCount}`;
+      return `Currently: ${formatInt(this.boughtGalaxies)}`;
     },
     galaxyCostDisplay() {
       return `Cost: ${format(this.cost, 2, 2)} Replicanti`;
@@ -50,7 +46,6 @@ export default {
       this.isAvailable = rg.canBuyMore;
       this.cost = rg.currentCost;
       this.boughtGalaxies = rg.bought;
-      this.extraGalaxies = rg.extra;
       this.isDivideUnlocked = Achievement(126).isUnlocked;
       const auto = Autobuyer.replicantiGalaxy;
       this.isAutoUnlocked = auto.isUnlocked;

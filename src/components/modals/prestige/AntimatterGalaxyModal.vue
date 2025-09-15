@@ -16,7 +16,7 @@ export default {
     return {
       newGalaxies: 0,
       keepAntimatter: false,
-      perkANRBought: false,
+      keepDimensions: false,
       keepDimBoost: false
     };
   },
@@ -26,12 +26,11 @@ export default {
       return `You are about to purchase an Antimatter Galaxy`;
     },
     message() {
-      const resetResouces = [];
-      if (Pelle.isDoomed) resetResouces.push("Antimatter", "Antimatter Dimensions", "Tickspeed");
-      if (!this.perkANRBought) resetResouces.push("Antimatter Dimensions", "Tickspeed");
-      if (!this.keepDimBoost) resetResouces.push("Dimension Boosts");
-      if (!this.keepAntimatter && !this.perkANRBought) resetResouces.push("Antimatter");
-      const resetList = makeEnumeration(resetResouces);
+      let reset = [];
+      if (!this.keepAntimatter) reset.push("Antimatter");
+      if (!this.keepDimensions) reset.push("Antimatter Dimensions", "Tickspeed");
+      if (!this.keepDimBoost) reset.push("Dimension Boosts");
+      const resetList = makeEnumeration(reset);
       let tickspeedFixed = "";
       if (InfinityChallenge(3).isRunning) {
         tickspeedFixed = `Infinity Challenge ${InfinityChallenge(3).id}`;
@@ -39,7 +38,7 @@ export default {
         tickspeedFixed = `${Ra.displayName}'s Reality`;
       }
       const tickspeedInfo = (tickspeedFixed === "")
-        ? "you will receive a small boost to Tickspeed Upgrades."
+        ? "you will receive a boost to Tickspeed Upgrades."
         : `you will not receive a boost to Tickspeed Upgrades, because you are in ${tickspeedFixed}.`;
       const message = (resetList === "")
         ? `This will reset nothing, and ${tickspeedInfo}`
@@ -67,10 +66,9 @@ export default {
           this.newGalaxies = Galaxy.buyableGalaxies(Math.round(dim.totalAmount.toNumber())) - player.galaxies;
         }
       }
-      this.keepAntimatter = Achievement(111).isUnlocked;
-      this.perkANRBought = Perk.antimatterNoReset.canBeApplied;
-      this.keepDimBoost = (Achievement(143).isUnlocked && !Pelle.isDoomed) ||
-        PelleUpgrade.galaxyNoResetDimboost.canBeApplied;
+      this.keepAntimatter = canKeepAntimatterOnSoftReset(PRESTIGE_EVENT.ANTIMATTER_GALAXY);
+      this.keepDimensions = canKeepDimensionsOnSoftReset(PRESTIGE_EVENT.ANTIMATTER_GALAXY);
+      this.keepDimBoost = canKeepDimBoostsOnGalaxy();
     },
     handleYesClick() {
       requestGalaxyReset(this.bulk);

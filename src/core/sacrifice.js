@@ -9,7 +9,7 @@ export class Sacrifice {
 
   static get canSacrifice() {
     return DimBoost.purchasedBoosts > 4 && !EternityChallenge(3).isRunning && this.nextBoost.gt(1.01) &&
-      AntimatterDimension(8).totalAmount.gt(0) && Currency.antimatter.lt(Player.infinityLimit) &&
+      AntimatterDimension(8).totalAmount.gt(0) && (Currency.antimatter.lt(Player.infinityLimit) || Achievement(118).isUnlocked) &&
       !Enslaved.isRunning;
   }
 
@@ -30,7 +30,13 @@ export class Sacrifice {
   // player would already have ach32/57 by the time they complete IC2. As Reality resets achievements, we had to
   // assume that all things boosting sacrifice can be gotten independently, which resulted in some odd effect stacking.
   static get sacrificeExponent() {
-    return DC.D2.timesEffectsOf(Achievement(32), Achievement(57), Achievement(88), InfinityChallenge(2).reward, TimeStudy(228), TimeStudy(304)).toNumber() * (11 - Player.dimensionMultDecrease);
+    return Effects.product(
+      Achievement(32),
+      Achievement(57),
+      Achievement(88),
+      InfinityChallenge(2).reward,
+      TimeStudy(228),
+      TimeStudy(304)) * (11 - Player.dimensionMultDecrease) * 2;
   }
 
   static get nextBoost() {

@@ -232,6 +232,7 @@ export class TimeStudyTree {
       default:
         throw Error(`Unrecognized TS requirement type: ${this.reqType}`);
     }
+    if ([161, 162].includes(config.id) && !TimeDimension(4).isUnlocked) reqSatisfied = false;
     if (study instanceof ECTimeStudyState) {
       if (this.purchasedStudies.some(s => s instanceof ECTimeStudyState)) return false;
       const hasForbiddenStudies = !Perk.studyECRequirement.isBought &&

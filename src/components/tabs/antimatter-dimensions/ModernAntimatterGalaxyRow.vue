@@ -3,27 +3,24 @@ export default {
   name: "ModernAntimatterGalaxyRow",
   data() {
     return {
-      type: GALAXY_TYPE.NORMAL,
       galaxies: {
         normal: 0,
         replicanti: 0,
-        dilation: 0
+        dilation: 0,
+        static: 0
       },
       requirement: {
         tier: 1,
         amount: 0
       },
       canBeBought: false,
-      distantStart: 0,
-      remoteStart: 0,
       lockText: null,
       canBulkBuy: false,
       creditsClosed: false,
-      scalingText: {
-        distant: null,
-        remote: null,
-      },
       hasTutorial: false,
+      keepAntimatter: false,
+      keepDimensions: false,
+      keepDimBoost: false,
     };
   },
   computed: {
@@ -34,49 +31,23 @@ export default {
     buttonText() {
       if (this.lockText !== null) return this.lockText;
       const reset = [];
-      if (!Achievement(111).isUnlocked) reset.push("Dimensions");
-      if (!Achievement(143).isUnlocked) reset.push("Dimension Boosts");
+      if (!this.keepAntimatter) reset.push("Antimatter");
+      if (!this.keepDimensions) reset.push("Antimatter Dimensions", "Tickspeed");
+      if (!this.keepDimBoost) reset.push("Dimension Boosts");
       return reset.length === 0
         ? `Multiply the power of Tickspeed upgrades by 1.25`
         : `Reset your ${makeEnumeration(reset)} to multiply the power of Tickspeed upgrades by 1.25`;
     },
     sumText() {
       const parts = [Math.max(this.galaxies.normal, 0)];
-      if (this.galaxies.replicanti > 0) parts.push(this.galaxies.replicanti);
-      if (this.galaxies.dilation > 0) parts.push(this.galaxies.dilation);
-      if (InfinityUpgrade.galaxyBoost.isBought) parts.push(1);
+      if (this.galaxies.replicanti) parts.push(this.galaxies.replicanti);
+      if (this.galaxies.dilation) parts.push(this.galaxies.dilation);
+      if (this.galaxies.static) parts.push(this.galaxies.static);
       const sum = parts.map(this.formatGalaxies).join(" + ");
       if (parts.length >= 2) {
         return `${sum} = ${this.formatGalaxies(parts.sum())}`;
       }
       return sum;
-    },
-    typeName() {
-      switch (this.type) {
-        case GALAXY_TYPE.NORMAL: return "Antimatter Galaxies";
-        case GALAXY_TYPE.DISTANT: return "Antimatter Galaxies";
-        case GALAXY_TYPE.REMOTE: return "Remote Antimatter Galaxies";
-      }
-      return undefined;
-    },
-    hasIncreasedScaling() {
-      return this.type !== GALAXY_TYPE.NORMAL;
-    },
-    costScalingText() {
-      switch (this.type) {
-        case GALAXY_TYPE.DISTANT:
-          return ``;
-        case GALAXY_TYPE.REMOTE: {
-          const scalings = [
-            { type: "distant", function: "quadratic", amount: this.distantStart },
-            { type: "remote", function: "exponential", amount: this.remoteStart }
-          ];
-          return `Increased Galaxy cost scaling: ${scalings.sort((a, b) => a.amount - b.amount)
-            .map(scaling => `${scaling.function} scaling past ${this.formatGalaxies(scaling.amount)} (${scaling.type})`)
-            .join(", ").capitalize()}`;
-        }
-      }
-      return undefined;
     },
     classObject() {
       return {
@@ -89,26 +60,21 @@ export default {
   },
   methods: {
     update() {
-      this.type = Galaxy.type;
       this.galaxies.normal = player.galaxies + GalaxyGenerator.galaxies;
-      this.galaxies.replicanti = Replicanti.galaxies.total;
+      this.galaxies.replicanti = Replicanti.galaxies.bought;
       this.galaxies.dilation = player.dilation.totalTachyonGalaxies;
+      this.galaxies.static = staticGalaxies();
       const requirement = Galaxy.requirement;
       this.requirement.amount = requirement.amount;
       this.requirement.tier = requirement.tier;
       this.canBeBought = requirement.isSatisfied && Galaxy.canBeBought;
-      this.distantStart = EternityChallenge(5).isRunning ? 0 : Galaxy.costScalingStart;
-      this.remoteStart = Galaxy.remoteStart;
       this.lockText = Galaxy.lockText;
       this.canBulkBuy = EternityMilestone.autobuyMaxGalaxies.isReached;
       this.creditsClosed = GameEnd.creditsEverClosed;
-      if (this.isDoomed) {
-        this.scalingText = {
-          distant: this.formatGalaxies(this.distantStart),
-          remote: this.formatGalaxies(Galaxy.remoteStart),
-        };
-      }
       this.hasTutorial = Tutorial.isActive(TUTORIAL_STATE.GALAXY);
+      this.keepAntimatter = canKeepAntimatterOnSoftReset(PRESTIGE_EVENT.ANTIMATTER_GALAXY);
+      this.keepDimensions = canKeepDimensionsOnSoftReset(PRESTIGE_EVENT.ANTIMATTER_GALAXY);
+      this.keepDimBoost = canKeepDimBoostsOnGalaxy();
     },
     buyGalaxy(bulk) {
       if (!this.canBeBought) return;
@@ -123,9 +89,8 @@ export default {
 
 <template>
   <div class="reset-container galaxy">
-    <h4>{{ typeName }} ({{ sumText }})</h4>
+    <h4>Antimatter Galaxies ({{ sumText }})</h4>
     <span>Requires: {{ formatInt(requirement.amount) }} {{ dimName }} Antimatter D</span>
-    <span v-if="hasIncreasedScaling">{{ costScalingText }}</span>
     <button
       :class="classObject"
       @click.exact="buyGalaxy(true)"
