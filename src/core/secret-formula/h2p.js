@@ -571,7 +571,7 @@ Infinity Points. They give a permanent ${formatX(2)} multiplier per purchase, si
 <br>
 <br>
 <b>Infinity Dimension Production:</b> Just like Antimatter Dimensions, each Infinity Dimension produces the
-next highest Infinity Dimension.
+next lower Infinity Dimension.
 <br>
 <br>
 Every crunch, your produced Infinity Dimensions are reset to the amount you purchased. While the production
