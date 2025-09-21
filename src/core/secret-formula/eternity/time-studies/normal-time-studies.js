@@ -348,7 +348,7 @@ export const normalTimeStudies = [
     effect: () => {
       const perkEffect = TimeSpan.fromMinutes(Perk.studyIdleEP.effectOrDefault(0));
       const totalSeconds = Time.thisInfinity.plus(perkEffect).totalSeconds;
-      return generalDilatedValueOf(totalSeconds / 60, 2).plus(1).pow(300);
+      return generalDilatedValueOf(totalSeconds, 2).plus(1).pow(50);
     },
     formatEffect: value => formatX(value, 2, 1)
   },
