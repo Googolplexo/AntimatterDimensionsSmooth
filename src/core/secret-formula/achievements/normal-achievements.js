@@ -716,7 +716,7 @@ export const normalAchievements = [
     id: 106,
     name: "The swarm",
     get description() { return `Get ${formatInt(10)} Replicanti Galaxies in the first ${formatInt(15)} seconds of an Infinity.`; },
-    checkRequirement: () => Replicanti.galaxies.total >= 10 && Time.thisInfinity.totalSeconds <= 15,
+    checkRequirement: () => Replicanti.galaxies.bought >= 10 && Time.thisInfinity.totalSeconds <= 15,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {
