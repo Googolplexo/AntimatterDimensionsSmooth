@@ -216,7 +216,7 @@ export const normalTimeStudies = [
     reqType: TS_REQUIREMENT_TYPE.AT_LEAST_ONE,
     description: () => `Time Dimension multiplier based on Replicanti Galaxies`,
     effect: () => DC.D1_005.pow(Math.pow(player.replicanti.galaxies, 1.75)),
-    formatEffect: value => formatX(value, 1, 1)
+    formatEffect: value => formatX(value, 2, 1)
   },
   {
     id: 111,

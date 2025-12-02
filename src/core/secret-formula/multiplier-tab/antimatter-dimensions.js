@@ -48,7 +48,7 @@ export const AD = {
         EternityChallenge(7).isRunning ? 7 : MultiplierTabHelper.activeDimCount("AD")).totalAmount;
       return mult.times(highestDim).clampMin(1);
     },
-    isActive: dim => (dim ? dim <= MultiplierTabHelper.activeDimCount("AD") : true),
+    isActive: dim => (dim ? dim <= MultiplierTabHelper.activeDimCount("AD") : AntimatterDimension(1).isProducing),
     dilationEffect: () => {
       const baseEff = (player.dilation.active || Enslaved.isRunning)
         ? 0.75 * Effects.product(DilationUpgrade.dilationPenalty)

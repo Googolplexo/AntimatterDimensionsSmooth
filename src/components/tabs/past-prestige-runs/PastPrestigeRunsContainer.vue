@@ -195,6 +195,7 @@ export default {
     },
     cellStyle(col, isHeader) {
       let width;
+      if (!this.hasRealTime && col > 1) col++;
       switch (col) {
         case 0:
           // "X ago" is really short

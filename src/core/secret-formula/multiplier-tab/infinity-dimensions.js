@@ -139,7 +139,7 @@ export const ID = {
       );
       return Decimal.pow(allMult, dim ? 1 : MultiplierTabHelper.activeDimCount("ID"));
     },
-    isActive: () => InfinityChallenge(1).isCompleted,
+    isActive: () => InfinityChallenge(1).isUnlocked,
     icon: MultiplierTabIcons.CHALLENGE("infinity"),
   },
   eternityChallenge: {
