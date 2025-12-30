@@ -11,7 +11,7 @@ export function antimatterDimensionCommonMultiplier() {
   multiplier = multiplier.times(ShopPurchase.dimPurchases.currentMult);
   multiplier = multiplier.times(ShopPurchase.allDimPurchases.currentMult);
 
-  if (!EternityChallenge(9).isRunning) {
+  if (![7, 9].some(id => EternityChallenge(id).isRunning)) {
     multiplier = multiplier.times(Currency.infinityPower.value.pow(InfinityDimensions.powerConversionRate).plus(1));
   }
   multiplier = multiplier.timesEffectsOf(
@@ -124,6 +124,10 @@ function applyNDMultipliers(mult, tier) {
   }
   if (tier === 8 || TimeStudy(71).isBought) {
     multiplier = multiplier.times(Sacrifice.totalBoost);
+  }
+
+  if (EternityChallenge(7).isRunning && tier === 8) {
+    multiplier = multiplier.times(Currency.infinityPower.value.pow(InfinityDimensions.powerConversionRate).plus(1));
   }
 
   multiplier = multiplier.timesEffectsOf(
@@ -421,16 +425,14 @@ class AntimatterDimensionState extends DimensionState {
 
     const loss = NormalChallenge(8).isRunning ? DC.DM1 : DC.D0;
 
-    if (tier === 8 ||
-      (tier > 3 && EternityChallenge(3).isRunning) ||
-      (tier > 6 && NormalChallenge(12).isRunning)) {
+    if (tier === 8 || (tier === 7 &&
+      (EternityChallenge(3).isRunning ||
+      NormalChallenge(12).isRunning))) {
       return loss;
     }
 
     let toGain;
-    if (tier === 7 && EternityChallenge(7).isRunning) {
-      toGain = InfinityDimension(1).productionPerSecond.times(10);
-    } else if (NormalChallenge(12).isRunning) {
+    if (NormalChallenge(12).isRunning) {
       toGain = AntimatterDimension(tier + 2).productionPerSecond;
     } else {
       toGain = AntimatterDimension(tier + 1).productionPerSecond;
@@ -444,7 +446,7 @@ class AntimatterDimensionState extends DimensionState {
    */
   get isProducing() {
     const tier = this.tier;
-    if ((EternityChallenge(3).isRunning && tier > 4) ||
+    if ((EternityChallenge(3).isRunning && tier === 8) ||
       (NormalChallenge(10).isRunning && tier > 6) ||
       (Laitela.isRunning && tier > Laitela.maxAllowedDimension)) {
       return false;
@@ -643,7 +645,7 @@ export const AntimatterDimensions = {
     const hasBigCrunchGoal = !player.break || Player.isInAntimatterChallenge;
     if (hasBigCrunchGoal && Currency.antimatter.gte(Player.infinityGoal)) return;
 
-    let maxTierProduced = EternityChallenge(3).isRunning ? 3 : 7;
+    let maxTierProduced = EternityChallenge(3).isRunning ? 6 : 7;
     let nextTierOffset = 1;
     if (NormalChallenge(12).isRunning) {
       maxTierProduced--;

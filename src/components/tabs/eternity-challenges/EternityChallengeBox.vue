@@ -86,7 +86,7 @@ export default {
       } else this.challenge.requestStart();
     },
     goalAtCompletions(completions) {
-      return format(this.challenge.goalAtCompletions(completions), 2, 1);
+      return format(this.challenge.goalAtCompletions(completions));
     }
   }
 };

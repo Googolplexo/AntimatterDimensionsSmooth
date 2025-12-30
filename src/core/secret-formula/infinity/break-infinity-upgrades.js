@@ -11,13 +11,10 @@ function rebuyable(config) {
     description,
     effect: () => effectFunction(player.infinityRebuyables[config.id]),
     isDisabled,
-    // There isn't enough room in the button to fit the EC reduction and "Next:" at the same time while still
-    // presenting all the information in an understandable way, so we only show it if the upgrade is maxed
     formatEffect: config.formatEffect ||
       (value => {
-        const afterECText = config.afterEC ? config.afterEC() : "";
         return value === config.maxUpgrades
-          ? `Currently: ^${formatInt(1 + value)} ${afterECText}`
+          ? `Currently: ^${formatInt(1 + value)}`
           : `Currently: ^${formatInt(1 + value)} | Next: ^${formatInt(2 + value)}`;
       }),
     formatCost: value => format(value, 2, 0),
@@ -115,10 +112,6 @@ export const breakInfinityUpgrades = {
       }
       return `${effect} Dimension Boosts on Galaxy resets`;
     },
-    afterEC: () => (EternityChallenge(11).completions > 0
-      ? `After EC11: ${formatX(Player.tickSpeedMultDecrease, 2, 2)}`
-      : ""
-    ),
     formatEffect: value => "",
     noLabel: true,
     onPurchased: () => GameCache.tickSpeedMultDecrease.invalidate()
@@ -129,10 +122,6 @@ export const breakInfinityUpgrades = {
     costIncrease: 50,
     maxUpgrades: 9,
     description: "Dimensional Sacrifice is stronger",
-    afterEC: () => (EternityChallenge(6).completions > 0
-      ? `After EC6: ${formatX(Player.dimensionMultDecrease, 2, 2)}`
-      : ""
-    ),
     noLabel: true,
     onPurchased: () => GameCache.dimensionMultDecrease.invalidate()
   }),

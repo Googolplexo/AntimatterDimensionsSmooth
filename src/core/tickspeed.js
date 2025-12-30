@@ -97,10 +97,7 @@ export const Tickspeed = {
   },
 
   get current() {
-    const tickspeed = Effarig.isRunning
-      ? Effarig.tickspeed
-      : this.baseValue.powEffectOf(DilationUpgrade.tickspeedPower);
-    return player.dilation.active || PelleStrikes.dilation.hasStrike ? dilatedValueOf(tickspeed) : tickspeed;
+    return Decimal.divide(1000, this.perSecond);
   },
 
   get cost() {
@@ -139,7 +136,8 @@ export const Tickspeed = {
   },
 
   get perSecond() {
-    return Decimal.divide(1000, this.current);
+    const tickspeed = Decimal.divide(1000, this.baseValue);
+    return player.dilation.active || PelleStrikes.dilation.hasStrike ? dilatedValueOf(tickspeed) : tickspeed;
   },
 
   multiplySameCosts() {

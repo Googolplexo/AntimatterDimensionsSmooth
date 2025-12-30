@@ -71,7 +71,7 @@ export default {
       <p>
         Next Tickspeed upgrade at
         <span class="c-time-dim-description__accent">{{ format(upgradeThreshold, 2, 1) }}</span>, multiplying by
-        <span class="c-time-dim-description__accent">{{ formatX(multPerTickspeed, 3, 3) }}</span> per
+        <span class="c-time-dim-description__accent">{{ formatX(multPerTickspeed, 2, 3) }}</span> per
         Tickspeed upgrade gained.
       </p>
     </div>

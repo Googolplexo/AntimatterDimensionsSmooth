@@ -13,12 +13,13 @@ export default {
       infinityPower: new Decimal(0),
       dimMultiplier: new Decimal(0),
       powerPerSecond: new Decimal(0),
-      incomeType: "",
+      isEC7Running: false,
       isEC8Running: false,
       EC8PurchasesLeft: 0,
       isEC9Running: false,
       isEnslavedRunning: false,
       isAnyAutobuyerUnlocked: false,
+      conversionRate: 0,
       nextDimCapIncrease: 0,
       tesseractCost: new Decimal(0),
       totalDimCap: 0,
@@ -41,13 +42,14 @@ export default {
       this.showLockedDimCostNote = !InfinityDimension(8).isUnlocked;
       this.isEC9Running = EternityChallenge(9).isRunning;
       this.infinityPower.copyFrom(Currency.infinityPower);
+      this.conversionRate = InfinityDimensions.powerConversionRate;
       if (this.isEC9Running) {
-        this.dimMultiplier.copyFrom(Decimal.pow(Math.max(this.infinityPower.log2(), 1), 4).max(1));
+        this.dimMultiplier.copyFrom(this.infinityPower.cbrt().plus(1));
       } else {
-        this.dimMultiplier.copyFrom(this.infinityPower.pow(7).plus(1));
+        this.dimMultiplier.copyFrom(this.infinityPower.pow(this.conversionRate).plus(1));
       }
       this.powerPerSecond.copyFrom(InfinityDimension(1).productionPerRealSecond);
-      this.incomeType = EternityChallenge(7).isRunning ? "Seventh Dimensions" : "Infinity Power";
+      this.isEC7Running = EternityChallenge(7).isRunning;
       this.isEC8Running = EternityChallenge(8).isRunning;
       if (this.isEC8Running) {
         this.EC8PurchasesLeft = player.eterc8ids;
@@ -102,9 +104,10 @@ export default {
         <br>
         translated to a
         <span class="c-infinity-dim-description__accent">{{ formatX(dimMultiplier, 2, 1) }}</span>
-        multiplier on all
-        <span v-if="!isEC9Running">Antimatter Dimensions.</span>
-        <span v-else>Time Dimensions due to Eternity Challenge 9.</span>
+        multiplier on
+        <span v-if="isEC7Running">the 8th Antimatter Dimension due to Eternity Challenge 7.</span>
+        <span v-else><span v-if="isEC9Running">all Time Dimensions due to Eternity Challenge 9.</span>
+        <span v-else>all Antimatter Dimensions.</span></span>
       </p>
     </div>
     <div
@@ -131,7 +134,7 @@ export default {
     </div>
     <div v-else>
     </div>
-    <div>You are getting {{ format(powerPerSecond, 2, 0) }} {{ incomeType }} per second.</div>
+    <div>You are getting {{ format(powerPerSecond, 2, 0) }} Infinity Power per second.</div>
     <b
       v-if="isEC8Running"
       class="l-infinity-dim-tab__ec8-purchases"

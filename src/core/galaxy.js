@@ -42,7 +42,7 @@ export class Galaxy {
   }
 
   static get costMult() {
-    return 45 - Effects.sum(BreakInfinityUpgrade.galaxyBoost, InfinityChallenge(5).reward);
+    return 45 - Effects.sum(BreakInfinityUpgrade.galaxyBoost, InfinityChallenge(5).reward, EternityChallenge(5));
   }
 
   static get baseCost() {

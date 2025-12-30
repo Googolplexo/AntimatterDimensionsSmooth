@@ -726,7 +726,7 @@ Each purchase increases the multiplier of that specific Time Dimension by ${form
     .join(", ")}
 <br>
 <b>Time Dimension price increases:</b> ${Array.range(1, 8)
-    .map(tier => format(TimeDimension(tier)._costMultiplier, 3))
+    .map(tier => formatInt(TimeDimension(tier)._costMultiplier))
     .join(", ")}
 <br>
 <br>

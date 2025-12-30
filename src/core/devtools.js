@@ -539,12 +539,12 @@ dev.optimiseCrunchAutobuyer = function(left, right, mode, tps) {
   const save = GameStorage.exportModifiedSave();
 
   let diff, leftNew, rightNew, leftValue, rightValue;
-  
+
   if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) {
     left = Decimal.pow(10, left);
     right = Decimal.pow(10, right);
   }
-  
+
   function isPrecise(left, right, mode) {
     if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) return right.div(left).log10() < 10;
     if (mode === AUTO_CRUNCH_MODE.TIME) return right - left < 0.1;
@@ -562,7 +562,7 @@ dev.optimiseCrunchAutobuyer = function(left, right, mode, tps) {
     GameStorage.import(save);
     return result;
   }
-  
+
   while (!isPrecise(left, right, mode)) {
     if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) {
       diff = right.div(left).cbrt();
@@ -581,6 +581,41 @@ dev.optimiseCrunchAutobuyer = function(left, right, mode, tps) {
       left = leftNew;
     }
   }
-  
+
+  GameIntervals.start();
+};
+
+dev.optimiseEC8 = function(goal, minutes) {
+  GameIntervals.stop();
+  const save = GameStorage.exportModifiedSave();
+
+  goal = Decimal.pow(10, goal);
+
+  player.infinityPoints = goal;
+  ReplicantiUpgrade.galaxies.autobuyerTick();
+  const maxGalaxyUpgrades = player.replicanti.boughtGalaxyCap;
+  GameStorage.import(save);
+
+  let results = [];
+
+  for (let i = 0; i <= Math.min(40, maxGalaxyUpgrades); i++) {
+    for (let j = 0; j <= 40 - i; j++) {
+      const k = 40 - i - j;
+      player.replicanti.boughtGalaxyCap = i;
+      player.replicanti.chance = j;
+      player.replicanti.interval = k;
+      for (let t = 0; t < 100; t++) {
+        gameLoop(minutes * 600);
+      }
+      results.push([i, j, k, player.infinityPoints.log10()]);
+      GameStorage.import(save);
+    }
+    console.log(i);
+  }
+
+  for (const result of results.sort((a, b) => b[3] - a[3]).slice(0, 20)) {
+    console.log(result);
+  }
+
   GameIntervals.start();
 };

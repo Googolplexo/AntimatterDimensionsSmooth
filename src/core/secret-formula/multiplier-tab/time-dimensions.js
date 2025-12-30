@@ -49,7 +49,7 @@ export const TD = {
         .map(td => getMult(td.tier))
         .reduce((x, y) => x.times(y), DC.D1);
     },
-    isActive: () => !EternityChallenge(2).isRunning && !EternityChallenge(10).isRunning,
+    isActive: () => !EternityChallenge(1).isRunning && !EternityChallenge(10).isRunning,
     icon: dim => MultiplierTabIcons.PURCHASE("TD", dim),
   },
   highestDim: {
@@ -142,30 +142,20 @@ export const TD = {
     multValue: dim => {
       let allMult = DC.D1.timesEffectsOf(
         EternityChallenge(1).reward,
-        EternityChallenge(10).reward,
-      ).times(EternityChallenge(7).isRunning ? Tickspeed.perSecond : DC.D1);
-      if (EternityChallenge(9).isRunning) {
-        allMult = allMult.times(
-          Decimal.pow(Math.clampMin(Currency.infinityPower.value.pow(InfinityDimensions.powerConversionRate / 7)
-            .log2(), 1), 4).clampMin(1));
-      }
+        EternityChallenge(10).reward);
       return Decimal.pow(allMult, dim ? 1 : MultiplierTabHelper.activeDimCount("TD"));
     },
-    isActive: () => EternityChallenge(1).completions > 0,
+    isActive: () => PlayerProgress.eternityUnlocked(),
     icon: MultiplierTabIcons.CHALLENGE("eternity")
   },
-  tickspeed: {
-    name: () => "Tickspeed (EC7)",
-    displayOverride: () => {
-      const tickRate = Tickspeed.perSecond;
-      const activeDims = MultiplierTabHelper.activeDimCount("TD");
-      const dimString = MultiplierTabHelper.pluralizeDimensions(activeDims);
-      return `${format(tickRate, 2, 2)}/sec on ${formatInt(activeDims)} ${dimString}
-        ➜ ${formatX(tickRate.pow(activeDims), 2, 2)}`;
+  infinityPower: {
+    name: "Infinity Power (Eternity Challenge 9)",
+    multValue: dim => {
+      const mult = Currency.infinityPower.value.cbrt().plus(1);
+      return Decimal.pow(mult, dim ? 1 : MultiplierTabHelper.activeDimCount("TD"));
     },
-    multValue: () => Tickspeed.perSecond.pow(MultiplierTabHelper.activeDimCount("TD")),
-    isActive: () => EternityChallenge(7).isRunning,
-    icon: MultiplierTabIcons.TICKSPEED,
+    isActive: () => EternityChallenge(9).isRunning,
+    icon: MultiplierTabIcons.INFINITY_POWER,
   },
   dilationUpgrade: {
     name: "Dilation Upgrade - Replicanti Multiplier",

@@ -10,7 +10,7 @@ const propList = {
     "alchemy", "pelle", "iap", "effectNC", "nerfIC", "nerfV", "nerfCursed", "nerfPelle"],
   ID: ["purchase", "achievementMult", "achievement", "replicanti", "infinityChallenge", "timeStudy", "eternityUpgrade",
     "eternityChallenge", "glyph", "alchemy", "imaginaryUpgrade", "pelle", "iap", "nerfV", "nerfCursed", "nerfPelle"],
-  TD: ["purchase", "achievementMult", "achievement", "timeStudy", "eternityUpgrade", "eternityChallenge",
+  TD: ["purchase", "achievementMult", "achievement", "timeStudy", "eternityUpgrade", "eternityChallenge", "infinityPower",
     "dilationUpgrade", "realityUpgrade", "glyph", "alchemy", "imaginaryUpgrade", "pelle", "iap", "nerfV", "nerfCursed"],
   IP: ["base", "infinityUpgrade", "infinityChallenge", "achievement", "timeStudy", "dilationUpgrade", "glyph", "alchemy", "pelle", "iap",
     "nerfTeresa", "nerfV"],
@@ -87,7 +87,7 @@ export const multiplierTabTree = {
     ["tickspeedUpgrades_purchased", "tickspeedUpgrades_free"]
   ],
   tickspeed_galaxies: [
-    ["galaxies_antimatter", "galaxies_replicanti", "galaxies_tachyon", "galaxies_infinity", "galaxies_timeStudy", "galaxies_nerfPelle"]
+    ["galaxies_antimatter", "galaxies_replicanti", "galaxies_tachyon", "galaxies_infinity", "galaxies_timeStudy", "galaxies_eternityChallenge", "galaxies_nerfPelle"]
   ],
   infinities_total: [
     getProps("infinities")
@@ -140,7 +140,7 @@ const targetedEffects = {
   },
   eternityChallenge: {
     checkFn: MultiplierTabHelper.ECDimCheck,
-    ID: [2, 4, 9],
+    ID: [2, 4, 7, 9],
     TD: [1, 10],
   },
 };
@@ -159,9 +159,9 @@ for (const res of dimTypes) {
 
 // A few dynamically-generated props are largely useless in terms of what they connect to, in that they have very few
 // entries or have 8 identical entries, so we explicitly remove those lists for a cleaner appearance on the UI
-const removedRegexes = ["AD_sacrifice", "AD_breakInfinityUpgrade", "AD_nerfIC", "AD_infinityUpgrade", "AD_v",
+const removedRegexes = ["AD_sacrifice", "AD_breakInfinityUpgrade", "AD_nerfIC", "AD_infinityUpgrade", "AD_infinityPower", "AD_v",
   "ID_replicanti", "ID_infinityChallenge", "ID_eternityUpgrades",
-  "TD_achievement", "TD_eternityUpgrade", "TD_dilationUpgrade", "TD_realityUpgrade",
+  "TD_achievement", "TD_eternityUpgrade", "TD_infinityPower", "TD_dilationUpgrade", "TD_realityUpgrade",
   ".._achievementMult", ".._glyph", ".._alchemy", ".._imaginaryUpgrade", ".._iap",
   ".._nerfV", ".._nerfCursed", ".._nerfPelle", ".._pelle", ".._gamespeed"
 ];
@@ -169,13 +169,6 @@ const removedProps = Object.keys(multiplierTabTree)
   .filter(key => removedRegexes.some(regex => key.match(regex)));
 for (const prop of removedProps) {
   multiplierTabTree[prop] = undefined;
-}
-
-// We need to handle infinity power multiplier a bit differently; previous steps of dynamic generation fill it with
-// 8 identical AD multipliers, but we want to replace it with ID mults and the conversion rate
-multiplierTabTree.AD_infinityPower = [["ID_total", "ID_powerConversion"]];
-for (let dim = 1; dim <= 8; dim++) {
-  multiplierTabTree[`AD_infinityPower_${dim}`] = [["ID_total", "ID_powerConversion"]];
 }
 
 // Dynamically fill effects which only affect certain dimensions, as noted in targetedEffects

@@ -112,7 +112,7 @@ export function replicantiLoop(diff) {
 }
 
 export function getReplicantiPower(chance) {
-  return chance / 10 + 2 + Effects.sum(TimeStudy(22), TimeStudy(102));
+  return chance / 10 + 2 + Effects.sum(TimeStudy(22), TimeStudy(102), EternityChallenge(6).reward);
 }
 
 export function replicantiMult() {
@@ -301,7 +301,7 @@ export const ReplicantiUpgrade = {
     baseCostAfterCount(count) {
       const logBase = 570;
       const logBaseIncrease = EternityChallenge(6).isRunning ? 2 : 75;
-      const logCostScaling = EternityChallenge(6).isRunning ? 2 : 55;
+      const logCostScaling = EternityChallenge(6).isRunning ? Math.log10(1.01) : 55;
       let logCost = logBase + count * logBaseIncrease + (count * (count - 1) / 2) * logCostScaling;
       return Decimal.pow10(logCost);
     }
@@ -358,7 +358,7 @@ export const Replicanti = {
       return ReplicantiUpgrade.galaxies.value;
     },
     get startingCost() {
-      return DC.D5E4.dividedByEffectsOf(TimeStudy(42), TimeStudy(133));
+      return DC.D5E4.dividedByEffectsOf(TimeStudy(42), TimeStudy(133), EternityChallenge(8).reward);
     },
     get currentCost() {
       return RGCost(this.startingCost, this.bought, this.max);

@@ -23,18 +23,13 @@ export class Sacrifice {
     return "Need to Crunch";
   }
 
-  // The code path for calculating the sacrifice exponent is pretty convoluted, but needs to be structured this way
-  // in order to mostly replicate old pre-Reality behavior. There are two key things to note in how sacrifice behaves
-  // which are not immediately apparent here; IC2 changes the formula by getting rid of a log10 (and therefore makes
-  // sacrifice significantly stronger despite the much smaller exponent) and pre-Reality behavior assumed that the
-  // player would already have ach32/57 by the time they complete IC2. As Reality resets achievements, we had to
-  // assume that all things boosting sacrifice can be gotten independently, which resulted in some odd effect stacking.
   static get sacrificeExponent() {
     return Effects.product(
       Achievement(32),
       Achievement(57),
       Achievement(88),
       InfinityChallenge(2).reward,
+      EternityChallenge(3).reward,
       TimeStudy(228),
       TimeStudy(304)) * (11 - Player.dimensionMultDecrease) * 2;
   }

@@ -27,7 +27,8 @@ export function totalGalaxies() {
 export function staticGalaxies() {
   return Effects.sum(
     InfinityUpgrade.galaxyBoost,
-    TimeStudy(111));
+    TimeStudy(111),
+    EternityChallenge(5).reward);
 }
 
 export function timeUntilReplicanti(goal) {

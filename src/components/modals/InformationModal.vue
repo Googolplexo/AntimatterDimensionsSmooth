@@ -28,7 +28,7 @@ export default {
       designed to have exclusively smooth formulas, created by Russian developer Googolplexo in 2024.
       <br>
       <br>
-      The modification is currently balanced up to 1e20 EP, as it needs much rebalancing. Use unbalanced content at your own risk. 
+      The modification is currently balanced up to 1e100 EP, as it needs much rebalancing. Use unbalanced content at your own risk. 
       <br>
       <br>
       The game has unfolding gameplay and multiple prestige layers. The "How to Play" button contains useful

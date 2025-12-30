@@ -22,7 +22,7 @@ export const AD = {
           : AntimatterDimension(dim).multiplier;
         return formatX(singleMult, 2, 2);
       }
-      const maxTier = EternityChallenge(7).isRunning ? 7 : MultiplierTabHelper.activeDimCount("AD");
+      const maxTier = MultiplierTabHelper.activeDimCount("AD");
       if (NormalChallenge(12).isRunning) return `${format(MultiplierTabHelper.actualNC12Production(), 2)}/sec`;
       return `${format(AntimatterDimensions.all
         .filter(ad => ad.isProducing)
@@ -44,8 +44,7 @@ export const AD = {
           .filter(ad => ad.isProducing)
           .map(ad => ad.multiplier)
           .reduce((x, y) => x.times(y), DC.D1);
-      const highestDim = AntimatterDimension(
-        EternityChallenge(7).isRunning ? 7 : MultiplierTabHelper.activeDimCount("AD")).totalAmount;
+      const highestDim = AntimatterDimension(MultiplierTabHelper.activeDimCount("AD")).totalAmount;
       return mult.times(highestDim).clampMin(1);
     },
     isActive: dim => (dim ? dim <= MultiplierTabHelper.activeDimCount("AD") : AntimatterDimension(1).isProducing),
@@ -77,11 +76,11 @@ export const AD = {
   highestDim: {
     name: () => `Amount of highest Dimension`,
     displayOverride: () => {
-      const dim = EternityChallenge(7).isRunning ? 7 : MultiplierTabHelper.activeDimCount("AD");
+      const dim = MultiplierTabHelper.activeDimCount("AD");
       return `AD ${dim}, ${format(AntimatterDimension(dim).totalAmount, 2)}`;
     },
     multValue: () => {
-      const dim = EternityChallenge(7).isRunning ? 7 : MultiplierTabHelper.activeDimCount("AD");
+      const dim = MultiplierTabHelper.activeDimCount("AD");
       return AntimatterDimension(dim).totalAmount;
     },
     isActive: () => AntimatterDimension(1).isProducing,
@@ -227,9 +226,10 @@ export const AD = {
     fakeValue: () => Currency.infinityPower.value.pow(InfinityDimensions.powerConversionRate),
     multValue: dim => {
       const mult = Currency.infinityPower.value.pow(InfinityDimensions.powerConversionRate).max(1);
+      if (EternityChallenge(7).isRunning) return (MultiplierTabHelper.activeDimCount("AD") < 8 || dim < 8) ? DC.D1 : mult;
       return Decimal.pow(mult, dim ? 1 : MultiplierTabHelper.activeDimCount("AD"));
     },
-    isActive: () => Currency.infinityPower.value.gt(1) && !EternityChallenge(9).isRunning,
+    isActive: () => !EternityChallenge(9).isRunning,
     icon: MultiplierTabIcons.INFINITY_POWER,
   },
   infinityChallenge: {
@@ -270,13 +270,6 @@ export const AD = {
 
       const dimMults = Array.repeat(DC.D1, 9);
       for (let tier = 1; tier <= 8; tier++) {
-        // We don't want to double-count the base effect that TS31 boosts
-        const infinitiedMult = DC.D1.timesEffectsOf(
-          AntimatterDimension(tier).infinityUpgrade,
-          BreakInfinityUpgrade.infinitiedMult
-        );
-        dimMults[tier] = dimMults[tier].times(infinitiedMult.pow(TimeStudy(31).effectOrDefault(1) - 1));
-
         dimMults[tier] = dimMults[tier].timesEffectsOf(
           tier === 8 ? TimeStudy(214) : null,
           tier === 1 ? TimeStudy(234) : null,

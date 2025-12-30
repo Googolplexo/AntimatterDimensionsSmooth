@@ -57,15 +57,9 @@ export const GameCache = {
     .map(run => run[1])
     .reduce(Number.sumReducer) / (1000 * player.records.recentEternities.length)),
 
-  tickSpeedMultDecrease: new Lazy(() => 10 - Effects.sum(
-    BreakInfinityUpgrade.tickspeedCostMult,
-    EternityChallenge(11).reward
-  )),
+  tickSpeedMultDecrease: new Lazy(() => 10 - BreakInfinityUpgrade.tickspeedCostMult.effectValue),
 
-  dimensionMultDecrease: new Lazy(() => 10 - Effects.sum(
-    BreakInfinityUpgrade.dimCostMult,
-    EternityChallenge(6).reward
-  )),
+  dimensionMultDecrease: new Lazy(() => 10 - BreakInfinityUpgrade.dimCostMult.effectValue),
 
   timeStudies: new Lazy(() => NormalTimeStudyState.studies
     .map(s => player.timestudy.studies.includes(s.id))),

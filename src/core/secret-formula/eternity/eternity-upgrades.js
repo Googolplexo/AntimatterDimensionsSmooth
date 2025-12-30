@@ -32,14 +32,14 @@ export const eternityUpgrades = {
   },
   tdMultTheorems: {
     id: 5,
-    cost: 1e40,
+    cost: 1e50,
     description: "Time Dimension multiplier based on your unspent Time Theorems",
     effect: () => Currency.timeTheorems.value.plus(1),
     formatEffect: value => formatX(value, 2, 1)
   },
   tdMultRealTime: {
     id: 6,
-    cost: 1e50,
+    cost: 1e60,
     description: () => (Pelle.isDoomed
       ? "Time Dimensions are multiplied based on time spent in this Armageddon"
       : "Time Dimensions are multiplied by days played"

@@ -818,8 +818,8 @@ export const normalAchievements = [
   {
     id: 121,
     name: "Can you get infinite IP?",
-    get description() { return `Reach ${formatPostBreak("1e300008")} Infinity Points.`; },
-    checkRequirement: () => Currency.infinityPoints.exponent >= 300008,
+    get description() { return `Reach ${formatPostBreak("1e308308")} Infinity Points.`; },
+    checkRequirement: () => Currency.infinityPoints.exponent >= 308308,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {
@@ -855,15 +855,15 @@ export const normalAchievements = [
     id: 125,
     name: "Like feasting on a behind",
     get description() {
-      return `Eternity without ever having any Infinities
-      or 1st Antimatter Dimensions.`;
+      return `Reach ${format(DC.E1400)} Infinity Points without having any Infinities
+      or any 1st Antimatter Dimensions in your current Eternity.`;
     },
-    checkRequirement: () => player.requirementChecks.eternity.noAD1 && Currency.infinities.eq(0),
-    checkEvent: GAME_EVENT.ETERNITY_RESET_BEFORE,
+    checkRequirement: () => Currency.infinityPoints.exponent >= 1400 &&
+      player.requirementChecks.eternity.noAD1 && Currency.infinities.eq(0),
+    checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Infinity Point multiplier based on time spent this Infinity.",
     effect() {
-      const thisInfinity = Time.thisInfinity.totalSeconds * 10 + 1;
-      return DC.D2.pow(Math.log(thisInfinity) * 28);
+      return generalDilatedValueOf(Time.thisInfinity.totalSeconds, 2).plus(1).pow(8);
     },
     cap: () => Effarig.eternityCap,
     formatEffect: value => `${formatX(value, 2, 2)}`
@@ -871,8 +871,8 @@ export const normalAchievements = [
   {
     id: 126,
     name: "Popular music",
-    get description() { return `Have ${formatInt(180)} times more Replicanti Galaxies than Antimatter Galaxies.`; },
-    checkRequirement: () => Replicanti.galaxies.total >= 180 * player.galaxies && player.galaxies > 0,
+    get description() { return `Have ${formatInt(180)} times more Replicanti Galaxies than Antimatter Galaxies outside of Eternity Challenge 6.`; },
+    checkRequirement: () => Replicanti.galaxies.bought >= 180 * player.galaxies && player.galaxies > 0 && !EternityChallenge(6).isRunning,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     get reward() {
       return `Replicanti Galaxies don't reset Replicanti.`;
@@ -928,13 +928,13 @@ export const normalAchievements = [
     id: 133,
     name: "I never liked this infinity stuff anyway",
     get description() {
-      return `Reach ${formatPostBreak(DC.E200000)} Infinity Points without
+      return `Reach ${formatPostBreak(DC.E2E6)} Infinity Points without
       buying any Infinity Dimensions or the ${formatX(2)} Infinity Point multiplier.`;
     },
     checkRequirement: () =>
       Array.dimensionTiers.map(InfinityDimension).every(dim => dim.baseAmount === 0) &&
       player.IPMultPurchases === 0 &&
-      Currency.infinityPoints.exponent >= 2000000,
+      Currency.infinityPoints.exponent >= 20000000,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {

@@ -61,7 +61,7 @@ export default {
       const upgrade = ReplicantiUpgrade.galaxies;
       function formatGalaxies(galaxies) {
         if (galaxies < 34) return `${formatX(1 + 1 / (galaxies + 1), 0, 3)}`;
-        return `×(1+1/${format(galaxies)})`;
+        return `×(1+1/${formatInt(galaxies)})`;
       }
       return new ReplicantiUpgradeButtonSetup(
         upgrade,

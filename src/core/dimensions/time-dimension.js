@@ -122,11 +122,7 @@ export function timeDimensionCommonMultiplier() {
     );
 
   if (EternityChallenge(9).isRunning) {
-    mult = mult.times(
-      Decimal.pow(
-        Math.clampMin(Currency.infinityPower.value.pow(InfinityDimensions.powerConversionRate / 7).log2(), 1),
-        4)
-        .clampMin(1));
+    mult = mult.times(Currency.infinityPower.value.cbrt().plus(1));
   }
   return mult;
 }
@@ -217,9 +213,6 @@ class TimeDimensionState extends DimensionState {
       return this.amount;
     }
     let production = this.amount.times(this.multiplier);
-    if (EternityChallenge(7).isRunning) {
-      production = production.times(Tickspeed.perSecond);
-    }
     return production;
   }
 
@@ -301,10 +294,6 @@ export const TimeDimensions = {
     } else {
       TimeDimension(1).produceCurrency(Currency.timeShards, diff);
     }
-
-    EternityChallenge(7).reward.applyEffect(production => {
-      InfinityDimension(8).amount = InfinityDimension(8).amount.plus(production.times(diff / 1000));
-    });
   }
 };
 

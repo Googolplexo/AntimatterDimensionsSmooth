@@ -9,7 +9,6 @@ export const ID = {
   total: {
     name: dim => {
       if (dim) return `ID ${dim} Multiplier`;
-      if (EternityChallenge(7).isRunning) return "AD7 Production";
       return "Infinity Power Production";
     },
     displayOverride: dim => (dim
@@ -147,8 +146,8 @@ export const ID = {
     multValue: dim => {
       const allMult = DC.D1.timesEffectsOf(
         EternityChallenge(4).reward,
-        EternityChallenge(9).reward,
-      ).times(EternityChallenge(7).isRunning ? Tickspeed.perSecond : DC.D1);
+        EternityChallenge(7).reward,
+        EternityChallenge(9).reward);
       if (dim) {
         if (dim === 1) return allMult.times(EternityChallenge(2).reward.effectOrDefault(1));
         return allMult;
@@ -157,21 +156,8 @@ export const ID = {
       return Decimal.pow(allMult, maxActiveDim)
         .times(maxActiveDim >= 1 ? EternityChallenge(2).reward.effectOrDefault(1) : DC.D1);
     },
-    isActive: () => EternityChallenge(2).completions > 0,
+    isActive: () => PlayerProgress.eternityUnlocked(),
     icon: MultiplierTabIcons.CHALLENGE("eternity"),
-  },
-  tickspeed: {
-    name: () => "Tickspeed (EC7)",
-    displayOverride: () => {
-      const tickRate = Tickspeed.perSecond;
-      const activeDims = MultiplierTabHelper.activeDimCount("ID");
-      const dimString = MultiplierTabHelper.pluralizeDimensions(activeDims);
-      return `${format(tickRate, 2, 2)}/sec on ${formatInt(activeDims)} ${dimString}
-        ➜ ${formatX(tickRate.pow(activeDims), 2, 2)}`;
-    },
-    multValue: () => Tickspeed.perSecond.pow(8),
-    isActive: () => EternityChallenge(7).isRunning,
-    icon: MultiplierTabIcons.TICKSPEED,
   },
   glyph: {
     name: "Glyph Effects",
@@ -216,13 +202,6 @@ export const ID = {
       dim ? 1 : MultiplierTabHelper.activeDimCount("ID")),
     isActive: () => ShopPurchaseData.totalSTD > 0,
     icon: MultiplierTabIcons.IAP,
-  },
-
-  powerConversion: {
-    name: "Infinity Power Conversion",
-    powValue: () => InfinityDimensions.powerConversionRate,
-    isActive: () => Currency.infinityPower.value.gt(1) && !EternityChallenge(9).isRunning,
-    icon: MultiplierTabIcons.IPOW_CONVERSION,
   },
 
   nerfV: {

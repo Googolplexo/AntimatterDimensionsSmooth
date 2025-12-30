@@ -59,6 +59,16 @@ export const galaxies = {
     isActive: () => TimeStudy(111).isBought,
     icon: MultiplierTabIcons.TIME_STUDY,
   },
+  eternityChallenge: {
+    name: "Eternity Challenge 5",
+    displayOverride: () => {
+      const num = EternityChallenge(5).reward.effectValue;
+      return `${formatInt(num)}`;
+    },
+    multValue: () => Decimal.pow(10, EternityChallenge(5).reward.effectValue),
+    isActive: () => PlayerProgress.eternityUnlocked(),
+    icon: MultiplierTabIcons.CHALLENGE("eternity"),
+  },
   nerfPelle: {
     name: "Doomed Reality",
     displayOverride: () => `All Galaxy strength /${formatInt(2)}`,

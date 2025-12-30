@@ -12,6 +12,7 @@ export function infinityDimensionCommonMultiplier() {
       InfinityChallenge(1).reward,
       InfinityChallenge(6).reward,
       EternityChallenge(4).reward,
+      EternityChallenge(7).reward,
       EternityChallenge(9).reward,
       EternityUpgrade.idMultEP,
       EternityUpgrade.idMultEternities,
@@ -115,7 +116,6 @@ class InfinityDimensionState extends DimensionState {
     if (tier === 8) {
       // We need a extra 10x here (since ID8 production is per-second and
       // other ID production is per-10-seconds).
-      EternityChallenge(7).reward.applyEffect(v => toGain = v.times(10));
       if (EternityChallenge(7).isRunning) EternityChallenge(7).applyEffect(v => toGain = v.times(10));
     } else {
       toGain = InfinityDimension(tier + 1).productionPerSecond;
@@ -132,9 +132,6 @@ class InfinityDimensionState extends DimensionState {
     let production = this.amount;
     if (EternityChallenge(11).isRunning) {
       return production;
-    }
-    if (EternityChallenge(7).isRunning) {
-      production = production.times(Tickspeed.perSecond);
     }
     return production.times(this.multiplier);
   }
@@ -376,13 +373,7 @@ export const InfinityDimensions = {
       InfinityDimension(tier).produceDimensions(InfinityDimension(tier - 1), diff / 10);
     }
 
-    if (EternityChallenge(7).isRunning) {
-      if (!NormalChallenge(10).isRunning) {
-        InfinityDimension(1).produceDimensions(AntimatterDimension(7), diff);
-      }
-    } else {
-      InfinityDimension(1).produceCurrency(Currency.infinityPower, diff);
-    }
+    InfinityDimension(1).produceCurrency(Currency.infinityPower, diff);
 
     player.requirementChecks.reality.maxID1 = player.requirementChecks.reality.maxID1
       .clampMin(InfinityDimension(1).amount);

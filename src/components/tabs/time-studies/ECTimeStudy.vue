@@ -45,10 +45,10 @@ export default {
     },
     // Linebreaks added to avoid twitching in scientific notation
     needsFirstLinebreak() {
-      return this.study.id === 7;
+      return [4, 7].includes(this.study.id);
     },
     needsSecondLinebreak() {
-      return [3, 4, 7].includes(this.study.id);
+      return [4, 7, 8].includes(this.study.id);
     }
   },
   methods: {
