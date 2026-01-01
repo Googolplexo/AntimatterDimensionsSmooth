@@ -90,7 +90,7 @@ export const eternityChallenges = [
     goalIncrease: DC.E625,
     reward: {
       description: "Increase the Replicanti power based on 2nd Time Dimensions",
-      effect: completions => Math.pow(TimeDimension(2).amount.log10(), 0.3) * completions / 3,
+      effect: completions => Math.pow(TimeDimension(2).amount.plus(1).log10(), 0.3) * completions / 3,
       formatEffect: value => `+${format(value, 2, 2)}`
     },
     scrambleText: ["cannot gain Antimatter Galaxies normally", "c㏰'퐚 gai鸭 Anti꟢at랜erﻪﶓa⁍axie㮾 䂇orma㦂l"],
