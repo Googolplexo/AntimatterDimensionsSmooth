@@ -5,11 +5,11 @@ export const MultiplierTabHelper = {
   activeDimCount(type) {
     switch (type) {
       case "AD":
-        return AntimatterDimensions.all.filter(ad => ad.isProducing).length;
+        return Math.max(1, AntimatterDimensions.all.filter(ad => ad.isProducing).length);
       case "ID":
-        return InfinityDimensions.all.filter(id => id.isProducing).length;
+        return Math.max(1, InfinityDimensions.all.filter(id => id.isProducing).length);
       case "TD":
-        return TimeDimensions.all.filter(td => td.isProducing).length;
+        return Math.max(1, TimeDimensions.all.filter(td => td.isProducing).length);
       default:
         throw new Error("Unrecognized Dimension type in Multiplier tab GameDB entry");
     }

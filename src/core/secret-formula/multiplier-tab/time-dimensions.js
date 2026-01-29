@@ -21,7 +21,8 @@ export const TD = {
       : TimeDimensions.all
         .filter(td => td.isProducing)
         .map(td => td.multiplier)
-        .reduce((x, y) => x.times(y), DC.D1)),
+        .reduce((x, y) => x.times(y), DC.D1))
+        .times(TimeDimension(MultiplierTabHelper.activeDimCount("TD")).amount),
     isActive: dim => (dim
       ? TimeDimension(dim).isProducing
       : (PlayerProgress.realityUnlocked() || TimeDimension(1).isProducing)),

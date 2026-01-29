@@ -20,7 +20,8 @@ export const ID = {
       : InfinityDimensions.all
         .filter(id => id.isProducing)
         .map(id => id.multiplier)
-        .reduce((x, y) => x.times(y), DC.D1)),
+        .reduce((x, y) => x.times(y), DC.D1))
+        .times(InfinityDimension(MultiplierTabHelper.activeDimCount("ID")).amount),
     isActive: dim => (dim
       ? InfinityDimension(dim).isProducing
       : (PlayerProgress.eternityUnlocked() || InfinityDimension(1).isProducing)),
