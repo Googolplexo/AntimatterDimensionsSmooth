@@ -738,7 +738,7 @@ export const normalAchievements = [
     name: "Yo dawg, I heard you liked infinities...",
     get description() {
       return `Have all your Infinities in your past ${formatInt(10)} Infinities be at least
-      ${format(DC.E2000, 1, 0)} times higher Infinity Points than the previous one.`;
+      ${format(DC.E2000)} times higher Infinity Points than the previous one.`;
     },
     checkRequirement: () => {
       if (player.records.recentInfinities.some(i => i[0] === Number.MAX_VALUE)) return false;
