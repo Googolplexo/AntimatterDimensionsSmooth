@@ -737,14 +737,14 @@ export const normalAchievements = [
     id: 111,
     name: "Yo dawg, I heard you liked infinities...",
     get description() {
-      return `Get at least ${format(6.66, 2, 2)} times more Infinities on every next Crunch than on the previous one
-        for ${formatInt(10)} consecutive Crunches.`;
+      return `Have all your Infinities in your past ${formatInt(10)} Infinities be at least
+      ${format(DC.E2000, 1, 0)} times higher Infinity Points than the previous one.`;
     },
     checkRequirement: () => {
       if (player.records.recentInfinities.some(i => i[0] === Number.MAX_VALUE)) return false;
-      const infinities = player.records.recentInfinities.map(run => run[3]);
+      const infinities = player.records.recentInfinities.map(run => run[2]);
       for (let i = 0; i < infinities.length - 1; i++) {
-        if (infinities[i].lt(infinities[i + 1].times(DC.D6_66))) return false;
+        if (infinities[i].lt(infinities[i + 1].times(DC.E2000))) return false;
       }
       return true;
     },
