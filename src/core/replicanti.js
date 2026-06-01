@@ -276,7 +276,7 @@ export const ReplicantiUpgrade = {
     get costIncrease() {
       const galaxies = this.value;
       let increase = EternityChallenge(6).isRunning
-        ? DC.E2.pow(galaxies).times(DC.E2)
+        ? DC.D1_01.pow(galaxies).times(DC.E2)
         : DC.E55.pow(galaxies).times(DC.E75);
       return increase;
     }
