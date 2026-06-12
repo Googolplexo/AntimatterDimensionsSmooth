@@ -55,16 +55,14 @@ export const dilationUpgrades = {
       (Perk.bypassTGReset.isBought && !Pelle.isDoomed
         ? "Reset Tachyon Galaxies, but lower their threshold"
         : "Reset Dilated Time and Tachyon Galaxies, but lower their threshold"),
-    // The 38th purchase is at 1e80, and is the last purchase.
-    effect: bought => (bought < 38 ? Math.pow(0.8, bought) : 0),
+    effect: bought => bought,
     formatEffect: effect => {
-      if (effect === 0) return `${formatX(getTachyonGalaxyMult(effect), 4, 4)}`;
-      const nextEffect = effect === Math.pow(0.8, 37) ? 0 : 0.8 * effect;
+      const nextEffect = effect + 1;
       return `${formatX(getTachyonGalaxyMult(effect), 4, 4)} ➜
         Next: ${formatX(getTachyonGalaxyMult(nextEffect), 4, 4)}`;
     },
     formatCost: value => format(value, 2),
-    purchaseCap: 38
+    purchaseCap: Number.MAX_VALUE
   }),
   tachyonGain: rebuyable({
     id: 3,
@@ -87,43 +85,28 @@ export const dilationUpgrades = {
   doubleGalaxies: {
     id: 4,
     cost: 5e6,
-    description: () => `Gain twice as many Tachyon Galaxies, up to ${formatInt(500)} base Galaxies`,
+    description: "Gain twice as many Tachyon Galaxies",
     effect: 2
   },
   tdMultReplicanti: {
     id: 5,
     cost: 1e9,
-    description: () => {
-      const rep10 = replicantiMult().pLog10();
-      let multiplier = "0.1";
-      if (rep10 > 9000) {
-        const ratio = DilationUpgrade.tdMultReplicanti.effectValue.pLog10() / rep10;
-        if (ratio < 0.095) {
-          multiplier = ratio.toFixed(2);
-        }
-      }
-      return `Time Dimensions are affected by Replicanti multiplier ${formatPow(multiplier, 1, 3)}, reduced
-        effect above ${formatX(DC.E9000)}`;
-    },
-    effect: () => {
-      let rep10 = replicantiMult().pLog10() * 0.1;
-      rep10 = rep10 > 9000 ? 9000 + 0.5 * (rep10 - 9000) : rep10;
-      return Decimal.pow10(rep10);
-    },
+    description: "Time Dimension multiplier based on Replicanti amount",
+    effect: () => player.replicanti.amount.plus(1).pow(0.3),
     formatEffect: value => formatX(value, 2, 1)
   },
   ndMultDT: {
     id: 6,
     cost: 5e7,
     description: "Antimatter Dimension multiplier based on Dilated Time, unaffected by Time Dilation",
-    effect: () => Currency.dilatedTime.value.pow(308).clampMin(1),
+    effect: () => Currency.dilatedTime.value.div(1e5).plus(1).pow(618),
     formatEffect: value => formatX(value, 2, 1)
   },
   ipMultDT: {
     id: 7,
     cost: 2e12,
     description: "Gain a multiplier to Infinity Points based on Dilated Time",
-    effect: () => Currency.dilatedTime.value.pow(1000).clampMin(1),
+    effect: () => Currency.dilatedTime.value.plus(1).pow(5000),
     formatEffect: value => formatX(value, 2, 1),
     cap: () => Effarig.eternityCap
   },
@@ -135,8 +118,8 @@ export const dilationUpgrades = {
   dilationPenalty: {
     id: 9,
     cost: 1e11,
-    description: () => `Reduce the Dilation penalty (${formatPow(1.05, 2, 2)} after reduction)`,
-    effect: 1.05,
+    description: () => `Reduce the Dilation penalty from ${formatPow(0.825, 3, 3)} to ${formatPow(0.845, 3, 3)}`,
+    effect: 0.845,
   },
   ttGenerator: {
     id: 10,

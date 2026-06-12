@@ -191,7 +191,7 @@ export const Pelle = {
   },
 
   get uselessTimeStudies() {
-    return [21, 32, 33, 41, 51, 61, 62, 121, 122, 123, 131, 141, 142, 143, 192, 213];
+    return [21, 32, 33, 41, 51, 61, 62, 121, 122, 123, 131, 141, 142, 143, 213, 234];
   },
 
   get disabledRUPGs() {

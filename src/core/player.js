@@ -24,7 +24,7 @@ window.player = {
       baseAmount: 0
     })),
     time: Array.range(0, 8).map(tier => ({
-      cost: [DC.D1, DC.D5, DC.E2, DC.D5E16, DC.E2350, DC.E2650, DC.E3000, DC.E3350][tier],
+      cost: [DC.D1, DC.D5, DC.E2, DC.D5E16, DC.E3000, DC.E3350, DC.E3750, DC.E4200][tier],
       amount: DC.D0,
       bought: 0
     }))
@@ -361,7 +361,7 @@ window.player = {
     previousRuns: {}
   },
   IPMultPurchases: 0,
-  version: 111,
+  version: 112,
   infinityPower: DC.D0,
   postC4Tier: 0,
   eternityPoints: DC.D0,

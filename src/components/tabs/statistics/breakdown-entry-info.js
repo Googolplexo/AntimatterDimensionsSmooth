@@ -13,12 +13,10 @@ export class BreakdownEntryInfo {
     this._name = createGetter(dbEntry.name, args);
     this._multValue = createGetter(dbEntry.multValue, args);
     this._powValue = createGetter(dbEntry.powValue, args);
-    this._dilationEffect = createGetter(dbEntry.dilationEffect, args);
     this._isActive = createGetter(dbEntry.isActive, args);
     this._fakeValue = createGetter(dbEntry.fakeValue, args);
     this._icon = createGetter(dbEntry.icon, args);
     this._displayOverride = createGetter(dbEntry.displayOverride, args);
-    this._isDilated = createGetter(dbEntry.isDilated, args);
     this._isBase = createGetter(dbEntry.isBase, args);
     this._ignoresNerfPowers = createGetter(dbEntry.ignoresNerfPowers, args);
     this._isNotARealThing = createGetter(dbEntry.isNotARealThing, args);
@@ -53,10 +51,6 @@ export class BreakdownEntryInfo {
     return this._powValue() ?? 1;
   }
 
-  get dilationEffect() {
-    return this._dilationEffect() ?? 1;
-  }
-
   get isActive() {
     return this._isActive() ?? false;
   }
@@ -71,10 +65,6 @@ export class BreakdownEntryInfo {
 
   get displayOverride() {
     return this._displayOverride();
-  }
-
-  get isDilated() {
-    return this._isDilated();
   }
 
   get isBase() {

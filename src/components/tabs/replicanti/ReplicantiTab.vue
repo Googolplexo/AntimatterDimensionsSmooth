@@ -29,6 +29,7 @@ export default {
       multIP: new Decimal(),
       unlockCost: new Decimal(),
       maxReplicanti: new Decimal(),
+      estimateToMax: 0,
     };
   },
   computed: {
@@ -97,7 +98,7 @@ export default {
       if (t === Number.MAX_VALUE) return "Impossibly far away";
       return (t < 0.01)
         ? "Currently increasing"
-        : timeUntilReplicanti(this.maxReplicanti).toStringShort();
+        : TimeSpan.fromSeconds(t).toStringShort();
     }
   },
   methods: {
@@ -126,6 +127,7 @@ export default {
       this.hasIPMult = AlchemyResource.exponential.amount > 0 && !this.isDoomed;
       this.multIP = Replicanti.amount.powEffectOf(AlchemyResource.exponential);
       this.maxReplicanti.copyFrom(player.records.thisReality.maxReplicanti);
+      this.estimateToMax = timeUntilReplicanti(this.maxReplicanti);
     },
     maxAll() {
       const r = ReplicantiUpgrade;

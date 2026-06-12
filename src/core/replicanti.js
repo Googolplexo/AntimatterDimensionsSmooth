@@ -23,10 +23,10 @@ export function replicantiGalaxy(auto) {
     return;
   }
   if (!Replicanti.galaxies.canBuyMore) return;
-  const bulk = Replicanti.galaxies.bulk
+  const bulk = Replicanti.galaxies.bulk;
   const galaxyGain = bulk.quantity;
   if (galaxyGain < 1) return;
-  if (!Achievement(126).isUnlocked || Pelle.isDoomed) Replicanti.amount = Replicanti.start;
+  if (!Achievement(126).isUnlocked || Pelle.isDoomed || EternityChallenge(12).isRunning) Replicanti.amount = Replicanti.start;
   addReplicantiGalaxies(galaxyGain);
 }
 
@@ -45,7 +45,7 @@ export function getIntervalBoost(x) {
 export function getReplicantiInterval(Interval) {
   let interval = getIntervalBoost(Interval).times(totalReplicantiSpeedMult());
 
-  if (TimeStudy(133).isBought && !Achievement(138).isUnlocked) {
+  if (TimeStudy(133).isBought && !Achievement(138).isUnlocked && !EternityChallenge(11).isRunning) {
     interval = interval.div(10);
   }
 
@@ -71,11 +71,16 @@ export function totalReplicantiSpeedMult() {
   totalMult = totalMult.times(ShopPurchase.replicantiPurchases.currentMult);
   if (Pelle.isDisabled("replicantiIntervalMult")) return totalMult;
 
-  totalMult = totalMult.timesEffectsOf(
+  if (!EternityChallenge(11).isRunning) totalMult = totalMult.timesEffectsOf(
     TimeStudy(21),
     TimeStudy(62),
     TimeStudy(131),
     TimeStudy(213),
+    TimeStudy(234),
+  );
+
+  totalMult = totalMult.timesEffectsOf(
+    EternityChallenge(11).reward,
     RealityUpgrade(2),
     RealityUpgrade(6),
     RealityUpgrade(23),
@@ -95,7 +100,10 @@ export function totalReplicantiSpeedMult() {
 }
 
 export function replicantiGainPerSecond() {
-  return getReplicantiInterval(player.replicanti.interval).plusEffectOf(TimeStudy(132));
+  if (EternityChallenge(12).isRunning) return DC.E7;
+  let gain = getReplicantiInterval(player.replicanti.interval);
+  if (!EternityChallenge(11).isRunning) gain = gain.plusEffectOf(TimeStudy(132));
+  return gain;
 }
 
 export function replicantiLoop(diff) {
@@ -346,7 +354,7 @@ export const Replicanti = {
     return ReplicantiUpgrade.chance.value;
   },
   get start() {
-    return (TimeStudy(33).isBought && !Pelle.isDoomed)
+    return (TimeStudy(33).isBought && !Pelle.isDoomed && !EternityChallenge(12).isRunning)
       ? this.galaxies.currentCost.div(2)
       : DC.D0;
   },
@@ -358,10 +366,16 @@ export const Replicanti = {
       return ReplicantiUpgrade.galaxies.value;
     },
     get startingCost() {
-      return DC.D5E4.dividedByEffectsOf(TimeStudy(42), TimeStudy(133), EternityChallenge(8).reward);
+      return DC.D5E4.dividedByEffectsOf(
+        TimeStudy(42),
+        TimeStudy(133),
+        TimeStudy(225),
+        TimeStudy(226),
+        EternityChallenge(8).reward);
     },
     get currentCost() {
-      return RGCost(this.startingCost, this.bought, this.max);
+      const cost = RGCost(this.startingCost, this.bought, this.max);
+      return EternityChallenge(12).isRunning ? cost.clampMax(DC.D5E4) : cost;
     },
     get canBuyMore() {
       return Replicanti.amount.gte(this.currentCost);
@@ -371,12 +385,29 @@ export const Replicanti = {
       return (buyer.canTick && buyer.isEnabled);
     },
     get bulk() {
-      if (!this.canBuyMore) return;
+      if (!this.canBuyMore) return { quantity: 0 };
       if (!Autobuyer.replicantiGalaxy.isUnlocked) return { quantity: 1, purchasePrice: this.currentCost };
+
+      if (EternityChallenge(12).isRunning) {
+        const belowCap = bulkBuyBinarySearch(DC.D5E4, {
+          costFunction: x => RGCost(this.startingCost, x, this.max),
+          firstCost: RGCost(this.startingCost, this.bought, this.max),
+          cumulative: false,
+        }, this.bought).quantity;
+        let totalCost = DC.D0;
+        for (let i = belowCap - 1; i >= 0; i--) {
+          const newCost = totalCost.plus(RGCost(this.startingCost, this.bought + i, this.max));
+          if (newCost.eq(totalCost)) break;
+          totalCost = newCost;
+        }
+        const aboveCap = player.replicanti.amount.minus(totalCost).div(DC.D5E4).floor().toNumber();
+        return { quantity: belowCap + aboveCap, purchasePrice: totalCost.plus(DC.D5E4.times(aboveCap)) };
+      }
+
       return bulkBuyBinarySearch(player.replicanti.amount, {
         costFunction: x => RGCost(this.startingCost, x, this.max),
         firstCost: this.currentCost,
-        cumulative: true,
+        cumulative: !Achievement(126).isUnlocked || Pelle.isDoomed,
       }, this.bought);
     },
   }

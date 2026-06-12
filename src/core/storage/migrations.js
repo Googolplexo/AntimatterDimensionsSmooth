@@ -450,6 +450,11 @@ export const migrations = {
       for (let tier = 0; tier < 8; tier++) {
         player.dimensions.time[tier].cost = TimeDimension(tier + 1).baseCost;
       }
+    },
+    112: player => {
+      for (let tier = 4; tier < 8; tier++) {
+        player.dimensions.time[tier].cost = TimeDimension(tier + 1).baseCost;
+      }
     }
   },
 

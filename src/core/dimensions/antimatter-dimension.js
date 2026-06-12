@@ -58,9 +58,14 @@ export function getDimensionFinalMultiplierUncached(tier) {
   if (tier < 1 || tier > 8) throw new Error(`Invalid Antimatter Dimension tier ${tier}`);
   if (NormalChallenge(10).isRunning && tier > 6) return DC.D1;
   if (EternityChallenge(11).isRunning) {
-    return Currency.infinityPower.value.pow(
-      InfinityDimensions.powerConversionRate
-    ).max(1).times(DimBoost.multiplierToNDTier(tier));
+    let buy10Value;
+    if (Laitela.continuumActive) {
+      buy10Value = AntimatterDimension(tier).continuumValue;
+    } else {
+      buy10Value = Math.floor(AntimatterDimension(tier).bought / 10);
+    }
+    return DimBoost.multiplierToNDTier(tier)
+    .times(Decimal.pow(AntimatterDimensions.buyTenMultiplier, buy10Value));
   }
 
   let multiplier = DC.D1;
@@ -119,7 +124,6 @@ function applyNDMultipliers(mult, tier) {
         Achievement(31),
         Achievement(68),
         Achievement(71),
-        TimeStudy(234)
       );
   }
   if (tier === 8 || TimeStudy(71).isBought) {

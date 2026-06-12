@@ -137,9 +137,10 @@ export default {
       const gainedEP = gainedEternityPoints();
       this.currentEP.copyFrom(Currency.eternityPoints);
       this.gainedEP.copyFrom(gainedEP);
-      const hasNewContent = !PlayerProgress.realityUnlocked() &&
-        Currency.eternityPoints.exponent >= 4000 &&
-        !TimeStudy.reality.isBought;
+      const hasNewContent = false;
+      // const hasNewContent = !PlayerProgress.realityUnlocked() &&
+      //   Currency.eternityPoints.exponent >= 4500 &&
+      //   !TimeStudy.reality.isBought;
       if (this.isDilation) {
         this.type = hasNewContent
           ? EP_BUTTON_DISPLAY_TYPE.DILATION_EXPLORE_NEW_CONTENT

@@ -46,8 +46,6 @@ export default {
       hadChildEntriesAt: [],
       mouseoverIndex: -1,
       lastNotEmptyAt: 0,
-      dilationExponent: 1,
-      isDilated: false,
       // This is used to temporarily remove the transition function from the bar styling when changing the way
       // multipliers are split up; the animation which results from not doing this looks very awkward
       lastLayoutChange: Date.now(),
@@ -103,8 +101,6 @@ export default {
           this.hadChildEntriesAt[i] = Date.now();
         }
       }
-      this.dilationExponent = this.resource.dilationEffect;
-      this.isDilated = this.dilationExponent !== 1;
       this.calculatePercents();
       this.now = Date.now();
       this.seenNC12 = player.infinities.gte(16) || PlayerProgress.eternityUnlocked();
@@ -200,16 +196,9 @@ export default {
       if (overrideStr) valueStr = `(${overrideStr})`;
       else {
         const values = [];
-        const formatFn = x => {
-          const isDilated = entry.isDilated;
-          if (isDilated && this.dilationExponent !== 1) {
-            const undilated = this.applyDilationExp(x, 1 / this.dilationExponent);
-            return `${formatX(undilated, 2, 2)} ➜ ${formatX(x, 2, 2)}`;
-          }
-          return entry.isBase
+        const formatFn = x => entry.isBase
             ? format(x, 2, 2)
             : formatX(x, 2, 2);
-        };
         if (Decimal.neq(entry.data.mult, 1)) values.push(formatFn(entry.data.mult.pow(entry.dimCount)));
         if (entry.data.pow !== 1) values.push(formatPow(entry.data.pow, 2, 3));
         valueStr = values.length === 0 ? "" : `(${values.join(", ")})`;
@@ -248,24 +237,6 @@ export default {
       return resource.isBase
         ? `${name}: ${format(val, 2, 2)}`
         : `${name}: ${formatX(val, 2, 2)}`;
-    },
-    applyDilationExp(value, exp) {
-      return Decimal.pow10(value.log10() ** exp);
-    },
-    dilationString() {
-      const resource = this.resource;
-      const gamespeed = this.entries.find(entry => entry.name === "Game speed");
-      const value = gamespeed ? gamespeed.data.mult : 1;
-      const baseMult = resource.mult.div(value);
-
-      let beforeMult = this.applyDilationExp(baseMult, 1 / this.dilationExponent).times(value).pow(resource.dimCount);
-      let afterMult = baseMult.times(value).pow(resource.dimCount);
-
-      const formatFn = resource.isBase
-        ? x => format(x, 2, 2)
-        : x => formatX(x, 2, 2);
-      return `Dilation Effect: Exponent${formatPow(this.dilationExponent, 2, 3)}
-        (${formatFn(beforeMult, 2, 2)} ➜ ${formatFn(afterMult, 2, 2)})`;
     },
     isRecent(date) {
       return (this.now - date) < 200;
@@ -351,13 +322,6 @@ export default {
             :resource="neutralize(entry)"
             :higherEntries="allEntries"
           />
-        </div>
-      </div>
-      <div v-if="isDilated && !isEmpty">
-        <div class="c-single-entry c-dilation-entry">
-          <div>
-            {{ dilationString() }}
-          </div>
         </div>
       </div>
       <div
@@ -489,15 +453,5 @@ export default {
 
 @keyframes a-glow-text {
   50% { background-color: var(--color-accent); }
-}
-
-.c-dilation-entry {
-  border: 0.2rem solid;
-  font-weight: bold;
-  animation: a-glow-dilation-nerf 3s infinite;
-}
-
-@keyframes a-glow-dilation-nerf {
-  50% { background-color: var(--color-bad); }
 }
 </style>

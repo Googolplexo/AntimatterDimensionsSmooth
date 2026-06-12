@@ -48,12 +48,6 @@ export const AD = {
       return mult.times(highestDim).clampMin(1);
     },
     isActive: dim => (dim ? dim <= MultiplierTabHelper.activeDimCount("AD") : AntimatterDimension(1).isProducing),
-    dilationEffect: () => {
-      const baseEff = (player.dilation.active || Enslaved.isRunning)
-        ? 0.75 * Effects.product(DilationUpgrade.dilationPenalty)
-        : 1;
-      return baseEff * (Effarig.isRunning ? Effarig.multDilation : 1);
-    },
     overlay: ["Ω", "<i class='fas fa-cube' />"],
     icon: dim => MultiplierTabIcons.DIMENSION("AD", dim),
   },
@@ -70,7 +64,7 @@ export const AD = {
         .map(ad => Decimal.pow(AntimatterDimensions.buyTenMultiplier, getPurchases(ad.tier)))
         .reduce((x, y) => x.times(y), DC.D1);
     },
-    isActive: () => !EternityChallenge(11).isRunning,
+    isActive: () => AntimatterDimension(1).isProducing,
     icon: dim => MultiplierTabIcons.PURCHASE("AD", dim),
   },
   highestDim: {
@@ -229,7 +223,7 @@ export const AD = {
       if (EternityChallenge(7).isRunning) return (MultiplierTabHelper.activeDimCount("AD") < 8 || dim < 8) ? DC.D1 : mult;
       return Decimal.pow(mult, dim ? 1 : MultiplierTabHelper.activeDimCount("AD"));
     },
-    isActive: () => !EternityChallenge(9).isRunning,
+    isActive: () => !EternityChallenge(9).isRunning && !EternityChallenge(11).isRunning,
     icon: MultiplierTabIcons.INFINITY_POWER,
   },
   infinityChallenge: {
@@ -272,7 +266,6 @@ export const AD = {
       for (let tier = 1; tier <= 8; tier++) {
         dimMults[tier] = dimMults[tier].timesEffectsOf(
           tier === 8 ? TimeStudy(214) : null,
-          tier === 1 ? TimeStudy(234) : null,
         );
       }
 
@@ -287,7 +280,7 @@ export const AD = {
     icon: MultiplierTabIcons.TIME_STUDY,
   },
   eternityChallenge: {
-    name: "Eternity Challenges",
+    name: "Eternity Challenge 10",
     multValue: dim => Decimal.pow(EternityChallenge(10).effectValue,
       dim ? 1 : MultiplierTabHelper.activeDimCount("AD")),
     isActive: () => EternityChallenge(10).isRunning,

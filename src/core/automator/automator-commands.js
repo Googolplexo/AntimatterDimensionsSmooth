@@ -9,10 +9,14 @@ const idSplitter = /id[ \t]+(\d)/ui;
 
 function prestigeNotify(flag) {
   if (!AutomatorBackend.isOn) return;
-  const state = AutomatorBackend.stack.top.commandState;
-  if (state && state.prestigeLevel !== undefined) {
-    state.prestigeLevel = Math.max(state.prestigeLevel, flag);
-  }
+
+  // Any frame in the stack may be waiting for a prestige event, so update all of them.
+  AutomatorBackend.stack.forEach(frame => {
+    const state = frame.commandState;
+    if (state && state.prestigeLevel !== undefined) {
+     state.prestigeLevel = Math.max(state.prestigeLevel, flag);
+    }
+  });
 }
 
 EventHub.logic.on(GAME_EVENT.BIG_CRUNCH_AFTER, () => prestigeNotify(T.Infinity.$prestigeLevel));
@@ -59,15 +63,15 @@ function findLastPrestigeRecord(layer) {
   let addedECs, gainedEP;
   switch (layer) {
     case "INFINITY":
-      return `${format(player.records.recentInfinities[0][1], 2)} IP`;
+      return `${format(player.records.recentInfinities[0][2], 2)} IP`;
     case "ETERNITY":
       addedECs = AutomatorData.lastECCompletionCount;
-      gainedEP = `${format(player.records.recentEternities[0][1], 2)} EP`;
+      gainedEP = `${format(player.records.recentEternities[0][2], 2)} EP`;
       return addedECs === 0
         ? `${gainedEP}`
         : `${gainedEP}, ${addedECs} completions`;
     case "REALITY":
-      return `${format(player.records.recentRealities[0][1], 2)} RM`;
+      return `${format(player.records.recentRealities[0][2], 2)} RM`;
     default:
       throw Error(`Unrecognized prestige ${layer} in Automator event log`);
   }

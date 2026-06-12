@@ -34,7 +34,9 @@ export class Galaxy {
 
     amount += (galaxies - 1) * galaxies * 5;
 
-    amount -= Effects.sum(InfinityUpgrade.resetBoost);
+    amount -= Effects.sum(
+      InfinityUpgrade.resetBoost,
+      TimeStudy(232));
 
     amount = Math.floor(amount);
     const tier = Galaxy.requiredTier;

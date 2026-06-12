@@ -659,20 +659,20 @@ secondary cost scaling ${formatX(2)}
     }, {
       name: "Eternity",
       info: () => `
-Upon reaching ${formatPostBreak(DC.E2000, 2)} IP, you can Eternity. Eternities will reset everything before this
+Upon reaching ${formatPostBreak(DC.E2000)} IP, you can Eternity. Eternities will reset everything before this
 point except challenge times, Achievements, and anything under the General section of the Statistics tab. You will be
 able to access more content after your first Eternity.
 <br>
 <br>
-You can pass ${formatPostBreak(DC.E2000, 2)} IP without anything being forced upon you, unlike the first time
+You can pass ${formatPostBreak(DC.E2000)} IP without anything being forced upon you, unlike the first time
 you reached ${formatPostBreak(Number.MAX_VALUE, 2)} antimatter. You will receive more Eternity Points the more
 Infinity Points you had before going Eternal. You will also gain one "Eternity" for completing an Eternity.
 <br>
 <br>
 Eternity Point gain scales similarly to Infinity Point gain, but scaling off of Infinity Points instead of antimatter.
-The base amount of EP gained at ${formatPostBreak(DC.E2000, 2)} IP is ${formatInt(1)} EP, multiplied by
-${formatInt(10)} for every factor of ${formatPostBreak(DC.E4000, 2)} more IP you have. This is always rounded
-down, which means that you will get ${formatInt(1)} EP at ${formatPostBreak(DC.E2000, 2)} IP but will not reach
+The base amount of EP gained at ${formatPostBreak(DC.E2000)} IP is ${formatInt(1)} EP, multiplied by
+${formatInt(10)} for every factor of ${formatPostBreak(DC.E4000)} more IP you have. This is always rounded
+down, which means that you will get ${formatInt(1)} EP at ${formatPostBreak(DC.E2000)} IP but will not reach
 ${formatInt(2)} EP until ${formatPostBreak(DC.C2P4000E2000, 2, 2)} IP.
 <br>
 <br>
@@ -843,7 +843,7 @@ completed both EC11 and EC12 five times each.
 <br>
 Dilating time will start a modified Eternity, called Time Dilation, in which all of your Antimatter/Infinity/Time
 Dimension multipliers’ <i>exponents</i> and the tickspeed multipliers’ <i>exponent</i> will be raised to
-${formatPow(0.75, 2, 2)}, significantly reducing them. If you can reach ${formatPostBreak(Number.MAX_VALUE, 2)} IP
+${formatPow(0.825, 3, 3)}, significantly reducing them. If you can reach ${formatPostBreak(DC.E2000)} IP
 to complete this Dilated Eternity, you will be rewarded with a new resource called Tachyon Particles.
 <br>
 <br>

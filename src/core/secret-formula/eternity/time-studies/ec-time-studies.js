@@ -112,13 +112,13 @@ export const ecTimeStudies = [
   },
   {
     id: 10,
-    cost: 550,
+    cost: 450,
     requirement: [181],
     reqType: TS_REQUIREMENT_TYPE.AT_LEAST_ONE,
     secondary: {
       resource: "Eternity Points",
       current: () => Currency.eternityPoints.value,
-      required: completions => DC.E20.pow(Math.min(completions, 4)).times(DC.E100),
+      required: completions => DC.E100.pow(Math.min(completions, 4)).times(DC.E100),
       formatValue: value => format(value, 2)
     }
   },

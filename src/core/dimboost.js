@@ -21,10 +21,10 @@ export class DimBoost {
   }
 
   static multiplierToNDTier(tier) {
-    const normalBoostMult = DimBoost.power.pow(this.purchasedBoosts + 1 - tier).clampMin(1);
-    const imaginaryBoostMult = DimBoost.power.times(ImaginaryUpgrade(24).effectOrDefault(1))
-      .pow(this.imaginaryBoosts).clampMin(1);
-    return normalBoostMult.times(imaginaryBoostMult);
+    const normalBoostMult = DimBoost.power.pow(this.totalBoosts + 1 - tier).clampMin(1);
+    if (TimeStudy(222).isBought) return normalBoostMult.times(TimeStudy(222).effectValue.div(DimBoost.power).pow
+      (Math.floor(Math.sqrt(DimBoost.totalBoosts)) - Math.ceil(Math.sqrt(tier)) + 1).clampMin(1));
+    return normalBoostMult;
   }
 
   static get maxDimensionsUnlockable() {
@@ -32,7 +32,7 @@ export class DimBoost {
   }
 
   static get canUnlockNewDimension() {
-    return DimBoost.purchasedBoosts + 4 < DimBoost.maxDimensionsUnlockable;
+    return DimBoost.totalBoosts + 4 < DimBoost.maxDimensionsUnlockable;
   }
 
   static get maxBoosts() {
@@ -54,14 +54,14 @@ export class DimBoost {
   }
 
   static get canBeBought() {
-    if (DimBoost.purchasedBoosts >= this.maxBoosts) return false;
+    if (DimBoost.totalBoosts >= this.maxBoosts) return false;
     if (player.records.thisInfinity.maxAM.gt(Player.infinityGoal) &&
        (!player.break || Player.isInAntimatterChallenge) && !InfinityChallenge(4).isCompleted) return false;
     return true;
   }
 
   static get lockText() {
-    if (DimBoost.purchasedBoosts >= this.maxBoosts) {
+    if (DimBoost.totalBoosts >= this.maxBoosts) {
       if (Ra.isRunning) return "Locked (Ra's Reality)";
     }
     return null;
@@ -72,23 +72,19 @@ export class DimBoost {
   }
 
   static bulkRequirement(bulk) {
-    const targetResets = DimBoost.purchasedBoosts + bulk;
+    const targetResets = DimBoost.totalBoosts + bulk;
     const tier = Math.min(targetResets + 3, this.maxDimensionsUnlockable);
     let amount = 20;
-    const discount = Effects.sum(
-      TimeStudy(211),
-      TimeStudy(222)
-    );
     if (tier === 6 && NormalChallenge(10).isRunning) {
-      amount += Math.round((targetResets - 3) * (20 - discount));
+      amount += Math.round((targetResets - 3) * 20);
     } else if (tier === 8) {
-      amount += Math.round((targetResets - 5) * (15 - discount));
+      amount += Math.round((targetResets - 5) * 15);
     }
     if (EternityChallenge(5).isRunning) {
       amount += Math.pow(targetResets - 1, 3) + targetResets - 1;
     }
 
-    amount -= Effects.sum(InfinityUpgrade.resetBoost, TimeStudy(81));
+    amount -= Effects.sum(InfinityUpgrade.resetBoost, TimeStudy(81), TimeStudy(211));
     if (InfinityChallenge(5).isCompleted) amount -= 1;
 
     amount *= InfinityUpgrade.resetBoost.chargedEffect.effectOrDefault(1);
@@ -100,7 +96,7 @@ export class DimBoost {
 
   static get unlockedByBoost() {
     if (DimBoost.lockText !== null) return DimBoost.lockText;
-    const boosts = DimBoost.purchasedBoosts;
+    const boosts = DimBoost.totalBoosts;
     const allNDUnlocked = EternityMilestone.unlockAllND.isReached;
 
     let newUnlock = "";
@@ -110,7 +106,10 @@ export class DimBoost {
       newUnlock = "unlock Sacrifice";
     }
 
-    const formattedMultText = `give a ${formatX(DimBoost.power, 2, 1)} multiplier `;
+    let power = DimBoost.power;
+    const x = DimBoost.totalBoosts + 1;
+    if (Math.round(Math.sqrt(x)) ** 2 === x) power = power.clampMin(TimeStudy(222).effectOrDefault(1));
+    const formattedMultText = `give a ${formatX(power, 2, 1)} multiplier `;
     let dimensionRange = `to the 1st Dimension`;
     if (boosts > 0) dimensionRange = `to Dimensions 1-${Math.min(boosts + 1, 8)}`;
     if (boosts >= DimBoost.maxDimensionsUnlockable - 1) dimensionRange = `to all Dimensions`;
@@ -124,16 +123,8 @@ export class DimBoost {
     return `Reset your Antimatter, Antimatter Dimensions and Tickspeed to ${boostEffects}`;
   }
 
-  static get purchasedBoosts() {
-    return Math.floor(player.dimensionBoosts);
-  }
-
-  static get imaginaryBoosts() {
-    return Ra.isRunning ? 0 : ImaginaryUpgrade(12).effectOrDefault(0) * ImaginaryUpgrade(23).effectOrDefault(1);
-  }
-
   static get totalBoosts() {
-    return Math.floor(this.purchasedBoosts + this.imaginaryBoosts);
+    return Math.floor(player.dimensionBoosts);
   }
 
   static get startingDimensionBoosts() {

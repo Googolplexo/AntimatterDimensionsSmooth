@@ -15,17 +15,6 @@ export const MultiplierTabHelper = {
     }
   },
 
-  // Helper method for galaxy strength multipliers affecting all galaxy types (this is used a large number of times)
-  globalGalaxyMult() {
-    return Effects.product(
-      TimeStudy(212),
-      TimeStudy(232),
-      Achievement(178),
-      PelleUpgrade.galaxyPower,
-      PelleRifts.decay.milestones[1]
-    ) * Pelle.specialGlyphEffect.power;
-  },
-
   // Helper method to check for whether an achievement affects a particular dimension or not. Format of dimStr is
   // expected to be a three-character string "XXN", eg. "AD3" or "TD2"
   achievementDimCheck(ach, dimStr) {
@@ -61,8 +50,6 @@ export const MultiplierTabHelper = {
         return dimStr === "AD8";
       case 227:
         return dimStr === "TD4";
-      case 234:
-        return dimStr === "AD1";
       default:
         return true;
     }

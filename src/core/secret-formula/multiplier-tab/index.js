@@ -16,9 +16,6 @@
  *  @property {Decimal|Number} multValue  Value for multipliers given by this effect. Note that some
  *    entries may have a pow10 applied to them in order to "undo" logarithmic scaling in the UI
  *  @property {Number} powValue           Numerical value for powers given by this effect
- *  @property {Number} dilationEffect     Exponent to use for dilation effect
- *  @property {Boolean} isDilated         Denotes if the multiplier is already dilated and needs an "anti-dilation"
- *    calculation to be applied to make the numbers in the UI correct. Defaults to false
  *  @property {Boolean} isActive          Conditional determining if this component should be visible
  *  @property {Array String} overlay      String array to be used as HTML for an overlay on the tab; all
  *    entries in the array are rendered on top of each other

@@ -28,6 +28,7 @@ export function staticGalaxies() {
   return Effects.sum(
     InfinityUpgrade.galaxyBoost,
     TimeStudy(111),
+    TimeStudy(223),
     EternityChallenge(5).reward);
 }
 
@@ -39,15 +40,33 @@ export function timeToNextRG() {
   const galaxies = Replicanti.galaxies;
   const canBulk = Autobuyer.replicantiGalaxy.isUnlocked && galaxies.canBuyMore;
   const bulk = galaxies.bulk;
-  const goal = canBulk
-    ? bulk.purchasePrice.plus(RGCost(galaxies.startingCost, galaxies.bought + bulk.quantity, galaxies.max))
+  const ec12 = EternityChallenge(12).isRunning;
+  let goal = canBulk
+    ? RGCost(galaxies.startingCost, galaxies.bought + bulk.quantity, galaxies.max)
     : galaxies.currentCost;
+  if (ec12) goal = goal.clampMax(DC.D5E4);
+  if (canBulk && (!Achievement(126).isUnlocked || Pelle.isDoomed || ec12)) goal = goal.plus(bulk.purchasePrice);
 
   if (TimeStudy(133).isBought) {
+    if (ec12) {
+      let totalCost = DC.D0;
+      for (let i = 0; i <= bulk.quantity + 1; i++) {
+        const s = player.records.secondsSinceLastRG + TimeSpan.fromMinutes(Perk.studyIdleEP.effectOrDefault(0)).totalSeconds;
+        const a = totalCost.timesEffectsOf(TimeStudy(133)).div(DC.E7).clampMax(Number.MAX_VALUE).toNumber();
+        const r = Replicanti.amount.div(DC.E7).minus((bulk.quantity + 1 - i) / 200).clampMax(Number.MAX_VALUE).toNumber();
+        if (a === Number.MAX_VALUE) return a;
+        const x = cubicRealRoots(0.0001, (r + 2 * s) / 10000 + 0.02, s * (2 * r + s) / 10000 + (r + s) / 50 + 1, r * (s / 100 + 1) ** 2 - a).max();
+        const nextCost = RGCost(galaxies.startingCost, galaxies.bought + i, galaxies.max);
+        if (nextCost.timesEffectsOf(TimeStudy(133)).div(((s + x) / 100 + 1) ** 2).gte(DC.D5E4)) return x;
+        totalCost = totalCost.plus(nextCost);
+      }
+    }
+
     // The answer is given by the following equation: r + x = a / ((s + x) / 100 + 1) ^ 2
     const s = player.records.secondsSinceLastRG + TimeSpan.fromMinutes(Perk.studyIdleEP.effectOrDefault(0)).totalSeconds;
     const a = goal.timesEffectsOf(TimeStudy(133)).div(replicantiGainPerSecond()).clampMax(Number.MAX_VALUE).toNumber();
     const r = Replicanti.amount.div(replicantiGainPerSecond()).clampMax(Number.MAX_VALUE).toNumber();
+    if (a === Number.MAX_VALUE) return a;
     return cubicRealRoots(0.0001, (r + 2 * s) / 10000 + 0.02, s * (2 * r + s) / 10000 + (r + s) / 50 + 1, r * (s / 100 + 1) ** 2 - a).max();
   }
 
@@ -74,8 +93,17 @@ export function canKeepDimBoostsOnGalaxy() {
   return PelleUpgrade.galaxyNoReset.canBeApplied || Achievement(111).canBeApplied;
 }
 
-export function staticGalaxyDescription(base) {
-  return `Gain ${quantifyInt("Galaxy", base)} for free`;
+export function staticGalaxyPower() {
+  return Effects.product(
+    TimeStudy(212),
+    TimeStudy(224));
+}
+
+export function staticGalaxyDescription(base, shortDesciption = false) {
+  const power = staticGalaxyPower();
+  const effective = power === 1 ? "" : ` (effectively ${format(base * power, 2, 1)})`;
+  const galaxies = quantifyInt("Galaxy", base) + effective;
+  return shortDesciption ? galaxies : "Gain " + galaxies + " for free";
 }
 
 export function playerInfinityUpgradesOnReset(reset = true) {
@@ -175,6 +203,7 @@ function totalEPMult() {
         TimeStudy(122),
         TimeStudy(121),
         TimeStudy(123),
+        EternityChallenge(12).reward,
         RealityUpgrade(12),
         GlyphEffect.epMult
       );
@@ -882,15 +911,12 @@ function updateImaginaryMachines(diff) {
 
 function updateTachyonGalaxies() {
   const tachyonGalaxyMult = Effects.max(1, DilationUpgrade.doubleGalaxies);
-  const tachyonGalaxyThreshold = 1000;
   const thresholdMult = getTachyonGalaxyMult();
   player.dilation.baseTachyonGalaxies = Math.max(player.dilation.baseTachyonGalaxies,
     1 + Math.floor(Decimal.log(Currency.dilatedTime.value.dividedBy(1000), thresholdMult)));
   player.dilation.nextThreshold = DC.E3.times(new Decimal(thresholdMult)
     .pow(player.dilation.baseTachyonGalaxies));
-  player.dilation.totalTachyonGalaxies =
-    Math.min(player.dilation.baseTachyonGalaxies * tachyonGalaxyMult, tachyonGalaxyThreshold) +
-    Math.max(player.dilation.baseTachyonGalaxies * tachyonGalaxyMult - tachyonGalaxyThreshold, 0) / tachyonGalaxyMult;
+  player.dilation.totalTachyonGalaxies = player.dilation.baseTachyonGalaxies * tachyonGalaxyMult;
 
   player.dilation.totalTachyonGalaxies *= DilationUpgrade.galaxyMultiplier.effectValue;
 }

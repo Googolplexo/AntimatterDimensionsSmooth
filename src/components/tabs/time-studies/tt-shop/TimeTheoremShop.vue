@@ -118,7 +118,7 @@ export default {
       this.shopMinimized = player.timestudy.shopMinimized;
       this.hasTTAutobuyer = Autobuyer.timeTheorem.isUnlocked;
       this.isAutobuyerOn = Autobuyer.timeTheorem.isActive;
-      this.minimizeAvailable = DilationUpgrade.ttGenerator.isBought || this.hasTTAutobuyer;
+      this.minimizeAvailable = this.hasTTAutobuyer;
       const budget = this.budget;
       budget.am.copyFrom(TimeTheoremPurchaseType.am.currency);
       budget.ip.copyFrom(TimeTheoremPurchaseType.ip.currency);

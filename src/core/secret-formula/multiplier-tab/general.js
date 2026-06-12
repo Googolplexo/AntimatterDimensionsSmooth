@@ -49,7 +49,15 @@ export const general = {
     name: (ts, dim) => (dim?.length === 2
       ? `Time Study ${ts} (${dim})`
       : `Time Study ${ts}`),
+    displayOverride: (ts, dim) => {
+      if ([111, 223].includes(ts)) {
+        const num = TimeStudy(ts).effectValue;
+        const mult = staticGalaxyPower();
+        return mult === 1 ? `${formatInt(num)}` : `${formatInt(num)}, effectively ${formatFloat(num * mult, 1)}`;
+      }
+    },
     multValue: (ts, dim) => {
+      if ([111, 223].includes(ts)) return Decimal.pow10(TimeStudy(ts).effectOrDefault(0));
       if (!dim) return TimeStudy(ts).canBeApplied ? TimeStudy(ts).effectOrDefault(1) : 1;
       if (dim?.length === 2) {
         let totalEffect = DC.D1;
@@ -76,12 +84,6 @@ export const general = {
   infinityChallenge: {
     name: ic => `Infinity Challenge ${ic}`,
     multValue: (ic, dim) => {
-      // We cheat here by actually giving IC4 a multiplier of a value equal to its effect on the final
-      // value in order to represent its proportion accurately. It's hidden by displayOverride
-      if (ic === 4) {
-        return InfinityChallenge(4).reward.effectValue.pow(player.options.multiplierTab.showAltGroup ? 1 : MultiplierTabHelper.activeDimCount("AD"));
-      }
-
       if (dim?.length === 2) {
         let totalEffect = DC.D1;
         for (let tier = 1; tier <= MultiplierTabHelper.activeDimCount(dim); tier++) {

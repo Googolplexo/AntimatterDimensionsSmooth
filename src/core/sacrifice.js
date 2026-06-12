@@ -8,7 +8,7 @@ export class Sacrifice {
   }
 
   static get canSacrifice() {
-    return DimBoost.purchasedBoosts > 4 && !EternityChallenge(3).isRunning && this.nextBoost.gt(1.01) &&
+    return DimBoost.totalBoosts > 4 && !EternityChallenge(3).isRunning && this.nextBoost.gt(1.01) &&
       AntimatterDimension(8).totalAmount.gt(0) && (Currency.antimatter.lt(Player.infinityLimit) || Achievement(118).isUnlocked) &&
       !Enslaved.isRunning;
   }
@@ -16,7 +16,7 @@ export class Sacrifice {
   static get disabledCondition() {
     if (NormalChallenge(10).isRunning) return "8th Dimensions are disabled";
     if (EternityChallenge(3).isRunning) return "Eternity Challenge 3";
-    if (DimBoost.purchasedBoosts < 5) return `Requires ${formatInt(5)} Dimension Boosts`;
+    if (DimBoost.totalBoosts < 5) return `Requires ${formatInt(5)} Dimension Boosts`;
     if (AntimatterDimension(8).totalAmount.eq(0)) return "No 8th Antimatter Dimensions";
     if (this.nextBoost.lte(1.01)) return `${formatX(1)} multiplier`;
     if (Player.isInAntimatterChallenge) return "Challenge goal reached";
@@ -30,6 +30,7 @@ export class Sacrifice {
       Achievement(88),
       InfinityChallenge(2).reward,
       EternityChallenge(3).reward,
+      TimeStudy(192),
       TimeStudy(228),
       TimeStudy(304)) * (11 - Player.dimensionMultDecrease) * 2;
   }

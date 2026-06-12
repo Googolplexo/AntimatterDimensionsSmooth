@@ -14,7 +14,7 @@ const propList = {
     "dilationUpgrade", "realityUpgrade", "glyph", "alchemy", "imaginaryUpgrade", "pelle", "iap", "nerfV", "nerfCursed"],
   IP: ["base", "infinityUpgrade", "infinityChallenge", "achievement", "timeStudy", "dilationUpgrade", "glyph", "alchemy", "pelle", "iap",
     "nerfTeresa", "nerfV"],
-  EP: ["base", "eternityUpgrade", "timeStudy", "glyph", "realityUpgrade", "pelle", "iap", "nerfTeresa", "nerfV"],
+  EP: ["base", "eternityUpgrade", "timeStudy", "eternityChallenge", "glyph", "realityUpgrade", "pelle", "iap", "nerfTeresa", "nerfV"],
 };
 
 // Some of the props above would contain every entry except "total" in their respective value GameDB entry, so we
@@ -114,7 +114,7 @@ multiplierTabTree.DT_total[0].unshift("TP_total");
 
 // Additional data specification for dynamically-generated props
 const dimTypes = ["AD", "ID", "TD"];
-const singleRes = ["IP", "EP", "DT", "infinities", "replicanti"];
+const singleRes = ["IP", "EP", "DT", "infinities", "replicanti", "galaxies"];
 const targetedEffects = {
   achievement: {
     checkFn: MultiplierTabHelper.achievementDimCheck,
@@ -126,12 +126,13 @@ const targetedEffects = {
   },
   timeStudy: {
     checkFn: MultiplierTabHelper.timeStudyDimCheck,
-    AD: [91, 101, 161, 193, 214, 234],
+    AD: [91, 101, 161, 193, 214],
     ID: [72, 82, 92, 162],
     TD: [11, 73, 83, 93, 103, 171, 221, 227, 301],
     IP: [41, 51, 141, 142, 143],
     EP: [61, 121, 122, 123],
-    replicanti: [21, 62, 131, 213],
+    replicanti: [21, 62, 131, 213, 234],
+    galaxies: [111, 223],
   },
   infinityChallenge: {
     checkFn: MultiplierTabHelper.ICDimCheck,
@@ -159,7 +160,7 @@ for (const res of dimTypes) {
 
 // A few dynamically-generated props are largely useless in terms of what they connect to, in that they have very few
 // entries or have 8 identical entries, so we explicitly remove those lists for a cleaner appearance on the UI
-const removedRegexes = ["AD_sacrifice", "AD_breakInfinityUpgrade", "AD_nerfIC", "AD_infinityUpgrade", "AD_infinityPower", "AD_v",
+const removedRegexes = ["AD_sacrifice", "AD_breakInfinityUpgrade", "AD_nerfIC", "AD_infinityUpgrade", "AD_infinityPower", "AD_eternityChallenge", "AD_v",
   "ID_replicanti", "ID_infinityChallenge", "ID_eternityUpgrades",
   "TD_achievement", "TD_eternityUpgrade", "TD_infinityPower", "TD_dilationUpgrade", "TD_realityUpgrade",
   ".._achievementMult", ".._glyph", ".._alchemy", ".._imaginaryUpgrade", ".._iap",

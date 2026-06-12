@@ -23,7 +23,6 @@ export const gamespeed = {
     },
     multValue: () => getGameSpeedupForDisplay(),
     isActive: () => PlayerProgress.seenAlteredSpeed(),
-    dilationEffect: () => (Effarig.isRunning ? Effarig.multDilation : 1),
     dimCount: dimType => (dimType ? MultiplierTabHelper.activeDimCount(dimType) : 1),
     overlay: ["Δ", `<i class="fas fa-clock" />`, `<i class="fas fa-circle" />`],
     ignoresNerfPowers: true,

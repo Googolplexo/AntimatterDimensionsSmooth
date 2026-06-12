@@ -1,10 +1,13 @@
 import { DC } from "./constants";
 
 export function effectiveBaseGalaxies() {
-  let replicantiGalaxies = Replicanti.galaxies.bought;
-  let freeGalaxies = player.dilation.totalTachyonGalaxies;
-  freeGalaxies *= 1 + Math.max(0, Replicanti.amount.log10() / 1e6) * AlchemyResource.alternation.effectValue;
-  return player.galaxies + GalaxyGenerator.galaxies + replicantiGalaxies + freeGalaxies + staticGalaxies();
+  return player.galaxies
+    + GalaxyGenerator.galaxies
+    + Replicanti.galaxies.bought
+    + player.dilation.totalTachyonGalaxies 
+      * (1 + Math.max(0, Replicanti.amount.log10() / 1e6) * AlchemyResource.alternation.effectValue)
+    + staticGalaxies()
+      * staticGalaxyPower();
 }
 
 export function getTickSpeedMultiplier() {
@@ -54,11 +57,11 @@ export function buyMaxTickSpeed() {
       cost = Tickspeed.cost;
     }
   } else {
-    const purchases = Tickspeed.costScale.getMaxBought(player.totalTickBought, Currency.antimatter.value, 1);
+    const purchases = Tickspeed.costScale.getMaxBought(player.totalTickBought, Currency.antimatter.value.timesEffectOf(TimeStudy(227)), 1);
     if (purchases === null) {
       return;
     }
-    Currency.antimatter.subtract(Decimal.pow10(purchases.logPrice));
+    Currency.antimatter.subtract(Decimal.pow10(purchases.logPrice).dividedByEffectOf(TimeStudy(227)));
     player.totalTickBought += purchases.quantity;
     boughtTickspeed = true;
   }
@@ -101,7 +104,7 @@ export const Tickspeed = {
   },
 
   get cost() {
-    return this.costScale.calculateCost(player.totalTickBought + player.chall9TickspeedCostBumps);
+    return this.costScale.calculateCost(player.totalTickBought + player.chall9TickspeedCostBumps).dividedByEffectOf(TimeStudy(227));
   },
 
   get costScale() {

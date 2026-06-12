@@ -18,9 +18,15 @@ export const replicanti = {
   },
   timeStudy: {
     name: "Time Studies",
-    multValue: () => new Decimal(1).timesEffectsOf(TimeStudy(21), TimeStudy(62), TimeStudy(131), TimeStudy(213)),
-    isActive: () => PlayerProgress.eternityUnlocked() && !Pelle.isDoomed,
+    multValue: () => new Decimal(1).timesEffectsOf(TimeStudy(21), TimeStudy(62), TimeStudy(131), TimeStudy(213), TimeStudy(234)),
+    isActive: () => PlayerProgress.eternityUnlocked() && !Pelle.isDoomed && !EternityChallenge(11).isRunning,
     icon: MultiplierTabIcons.TIME_STUDY,
+  },
+  eternityChallenge: {
+    name: "Eternity Challenge 11",
+    multValue: () => EternityChallenge(11).reward.effectOrDefault(1),
+    isActive: () => PlayerProgress.eternityUnlocked() && !Pelle.isDoomed,
+    icon: MultiplierTabIcons.CHALLENGE("eternity")
   },
   glyph: {
     name: "Glyph Effects",

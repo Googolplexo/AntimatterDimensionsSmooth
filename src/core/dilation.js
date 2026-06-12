@@ -107,7 +107,7 @@ export function buyDilationUpgrade(id, bulk = 1) {
 export function getTachyonGalaxyMult(thresholdUpgrade) {
   // This specifically needs to be an undefined check because sometimes thresholdUpgrade is zero
   const upgrade = thresholdUpgrade === undefined ? DilationUpgrade.galaxyThreshold.effectValue : thresholdUpgrade;
-  const thresholdMult = 3.65 * upgrade + 0.35;
+  const thresholdMult = 12 / (3 + upgrade);
   const glyphEffect = getAdjustedGlyphEffect("dilationgalaxyThreshold");
   const glyphReduction = glyphEffect === 0 ? 1 : glyphEffect;
   const power = DilationUpgrade.galaxyThresholdPelle.canBeApplied
@@ -169,7 +169,7 @@ export function getBaseTP(antimatter, requireEternity) {
   const am = (isInCelestialReality() || Pelle.isDoomed)
     ? antimatter
     : Ra.unlocks.unlockDilationStartingTP.effectOrDefault(antimatter);
-  let baseTP = Decimal.pow(Decimal.log10(am) / 400, 1.5);
+  let baseTP = Decimal.pow(Decimal.log10(am.plus(1)), 2.5).div(DC.D5E9);
   if (Enslaved.isRunning) baseTP = baseTP.pow(Enslaved.tachyonNerf);
   return baseTP;
 }
@@ -191,10 +191,10 @@ export function getTachyonReq() {
   if (Enslaved.isRunning) effectiveTP = effectiveTP.pow(1 / Enslaved.tachyonNerf);
   return Decimal.pow10(
     effectiveTP
-      .times(Math.pow(400, 1.5))
-      .pow(2 / 3)
+      .times(DC.D5E9)
+      .pow(0.4)
       .toNumber()
-  );
+  ).minus(1);
 }
 
 export function getDilationTimeEstimate(goal) {
@@ -214,7 +214,7 @@ export function getDilationTimeEstimate(goal) {
 }
 
 export function dilatedValueOf(value) {
-  return generalDilatedValueOf(value, 0.75 * Effects.product(DilationUpgrade.dilationPenalty));
+  return generalDilatedValueOf(value, DilationUpgrade.dilationPenalty.effectOrDefault(0.825));
 }
 
 export function generalDilatedValueOf(value, dilationPenalty) {

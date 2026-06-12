@@ -79,8 +79,8 @@ export const progressStages = [
     id: PROGRESS_STAGE.LATE_ETERNITY,
     name: "Late Eternity",
     hasReached: save => new Decimal(save.dilation.dilatedTime).gt(1e15),
-    suggestedResource: () => (new Decimal(player.eternityPoints).log10() > 4000
-      ? "Eternity Points and/or Dilated Time. Alternatively, you can unlock and perform your first Reality"
+    suggestedResource: () => (new Decimal(player.eternityPoints).log10() > 4500
+      ? "Eternity Points and/or Dilated Time. You have reached the end of balanced content" // Alternatively, you can unlock and perform your first Reality"
       : "Eternity Points and/or Dilated Time"
     ),
     // Tracks up to e8000 even though many players will reality well before that; we still want to distinguish

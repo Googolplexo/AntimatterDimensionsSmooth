@@ -26,13 +26,6 @@ export const TD = {
     isActive: dim => (dim
       ? TimeDimension(dim).isProducing
       : (PlayerProgress.realityUnlocked() || TimeDimension(1).isProducing)),
-    dilationEffect: () => {
-      const baseEff = player.dilation.active
-        ? 0.75 * Effects.product(DilationUpgrade.dilationPenalty)
-        : 1;
-      return baseEff * (Effarig.isRunning ? Effarig.multDilation : 1);
-    },
-    isDilated: true,
     overlay: ["Δ", "<i class='fa-solid fa-cube' />"],
     icon: dim => MultiplierTabIcons.DIMENSION("TD", dim),
   },
@@ -95,8 +88,7 @@ export const TD = {
       for (let tier = 1; tier <= 8; tier++) {
         dimMults[tier] = dimMults[tier].timesEffectsOf(
           tier === 1 ? TimeStudy(11) : null,
-          tier === 3 ? TimeStudy(73) : null,
-          tier === 4 ? TimeStudy(227) : null
+          tier === 3 ? TimeStudy(73) : null
         );
       }
 

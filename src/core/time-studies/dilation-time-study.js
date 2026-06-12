@@ -25,7 +25,7 @@ export class DilationTimeStudyState extends TimeStudyState {
   get totalTimeTheoremRequirement() {
     switch (this.id) {
       case 0:
-        return 12900;
+        return 13700;
       case 1:
         return 120;
       default:
@@ -55,10 +55,12 @@ export class DilationTimeStudyState extends TimeStudyState {
     if (this.id === 6) {
       // ID 6 is the reality unlock study
       if (!PlayerProgress.realityUnlocked()) {
-        Modal.message.show(`Reality Machine gain for your first Reality is reduced above ${format("1e6000")} Eternity
-          Points and capped at ${format("1e8000")} Eternity Points. This is due to balance changes made in the Reality
-          update which affect the difficulty of reaching those amounts, such as the increased Time Dimension cost
-          scaling above ${format("1e6000")}.`, {}, 3);
+        Modal.message.show(`You have reached the point of Antimatter Dimensions: Smooth that is temporarily considered
+          the end. Balancing of the Reality prestige layer is being worked on. Please note that the developer does not take
+          responsibility for any harm that playing with Reality mechanics may cause. The option to perform a Reality reset has been
+          left for those who want to explore it, but if you choose to do so, as well as if you edit the game state through console,
+          your save may be permanently damaged. It is guaranteed that you will be able to gain at least 1 Reality Machine immediately
+          in the next update.`, {}, 3);
         EventHub.dispatch(GAME_EVENT.REALITY_FIRST_UNLOCKED);
       }
       if (!Perk.autounlockReality.isBought) Tab.reality.glyphs.show();

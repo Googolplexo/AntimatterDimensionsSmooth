@@ -15,7 +15,6 @@ export const DT = {
     multValue: () => getDilationGainPerSecond().times(getGameSpeedupForDisplay()),
     isActive: () => PlayerProgress.realityUnlocked() ||
       (PlayerProgress.dilationUnlocked() && getDilationGainPerSecond().gt(0)),
-    dilationEffect: () => (Enslaved.isRunning ? 0.85 : 1),
     overlay: ["Ψ"],
   },
   achievement: {

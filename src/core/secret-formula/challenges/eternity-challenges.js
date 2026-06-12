@@ -74,7 +74,7 @@ export const eternityChallenges = [
     reward: {
       description: "Gain free Galaxies",
       effect: completions => completions * 3,
-      formatEffect: value => `${formatInt(value)} Galaxies`
+      formatEffect: value => staticGalaxyDescription(value, true)
     }
   },
   {
@@ -144,18 +144,18 @@ export const eternityChallenges = [
     id: 10,
     description: () => {
       let description = `Time Dimensions and Infinity Dimensions are disabled. You gain an immense boost from
-        Infinities to Antimatter Dimensions (Infinities${formatPow(950)}). ${specialInfinityGlyphDisabledEffectText()}`;
+        Infinities to Antimatter Dimensions (Infinities^${formatInt(3000)}). ${specialInfinityGlyphDisabledEffectText()}`;
       EternityChallenge(10).applyEffect(v => description += ` Currently: ${formatX(v, 2, 1)}`);
       return description;
     },
-    goal: DC.E3000,
+    goal: DC.E80000,
     pelleGoal: DC.E3200,
-    goalIncrease: DC.E300,
-    effect: () => Decimal.pow(Currency.infinitiesTotal.value, 950).clampMin(1).pow(TimeStudy(31).effectOrDefault(1)),
+    goalIncrease: DC.E5000,
+    effect: () => Decimal.pow(Currency.infinitiesTotal.value.plus(1), 3000).pow(TimeStudy(31).effectOrDefault(1)),
     reward: {
       description: "Time Dimension multiplier based on Infinities",
       effect: completions => {
-        const mult = Currency.infinitiesTotal.value.times(2.783e-6).pow(0.4 + 0.1 * completions).clampMin(1);
+        const mult = Currency.infinitiesTotal.value.times(1e-6).plus(1).pow(Math.sqrt(4 + completions) - 2);
         return mult.powEffectOf(TimeStudy(31));
       },
       formatEffect: value => {
@@ -169,39 +169,34 @@ export const eternityChallenges = [
   },
   {
     id: 11,
-    description: () => `all Dimension multipliers and powers are disabled except for the multipliers from
-      Infinity Power and Dimension Boosts (to Antimatter Dimensions). ${specialInfinityGlyphDisabledEffectText()}`,
-    goal: DC.E450,
+    description: () => `all Dimension multipliers are disabled except for the multiplier from
+      Dimension Boosts and the buy 10 multiplier (to Antimatter Dimensions). Time Studies don't affect Replicanti gain in any way. ${specialInfinityGlyphDisabledEffectText()}`,
+    goal: DC.E6000,
     pelleGoal: DC.E11200,
-    goalIncrease: DC.E200,
+    goalIncrease: DC.E1000,
     pelleGoalIncrease: DC.E1400,
     reward: {
-      description: "Further reduce Tickspeed cost multiplier growth",
-      effect: completions => completions * 0.07,
-      formatEffect: value => {
-        const total = Math.round(Player.tickSpeedMultDecrease + Effects.sum(EternityChallenge(11).reward)) - value;
-        return `-${format(value, 2, 2)} (${formatX(total, 2, 2)} total)`;
-      }
+      description: "Replicanti gain multiplier based on 1st Infinity Dimensions",
+      effect: completions => (Math.pow(InfinityDimension(1).amount.plus(1).log(10) / 100000 + 1, completions ** 2) - 1) * 1000 + 1,
+      formatEffect: value => formatX(value, 2, 2)
     }
   },
   {
     id: 12,
-    description: () => (PlayerProgress.realityUnlocked()
-      ? `the game runs ×${formatInt(1000)} slower; all other game speed effects are disabled. The goal must be reached
-        within a certain amount of time or you will fail the Challenge. ${specialInfinityGlyphDisabledEffectText()}`
-      : `the game runs ×${formatInt(1000)} slower. The goal must be reached
-        within a certain amount of time or you will fail the Challenge.`),
-    goal: DC.E110000,
+    description: () => `the game runs ×${formatInt(1000)} slower, you gain ${format(DC.E7)} Replicanti/s
+      and RGs reset them, unaffected by upgrades. RG requirement caps at ${format(DC.D5E4)}.
+      You will fail the Challenge once a certain time has passed.`,
+    goal: DC.E1300000,
     pelleGoal: DC.E208000,
-    goalIncrease: DC.E12000,
+    goalIncrease: DC.E100000,
     restriction: completions => Math.max(10 - 2 * completions, 1) / 10,
     checkRestriction: restriction => Time.thisEternity.totalSeconds < restriction,
     formatRestriction: restriction => `in ${quantify("in-game second", restriction, 0, 1)} or less.`,
     failedRestriction: "(Too slow for more)",
     reward: {
-      description: "Infinity Dimension cost multipliers are reduced",
-      effect: completions => 1 - completions * 0.008,
-      formatEffect: value => `x${formatPow(value, 3, 3)}`
+      description: "Multiply Eternity Point gain",
+      effect: completions => DC.E9.pow(completions),
+      formatEffect: formatX
     }
   }
 ];

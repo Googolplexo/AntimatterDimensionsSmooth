@@ -9,7 +9,7 @@ export const galaxies = {
     name: "Antimatter Galaxies",
     displayOverride: () => {
       const num = player.galaxies + GalaxyGenerator.galaxies;
-      return `${formatInt(num)}`;
+      return formatInt(num);
     },
     multValue: () => Decimal.pow10(player.galaxies + GalaxyGenerator.galaxies),
     isActive: true,
@@ -19,7 +19,7 @@ export const galaxies = {
     name: "Replicanti Galaxies",
     displayOverride: () => {
       const num = Replicanti.galaxies.bought;
-      return `${formatInt(num)}`;
+      return formatInt(num);
     },
     multValue: () => Decimal.pow10(Replicanti.galaxies.bought),
     isActive: () => Replicanti.areUnlocked,
@@ -29,7 +29,7 @@ export const galaxies = {
     name: "Tachyon Galaxies",
     displayOverride: () => {
       const num = player.dilation.totalTachyonGalaxies;
-      return `${formatInt(num)}`;
+      return formatInt(num);
     },
     multValue: () => {
       const num = player.dilation.totalTachyonGalaxies;
@@ -43,29 +43,40 @@ export const galaxies = {
     name: "Infinity Upgrades",
     displayOverride: () => {
       const num = InfinityUpgrade.galaxyBoost.effectValue;
-      return `${formatInt(num)}`;
+      const mult = staticGalaxyPower();
+      return mult === 1 ? formatInt(num) : `${formatInt(num)}, effectively ${formatFloat(num * mult, 1)}`;
     },
-    multValue: () => new Decimal(10),
+    multValue: () => Decimal.pow10(staticGalaxyPower()),
     isActive: () => InfinityUpgrade.galaxyBoost.isBought,
     icon: MultiplierTabIcons.UPGRADE("infinity"),
   },
   timeStudy: {
-    name: "Time Study 111",
+    name: "Time Studies",
     displayOverride: () => {
-      const num = TimeStudy(111).effectValue;
-      return `${formatInt(num)}`;
+      const num = Effects.sum(
+        TimeStudy(111),
+        TimeStudy(223));
+      const mult = staticGalaxyPower();
+      return mult === 1 ? formatInt(num) : `${formatInt(num)}, effectively ${formatFloat(num * mult, 1)}`;
     },
-    multValue: () => new Decimal(10000),
-    isActive: () => TimeStudy(111).isBought,
+    multValue: () => {
+      const num = Effects.sum(
+        TimeStudy(111),
+        TimeStudy(223));
+      const mult = staticGalaxyPower();
+      return Decimal.pow10(num * mult);
+    },
+    isActive: () => PlayerProgress.eternityUnlocked(),
     icon: MultiplierTabIcons.TIME_STUDY,
   },
   eternityChallenge: {
     name: "Eternity Challenge 5",
     displayOverride: () => {
       const num = EternityChallenge(5).reward.effectValue;
-      return `${formatInt(num)}`;
+      const mult = staticGalaxyPower();
+      return mult === 1 ? formatInt(num) : `${formatInt(num)}, effectively ${formatFloat(num * mult, 1)}`;
     },
-    multValue: () => Decimal.pow(10, EternityChallenge(5).reward.effectValue),
+    multValue: () => Decimal.pow10(EternityChallenge(5).reward.effectValue * staticGalaxyPower()),
     isActive: () => PlayerProgress.eternityUnlocked(),
     icon: MultiplierTabIcons.CHALLENGE("eternity"),
   },
