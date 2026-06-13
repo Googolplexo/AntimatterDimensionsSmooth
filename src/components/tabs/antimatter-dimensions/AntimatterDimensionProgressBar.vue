@@ -89,7 +89,7 @@ export default {
         // Show all other goals from the top down, starting at features in the highest prestige layer
         setProgress(Currency.infinityPoints.value, Tesseracts.nextCost, "Percentage to next Tesseract");
       } else if (PlayerProgress.dilationUnlocked()) {
-        setProgress(Currency.eternityPoints.value, DC.E4000, "Percentage to Reality");
+        setProgress(Currency.eternityPoints.value, DC.E4500, "Percentage to Reality");
       } else if (InfinityDimension(8).isUnlocked) {
         setProgress(Currency.infinityPoints.value, Player.eternityGoal, "Percentage to Eternity");
       } else if (player.break) {
