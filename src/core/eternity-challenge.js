@@ -23,6 +23,7 @@ export function startEternityChallenge() {
   playerInfinityUpgradesOnReset();
   AchievementTimers.marathon2.reset();
   ECTimeStudyState.invalidateCachedRequirements();
+  player.dilation.active = false;
 }
 
 class EternityChallengeRewardState extends GameMechanicState {
