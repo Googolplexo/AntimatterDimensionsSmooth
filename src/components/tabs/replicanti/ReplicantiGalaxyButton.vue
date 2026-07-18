@@ -13,7 +13,6 @@ export default {
       isAvailable: false,
       isAutoUnlocked: false,
       isAutoActive: false,
-      isAutoEnabled: false,
       isDivideUnlocked: false,
       boughtGalaxies: 0,
       cost: new Decimal(0)
@@ -36,8 +35,7 @@ export default {
     },
     autobuyerTextDisplay() {
       const auto = this.isAutoActive;
-      const disabled = !this.isAutoEnabled;
-      return `Auto Galaxy ${auto ? "ON" : "OFF"}${disabled ? " (disabled)" : ""}`;
+      return `Auto Galaxy ${auto ? "ON" : "OFF"}`;
     },
   },
   methods: {
@@ -50,7 +48,6 @@ export default {
       const auto = Autobuyer.replicantiGalaxy;
       this.isAutoUnlocked = auto.isUnlocked;
       this.isAutoActive = auto.isActive;
-      this.isAutoEnabled = auto.isEnabled;
     },
     handleAutoToggle(value) {
       Autobuyer.replicantiGalaxy.isActive = value;

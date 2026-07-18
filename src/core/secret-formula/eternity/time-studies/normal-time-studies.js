@@ -279,7 +279,7 @@ export const normalTimeStudies = [
     requiresST: [132, 133],
     description: () => (Achievement(138).isUnlocked
       ? `You gain ${formatX(4)} more Replicanti`
-      : `Automatic Replicanti Galaxies are disabled, but you gain ${formatX(4)} more Replicanti`),
+      : `Replicanti Galaxy autobuyer doesn't work offline, but you gain ${formatX(4)} more Replicanti`),
     effect: 4
   },
   {

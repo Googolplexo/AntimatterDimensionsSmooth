@@ -964,6 +964,8 @@ function afterSimulation(seconds, playerBefore) {
   }
 
   GameUI.notify.showBlackHoles = true;
+
+  player.auto.replicantiGalaxies.isActive = playerBefore.auto.replicantiGalaxies.isActive;
 }
 
 export function simulateTime(seconds, real, fast) {
@@ -1041,6 +1043,8 @@ export function simulateTime(seconds, real, fast) {
       gameLoop(1000 * realTickTime, { blackHoleSpeedup });
     };
   }
+
+  if (!Achievement(138).isUnlocked && TimeStudy(131).isBought) player.auto.replicantiGalaxies.isActive = false;
 
   // We don't show the offline modal here or bother with async if doing a fast simulation
   if (fast) {

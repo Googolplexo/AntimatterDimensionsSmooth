@@ -13,16 +13,11 @@ export class ReplicantiGalaxyAutobuyerState extends AutobuyerState {
     return EternityMilestone.autobuyerReplicantiGalaxy.isReached;
   }
 
-  get isEnabled() {
-    return Achievement(138).isUnlocked || !TimeStudy(131).isBought;
-  }
-
   get hasUnlimitedBulk() {
     return true;
   }
 
   tick() {
-    if (!this.isEnabled) return;
     replicantiGalaxy(true);
   }
 }
