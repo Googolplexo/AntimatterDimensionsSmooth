@@ -101,7 +101,7 @@ export const eternityChallenges = [
       "1st Time Dimensions produce 8th Infinity Dimensions instead of Time Shards. " +
       "The multiplier from Infinity Power applies to the 8th Antimatter Dimension only.",
     goal: DC.E2500,
-    pelleGoal: DC.E2900,
+    pelleGoal: DC.E2700,
     goalIncrease: DC.E4375,
     effect: () => TimeDimension(1).productionPerSecond,
     reward: {

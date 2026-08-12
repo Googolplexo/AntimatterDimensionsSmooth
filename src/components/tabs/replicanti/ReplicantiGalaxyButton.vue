@@ -28,7 +28,7 @@ export default {
       return `Currently: ${formatInt(this.boughtGalaxies)}`;
     },
     galaxyCostDisplay() {
-      return `Cost: ${format(this.cost, 2, 2)} Replicanti`;
+      return `Need: ${format(this.cost, 2, 2)} Replicanti`;
     },
     autobuyer() {
       return Autobuyer.replicantiGalaxy;

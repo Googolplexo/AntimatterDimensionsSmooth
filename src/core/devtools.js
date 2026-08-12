@@ -538,7 +538,7 @@ dev.optimiseCrunchAutobuyer = function(left, right, mode, tps) {
   Autobuyer.bigCrunch.mode = mode;
   const save = GameStorage.exportModifiedSave();
 
-  let diff, leftNew, rightNew, leftValue, rightValue;
+  let diff, leftNew, rightNew;
 
   if (mode === AUTO_CRUNCH_MODE.X_HIGHEST) {
     left = Decimal.pow(10, left);
