@@ -310,7 +310,7 @@ export const normalTimeStudies = [
       const totalSeconds = player.records.secondsSinceLastRG + perkEffect;
       return totalSeconds.toDecimal().div(100).plus(1).pow(2);
     },
-    formatEffect: value => formatX(value, 1, 1)
+    formatEffect: value => formatX(value, 2, 1)
   },
   {
     id: 141,
