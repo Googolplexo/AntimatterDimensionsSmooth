@@ -8,7 +8,6 @@ export const glyphTypes = {
     id: "time",
     symbol: GLYPH_SYMBOLS.time,
     color: "#b241e3",
-    primaryEffect: "timepow",
     alchemyResource: ALCHEMY_RESOURCE.TIME,
     hasRarity: true
   },
@@ -30,7 +29,6 @@ export const glyphTypes = {
     id: "infinity",
     symbol: GLYPH_SYMBOLS.infinity,
     color: "#b67f33",
-    primaryEffect: "infinitypow",
     alchemyResource: ALCHEMY_RESOURCE.INFINITY,
     hasRarity: true
   },
@@ -38,7 +36,6 @@ export const glyphTypes = {
     id: "power",
     symbol: GLYPH_SYMBOLS.power,
     color: "#22aa48",
-    primaryEffect: "powerpow",
     alchemyResource: ALCHEMY_RESOURCE.POWER,
     hasRarity: true
   },

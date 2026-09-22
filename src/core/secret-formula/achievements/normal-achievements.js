@@ -873,10 +873,7 @@ export const normalAchievements = [
     name: "Popular music",
     get description() { return `Have ${formatInt(180)} times more Replicanti Galaxies than Antimatter Galaxies outside of Eternity Challenge 6.`; },
     checkRequirement: () => Replicanti.galaxies.bought >= 180 * player.galaxies && player.galaxies > 0 && !EternityChallenge(6).isRunning,
-    checkEvent: GAME_EVENT.GAME_TICK_AFTER,
-    get reward() {
-      return `Replicanti Galaxies don't reset Replicanti.`;
-    },
+    checkEvent: GAME_EVENT.GAME_TICK_AFTER
   },
   {
     id: 127,
@@ -892,8 +889,11 @@ export const normalAchievements = [
     checkRequirement: () => Currency.infinityPoints.exponent >= 690000 && player.timestudy.studies.length === 0,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Time Dimension multiplier based on the number of Time Studies you have.",
-    effect: () => player.timestudy.studies.length + 1,
-    formatEffect: value => `${formatX(value)}`
+    effect: () => {
+      const x = player.timestudy.studies.length;
+      return x ** (x * x / 2000);
+    },
+    formatEffect: value => `${formatX(value, 2, 2)}`
   },
   {
     id: 131,

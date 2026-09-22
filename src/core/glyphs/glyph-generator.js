@@ -272,12 +272,6 @@ export const GlyphGenerator = {
       const unincluded = effectValues[20] < effectValues[21] ? 20 : 21;
       effectValues[unincluded] = -1;
     }
-    // This is timepow/infinitypow/powerpow
-    for (const i of [0, 12, 16]) {
-      if (i in effectValues) {
-        effectValues[i] = 2;
-      }
-    }
     // Sort from highest to lowest value.
     const effects = Object.keys(effectValues).sort((a, b) => effectValues[b] - effectValues[a]).slice(0, count);
     return effects.map(Number).toBitmask();
@@ -348,21 +342,14 @@ export const GlyphGenerator = {
       const maxEffects = RealityUpgrade(17).isBought ? 3 : 2;
       if (countValuesFromBitmask(newMask) > maxEffects) {
         // Turn the old effect bitmask into an array of removable effects and then deterministically remove one
-        // of the non-power effects based on seed and reality count
+        // of the effects based on seed and reality count
         const replacable = getGlyphEffectsFromBitmask(newGlyph.effects)
           .filter(eff => eff.isGenerated)
-          .map(eff => eff.bitmaskIndex)
-          .filter(eff => ![0, 12, 16].includes(eff));
+          .map(eff => eff.bitmaskIndex);
         const toRemove = replacable[Math.abs(initSeed + realityCount) % replacable.length];
         newGlyph.effects = newMask & ~(1 << toRemove);
       } else {
         newGlyph.effects = newMask;
-      }
-
-      // Add the power effects on power/infinity/time, since the initial setting of newMask removes them half the time
-      const dimPowers = { power: 16, infinity: 12, time: 0 };
-      if (dimPowers[newGlyph.type] !== undefined) {
-        newGlyph.effects |= 1 << dimPowers[newGlyph.type];
       }
 
       glyphs.push(newGlyph);

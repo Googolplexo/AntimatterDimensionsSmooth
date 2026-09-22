@@ -60,7 +60,7 @@ export const tickspeed = {
       return Tickspeed.multiplier.log10() / Math.log10(baseMultiplier);
     },
     fakeValue: DC.E1,
-    isActive: true,
+    isActive: () => totalGalaxies(),
     icon: MultiplierTabIcons.GALAXY,
   },
   pelleTickspeedPow: {

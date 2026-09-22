@@ -59,9 +59,9 @@ window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alrea
   // The amount we can actually buy is in the interval [canBuy/2, canBuy), we do a binary search
   // to find the exact value:
   let canBuy = cantBuy / 2;
-  if (cantBuy > Number.MAX_SAFE_INTEGER) throw new Error("Overflow in binary search");
   while (cantBuy - canBuy > 1) {
     const middle = Math.floor((canBuy + cantBuy) / 2);
+    if (middle === canBuy || middle === cantBuy) break;
     if (money.gte(costFunction(alreadyBought + middle - 1))) {
       canBuy = middle;
     } else {
@@ -77,7 +77,7 @@ window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alrea
   let count = 0;
   for (let i = canBuy - 1; i > 0; --i) {
     const newCost = totalCost.plus(costFunction(alreadyBought + i - 1));
-    if (newCost.eq(totalCost)) break;
+    if (newCost.eq(totalCost) || costFunction(alreadyBought + i - 1).gte(costFunction(alreadyBought + i))) break;
     totalCost = newCost;
     if (money.lt(totalCost)) {
       --canBuy;
@@ -391,7 +391,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
     // when we can only afford 1.
     const money = rawMoney.div(numberPerSet);
     let logMoney = money.log10();
-    if (logMoney === Math.floor(logMoney)) logMoney -= 1;
+    if (logMoney === Math.floor(logMoney)) logMoney *= 1 - 1e-9;
     const logMult = this._logBaseIncrease;
     const logBase = this._logBaseCost;
     // The 1 + is because the multiplier isn't applied to the first purchase

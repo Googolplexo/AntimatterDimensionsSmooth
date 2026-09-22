@@ -93,11 +93,4 @@ export const DT = {
     isActive: () => Pelle.isDoomed && getDilationGainPerSecond().neq(0),
     icon: MultiplierTabIcons.PELLE,
   },
-  gamespeed: {
-    name: "Current Game speed",
-    multValue: () => getGameSpeedupForDisplay(),
-    isActive: () => getGameSpeedupForDisplay() > 1 && getDilationGainPerSecond().neq(0),
-    ignoresNerfPowers: true,
-    icon: MultiplierTabIcons.GAMESPEED,
-  },
 };

@@ -11,8 +11,8 @@ function addReplicantiGalaxies(newGalaxies) {
 }
 
 export function RGCost(start, bought, max) {
-  const scale = new Decimal(1 + 1 / (max + 1));
-  return start.times(scale.pow((bought) * (bought - 1) / 2));
+  const scale = max > 1e9 ? Math.LOG10E / max : Math.log10(1 + 1 / (max + 1));
+  return start.times(Decimal.pow10(scale * (bought) * (bought - 1) / 2));
 }
 
 // Function called externally for gaining RGs, which adjusts replicanti amount before calling the function
@@ -26,7 +26,7 @@ export function replicantiGalaxy(auto) {
   const bulk = Replicanti.galaxies.bulk;
   const galaxyGain = bulk.quantity;
   if (galaxyGain < 1) return;
-  if (!Achievement(126).isUnlocked || Pelle.isDoomed || EternityChallenge(12).isRunning) Replicanti.amount = Replicanti.start;
+  if (!TimeStudy(213).isBought || Pelle.isDoomed || EternityChallenge(12).isRunning) Replicanti.amount = Replicanti.start;
   addReplicantiGalaxies(galaxyGain);
 }
 
@@ -110,13 +110,14 @@ export function replicantiLoop(diff) {
   if (!player.replicanti.unl) return;
   const areRGsBeingBought = Replicanti.galaxies.areBeingBought;
  
-  Replicanti.amount = Replicanti.amount.plus(replicantiGainPerSecond().times(diff / 1000));
+  Replicanti.amount = Replicanti.amount.plus(replicantiGainPerSecond().times(diff).div(1000));
+  player.records.thisReality.maxReplicanti = player.records.thisReality.maxReplicanti
+    .clampMin(Replicanti.amount);
+  Achievement(95).tryUnlock();
 
   if (areRGsBeingBought) {
     replicantiGalaxy(true);
   }
-  player.records.thisReality.maxReplicanti = player.records.thisReality.maxReplicanti
-    .clampMin(Replicanti.amount);
 }
 
 export function getReplicantiPower(chance) {
@@ -341,7 +342,7 @@ export const Replicanti = {
     if (freeUnlock || Currency.infinityPoints.gte(cost)) {
       if (!freeUnlock) Currency.infinityPoints.subtract(cost);
       player.replicanti.unl = true;
-      Replicanti.amount = DC.D1;
+      Replicanti.amount = DC.D0;
     }
   },
   get amount() {
@@ -407,7 +408,7 @@ export const Replicanti = {
       return bulkBuyBinarySearch(player.replicanti.amount, {
         costFunction: x => RGCost(this.startingCost, x, this.max),
         firstCost: this.currentCost,
-        cumulative: !Achievement(126).isUnlocked || Pelle.isDoomed,
+        cumulative: !TimeStudy(213).isBought || Pelle.isDoomed,
       }, this.bought);
     },
   }

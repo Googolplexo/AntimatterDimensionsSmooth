@@ -45,7 +45,7 @@ export function timeToNextRG() {
     ? RGCost(galaxies.startingCost, galaxies.bought + bulk.quantity, galaxies.max)
     : galaxies.currentCost;
   if (ec12) goal = goal.clampMax(DC.D5E4);
-  if (canBulk && (!Achievement(126).isUnlocked || Pelle.isDoomed || ec12)) goal = goal.plus(bulk.purchasePrice);
+  if (canBulk && (!TimeStudy(213).isBought || Pelle.isDoomed || ec12)) goal = goal.plus(bulk.purchasePrice);
 
   if (TimeStudy(133).isBought) {
     if (ec12) {
@@ -53,7 +53,7 @@ export function timeToNextRG() {
       for (let i = 0; i <= bulk.quantity + 1; i++) {
         const s = player.records.secondsSinceLastRG + TimeSpan.fromMinutes(Perk.studyIdleEP.effectOrDefault(0)).totalSeconds;
         const a = totalCost.timesEffectsOf(TimeStudy(133)).div(DC.E7).clampMax(Number.MAX_VALUE).toNumber();
-        const r = Replicanti.amount.div(DC.E7).minus((bulk.quantity + 1 - i) / 200).clampMax(Number.MAX_VALUE).toNumber();
+        const r = Replicanti.amount.div(DC.E7).minus((bulk.quantity + 1 - i) / 200).toNumber();
         if (a === Number.MAX_VALUE) return a;
         const x = cubicRealRoots(0.0001, (r + 2 * s) / 10000 + 0.02, s * (2 * r + s) / 10000 + (r + s) / 50 + 1, r * (s / 100 + 1) ** 2 - a).max();
         const nextCost = RGCost(galaxies.startingCost, galaxies.bought + i, galaxies.max);

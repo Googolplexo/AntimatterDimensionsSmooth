@@ -178,7 +178,7 @@ export function initializeChallengeCompletions(isReality) {
   if (!isReality && EternityMilestone.keepAutobuyers.isReached || Pelle.isDoomed) {
     NormalChallenges.completeAll();
   }
-  if (EternityMilestone.autoIC.isReached && !Pelle.isDoomed) InfinityChallenges.completeAll();
+  if (!isReality && EternityMilestone.autoIC.isReached && !Pelle.isDoomed) InfinityChallenges.completeAll();
   player.challenge.normal.current = 0;
   player.challenge.infinity.current = 0;
 }

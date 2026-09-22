@@ -431,7 +431,7 @@ export const migrations = {
       }
     },
     108: player => {
-      player.infinityPower = new Decimal("0");
+      player.infinityPower = new Decimal(0);
     },
     109: player => {
       if (player.records.bestInfinity.time === 999999999999) player.records.bestInfinity.time = Number.MAX_VALUE;

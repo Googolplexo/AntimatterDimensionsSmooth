@@ -10,7 +10,7 @@ export default {
   methods: {
     update() {
       const galaxies = Replicanti.galaxies;
-      this.remainingTimeText = `Next Replicanti Galaxy in ${TimeSpan.fromSeconds(timeToNextRG())}`;
+      this.remainingTimeText = `Next Replicanti Galaxy in ${timeToNextRG() === Number.MAX_VALUE ? "an extremely long time" : TimeSpan.fromSeconds(timeToNextRG())}`;
       this.galaxyText = (Autobuyer.replicantiGalaxy.isUnlocked && galaxies.canBuyMore)
         ? `You can get ${quantifyInt("Replicanti Galaxy", galaxies.bulk.quantity)}` : "";
     }

@@ -204,9 +204,8 @@ function maxBuyDimBoosts() {
     softReset(1);
     return;
   }
-  // Linearly extrapolate dimboost costs. req1 = a * 1 + b, req2 = a * 2 + b
-  // so a = req2 - req1, b = req1 - a = 2 req1 - req2, num = (dims - b) / a
-  const increase = req2.amount - req1.amount;
+
+  const increase = NormalChallenge(10).isRunning ? 20 : 15;
   const dim = AntimatterDimension(req1.tier);
   let maxBoosts = Math.min(Number.MAX_VALUE,
     1 + Math.floor((dim.totalAmount.toNumber() - req1.amount) / increase));
@@ -218,6 +217,7 @@ function maxBuyDimBoosts() {
   let minBoosts = 2;
   while (maxBoosts !== minBoosts + 1) {
     const middle = Math.floor((maxBoosts + minBoosts) / 2);
+    if (middle === maxBoosts || middle === minBoosts) break;
     if (DimBoost.bulkRequirement(middle).isSatisfied) minBoosts = middle;
     else maxBoosts = middle;
   }

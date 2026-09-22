@@ -119,7 +119,7 @@ export function timeDimensionCommonMultiplier() {
       EternityUpgrade.tdMultAchs,
       EternityUpgrade.tdMultTheorems,
       EternityUpgrade.tdMultRealTime,
-      Replicanti.areUnlocked && Replicanti.amount.gt(1) ? DilationUpgrade.tdMultReplicanti : null,
+      Replicanti.areUnlocked ? DilationUpgrade.tdMultReplicanti : null,
       Pelle.isDoomed ? null : RealityUpgrade(22),
       AlchemyResource.dimensionality,
       PelleRifts.chaos
@@ -145,10 +145,6 @@ class TimeDimensionState extends DimensionState {
     this._baseCost = BASE_COSTS[tier];
     const COST_MULTS = [null, 3, 9, 27, 81, 243, 729, 2187, 6561];
     this._costMultiplier = COST_MULTS[tier];
-    const E6000_SCALING_AMOUNTS = [null, 7322, 4627, 3382, 2665, 833, 689, 562, 456];
-    this._e6000ScalingAmount = E6000_SCALING_AMOUNTS[tier];
-    const COST_THRESHOLDS = [Decimal.NUMBER_MAX_VALUE, DC.E1300, DC.E6000];
-    this._costIncreaseThresholds = COST_THRESHOLDS;
   }
 
   /** @returns {Decimal} */
@@ -249,14 +245,6 @@ class TimeDimensionState extends DimensionState {
 
   get powerMultiplier() {
     return DC.D4;
-  }
-
-  get e6000ScalingAmount() {
-    return this._e6000ScalingAmount;
-  }
-
-  get costIncreaseThresholds() {
-    return this._costIncreaseThresholds;
   }
 
   get requirementReached() {

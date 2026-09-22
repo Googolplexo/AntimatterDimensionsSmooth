@@ -445,7 +445,7 @@ export const normalTimeStudies = [
     cost: 200,
     requirement: [193],
     reqType: TS_REQUIREMENT_TYPE.AT_LEAST_ONE,
-    description: () => `You gain ×${formatInt(1000)} more Replicanti`,
+    description: () => `Replicanti Galaxies don't reset Replicanti and you gain ×${formatInt(1000)} more Replicanti`,
     effect: 1000
   },
   {

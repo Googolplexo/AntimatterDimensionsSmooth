@@ -31,7 +31,7 @@ export default {
     update() {
       const galaxies = Replicanti.galaxies;
       this.replicanti.copyFrom(player.replicanti.amount);
-      this.keepReplicanti = (Achievement(126).isUnlocked && !Pelle.isDoomed);
+      this.keepReplicanti = (TimeStudy(213).isBought && !EternityChallenge(12).isRunning && !Pelle.isDoomed);
       this.canBeBought = galaxies.canBuyMore ? galaxies.bulk.quantity : 0;
       this.startingReplicanti = Replicanti.start;
       if (this.replicanti.lt(galaxies.startingCost)) this.emitClose();

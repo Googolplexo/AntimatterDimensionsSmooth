@@ -104,7 +104,7 @@ export default {
       this.isAutobuyerOn = Autobuyer.timeDimension(this.tier).isActive;
       this.realityUnlocked = PlayerProgress.realityUnlocked();
       this.showTTCost = !this.isUnlocked && !this.shiftDown;
-      if (this.tier > 4) this.ttCost = TimeStudy.timeDimension(this.tier).cost;
+      if (this.tier > 3) this.ttCost = TimeStudy.timeDimension(this.tier).cost;
       this.currTT.copyFrom(Currency.timeTheorems.value);
       this.ttGen.copyFrom(getTTPerSecond().times(getGameSpeedupFactor()));
     },
