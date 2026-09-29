@@ -863,7 +863,7 @@ export const normalAchievements = [
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
     reward: "Infinity Point multiplier based on time spent this Infinity.",
     effect() {
-      return generalDilatedValueOf(Time.thisInfinity.totalSeconds, 2).plus(1).pow(8);
+      return generalDilatedValueOf(Time.thisInfinity.totalMinutes / 10, 1.5).plus(1).pow(100);
     },
     cap: () => Effarig.eternityCap,
     formatEffect: value => `${formatX(value, 2, 2)}`
