@@ -110,7 +110,7 @@ export default {
         return;
       }
       this.isInEC8 = EternityChallenge(8).isRunning;
-      this.isMaxAllUnlocked = this.isUnlocked && EternityMilestone.unlockReplicanti.isReached && !this.isinEC8;
+      this.isMaxAllUnlocked = this.isUnlocked && EternityMilestone.unlockReplicanti.isReached && !this.isInEC8;
       if (this.isInEC8) {
         this.ec8Purchases = player.eterc8repl;
       }
